@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Clock, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight as PhArrowRight } from "@phosphor-icons/react";
 import { Header } from "../components/Header";
 import { HeroSection } from "../components/HeroSection";
 import { HeroSectionStrachans } from "../components/HeroSectionStrachans";
@@ -181,7 +182,7 @@ function ServiceCard({ item, brand }: { item: CardItem; brand: Brand }) {
 
         <div className={`flex items-center gap-2 ${accentText} group-hover:gap-3 transition-all`} style={{ fontWeight: 600 }}>
           <span className="text-[0.9rem]">{item.ctaLabel}</span>
-          <ArrowRight size={16} />
+          {brand.id === "healthcheck" ? <PhArrowRight size={16} weight="duotone" /> : <ArrowRight size={16} />}
         </div>
       </div>
     </a>
@@ -212,6 +213,8 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
       };
   useSeo({ ...seo, path: brand.basePath || "/" });
 
+  const isHC = brand.id === "healthcheck";
+
   return (
     <div className={`min-h-screen bg-white ${brand.themeClass}`}>
       <JsonLd data={pharmacyGraph(brand, brand.id === "healthcheck" ? ["Bradford", "West Yorkshire"] : undefined)} />
@@ -224,8 +227,14 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-brand-primary/5 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center mb-10 max-w-2xl mx-auto">
-            <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>NHS Pharmacy First</h2>
-            <p className="text-gray-600 text-[1rem] leading-relaxed">Get free, fast treatment for 7 common conditions without seeing your GP. Our pharmacists can assess you and supply prescription medicines where appropriate — at no cost.</p>
+            <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
+              {isHC ? <><span className="hc-swoosh-text">Free NHS</span> Services</> : "NHS Pharmacy First"}
+            </h2>
+            <p className="text-gray-600 text-[1rem] leading-relaxed">
+              {isHC
+                ? "Get fast, expert treatment for 7 common conditions without seeing your GP. Our pharmacists can assess you and supply prescription medicines where appropriate — fully funded by the NHS, at no cost to you."
+                : "Get free, fast treatment for 7 common conditions without seeing your GP. Our pharmacists can assess you and supply prescription medicines where appropriate — at no cost."}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -242,7 +251,9 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         <div className="absolute bottom-20 left-0 w-[400px] h-[400px] bg-brand-secondary/8 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center mb-10 max-w-2xl mx-auto">
-            <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>Private clinics at your pharmacy</h2>
+            <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
+              {isHC ? <><span className="hc-swoosh-text">Private clinics</span> at your pharmacy</> : "Private clinics at your pharmacy"}
+            </h2>
             <p className="text-gray-600 text-[1rem] leading-relaxed">Skip the GP queue. Book one of our most-requested private services in minutes — delivered by trained pharmacists in a private consultation room.</p>
           </div>
 

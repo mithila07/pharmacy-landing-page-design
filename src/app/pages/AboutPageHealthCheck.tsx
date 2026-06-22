@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { ShieldCheck, Stethoscope, Heartbeat, MapPin, Check, Calendar, ArrowRight, SealCheck, ArrowSquareOut, Pill, Syringe, Pulse, Users, Star, IconContext } from "@phosphor-icons/react";
+import { ShieldCheck, Certificate, Heartbeat, Hospital, ThumbsUp, Check, Calendar, ArrowRight, SealCheck, ArrowSquareOut, Pill, Syringe, Pulse, Ear, HandHeart, Users, Star, IconContext } from "@phosphor-icons/react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Reveal } from "../components/Reveal";
@@ -30,9 +30,9 @@ const STATS = [
 
 const VALUES = [
   { icon: ShieldCheck, title: "A registered pharmacy", text: "We're registered with the General Pharmaceutical Council (GPhC) and follow its standards for safe, professional care." },
-  { icon: Stethoscope, title: "Qualified clinicians", text: "Our pharmacists are trained to assess, advise and, where appropriate, supply treatment — in a private consultation room." },
-  { icon: Heartbeat, title: "NHS & private, one roof", text: "From NHS Pharmacy First and dispensing to private travel jabs and health checks — without the wait for a GP." },
-  { icon: MapPin, title: "Local & convenient", text: "On Great Horton Road in Bradford, with step-free access and friendly faces who know the community." },
+  { icon: Certificate, title: "Qualified clinicians", text: "Our pharmacists are trained to assess, advise and, where appropriate, supply treatment — in a private consultation room." },
+  { icon: Hospital, title: "NHS & private, one roof", text: "From NHS Pharmacy First and dispensing to private travel jabs and health checks — without the wait for a GP." },
+  { icon: ThumbsUp, title: "Local & convenient", text: "On Great Horton Road in Bradford, with step-free access and friendly faces who know the community." },
 ];
 
 const SERVICES = [
@@ -40,8 +40,8 @@ const SERVICES = [
   { icon: Pill, title: "Dispensing & medicines advice", text: "NHS dispensing with clear, friendly guidance on how to take your medication safely." },
   { icon: Syringe, title: "Travel vaccinations", text: "Pre-travel advice and a full range of travel jabs in a single visit." },
   { icon: Pulse, title: "Health checks", text: "Blood pressure checks, weight management support and other routine health screening." },
-  { icon: Stethoscope, title: "Ear wax removal", text: "Quick, comfortable micro-suction by a trained clinician — usually one short appointment." },
-  { icon: Users, title: "Private consultations", text: "A dedicated, private room for sensitive conversations and one-to-one clinical care." },
+  { icon: Ear, title: "Ear wax removal", text: "Quick, comfortable micro-suction by a trained clinician — usually one short appointment." },
+  { icon: HandHeart, title: "Private consultations", text: "A dedicated, private room for sensitive conversations and one-to-one clinical care." },
 ];
 
 export default function AboutPageHealthCheck() {
@@ -269,7 +269,7 @@ export default function AboutPageHealthCheck() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => navigate(brand.basePath)}
-              className="inline-flex items-center justify-center gap-2 bg-white text-brand-primary px-7 min-h-[48px] rounded-xl hover:-translate-y-0.5 hover:shadow-xl transition-all cursor-pointer"
+              className="hc-btn-grad-green inline-flex items-center justify-center gap-2 text-white px-7 min-h-[48px] rounded-xl transition-all cursor-pointer"
               style={{ fontWeight: 700 }}
             >
               <Calendar size={18} /> Book appointment

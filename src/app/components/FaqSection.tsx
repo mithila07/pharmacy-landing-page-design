@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, MessageCircleQuestion, ArrowRight } from "lucide-react";
+import { Headset as PhHeadset, ArrowRight as PhArrowRight } from "@phosphor-icons/react";
 import { Reveal } from "./Reveal";
 import { carefirstBrand, type Brand } from "../branding";
 import { JsonLd } from "../seo";
@@ -46,6 +47,7 @@ const faqs = [
 export function FaqSection({ brand = carefirstBrand }: { brand?: Brand } = {}) {
   const [open, setOpen] = useState<number | null>(0);
   const navigate = useNavigate();
+  const isHC = brand.id === "healthcheck";
 
   const handleContact = () => {
     if (brand.contactPath) navigate(brand.contactPath);
@@ -64,7 +66,7 @@ export function FaqSection({ brand = carefirstBrand }: { brand?: Brand } = {}) {
           <div className="lg:sticky lg:top-24">
             <span className="text-[0.8rem] text-brand-secondary uppercase tracking-widest" style={{ fontWeight: 700 }}>FAQs</span>
             <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mt-2 mb-4" style={{ fontWeight: 700 }}>
-              Questions, answered
+              {isHC ? <>Questions, <span className="hc-swoosh-text">answered</span></> : "Questions, answered"}
             </h2>
             <p className="text-gray-600 text-[1rem] leading-relaxed mb-6">
               Everything you need to know about booking, NHS eligibility and our private clinics. Can't find your
@@ -72,11 +74,11 @@ export function FaqSection({ brand = carefirstBrand }: { brand?: Brand } = {}) {
             </p>
             <button
               onClick={handleContact}
-              className="inline-flex items-center gap-2 bg-brand-primary text-white px-5 py-2.5 rounded-xl hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-primary/25 transition-all cursor-pointer"
+              className="hc-btn-grad-blue inline-flex items-center gap-2 bg-brand-primary text-white px-5 py-2.5 rounded-xl transition-all cursor-pointer"
               style={{ fontWeight: 600 }}
             >
-              <MessageCircleQuestion size={16} /> Contact the team
-              <ArrowRight size={15} />
+              {isHC ? <PhHeadset size={17} weight="duotone" /> : <MessageCircleQuestion size={16} />} Contact the team
+              {isHC ? <PhArrowRight size={15} weight="duotone" /> : <ArrowRight size={15} />}
             </button>
           </div>
         </Reveal>

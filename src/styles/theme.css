@@ -172,6 +172,73 @@
   transform: translateY(0);
 }
 
+/* Single-hue gradient CTA buttons (green / blue) — same slide-on-hover
+ * animation as the hero swoosh button, but mono-tone (two shades of one
+ * colour), NOT the multi-colour swoosh. The gradient is painted as a
+ * background-image so it layers over any existing `bg-brand-*` utility. */
+.theme-healthcheck .hc-btn-grad-green,
+.theme-healthcheck .hc-btn-grad-blue {
+  color: #fff;
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  transition: background-position 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.theme-healthcheck .hc-btn-grad-green {
+  background-image: linear-gradient(105deg, #00b23b 0%, #00872d 50%, #00b23b 100%);
+  box-shadow: 0 4px 14px rgba(0, 135, 45, 0.22);
+}
+.theme-healthcheck .hc-btn-grad-blue {
+  background-image: linear-gradient(105deg, #1a78ff 0%, #005de6 50%, #1a78ff 100%);
+  box-shadow: 0 4px 14px rgba(0, 93, 230, 0.22);
+}
+.theme-healthcheck .hc-btn-grad-green:hover,
+.theme-healthcheck .hc-btn-grad-blue:hover {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+}
+.theme-healthcheck .hc-btn-grad-green:hover {
+  box-shadow: 0 12px 26px rgba(0, 135, 45, 0.32);
+}
+.theme-healthcheck .hc-btn-grad-blue:hover {
+  box-shadow: 0 12px 26px rgba(0, 93, 230, 0.32);
+}
+.theme-healthcheck .hc-btn-grad-green:active,
+.theme-healthcheck .hc-btn-grad-blue:active {
+  transform: translateY(0);
+}
+.theme-healthcheck .hc-btn-grad-green:disabled,
+.theme-healthcheck .hc-btn-grad-blue:disabled {
+  opacity: 0.4;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Booking / service pages already tag their primary CTA with `.cta-primary`
+ * (same convention as the Canada theme) — give it the HealthCheck blue
+ * gradient + slide hover so every page, including the service booking flow,
+ * matches. */
+.theme-healthcheck .cta-primary {
+  background-image: linear-gradient(105deg, #1a78ff 0%, #005de6 50%, #1a78ff 100%);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 93, 230, 0.22);
+  transition: background-position 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.theme-healthcheck .cta-primary:hover {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 93, 230, 0.32);
+}
+.theme-healthcheck .cta-primary:active {
+  transform: translateY(0);
+}
+.theme-healthcheck .cta-primary:disabled {
+  opacity: 0.4;
+  transform: none;
+  box-shadow: none;
+}
+
 /* ------------------------------------------------------------------
  * Canada Pharmacy — a deliberately different design language.
  * Fresh lime-green (from the logo) + slate charcoal, on warm paper,

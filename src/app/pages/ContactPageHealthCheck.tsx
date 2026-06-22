@@ -105,7 +105,7 @@ export default function ContactPageHealthCheck() {
                     href={directionsUrl(branch.address)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-brand-secondary text-white px-4 min-h-[42px] rounded-lg text-[0.85rem] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#00872D]/25 transition-all no-underline shrink-0"
+                    className="hc-btn-grad-green inline-flex items-center gap-1.5 bg-brand-secondary text-white px-4 min-h-[42px] rounded-lg text-[0.85rem] transition-all no-underline shrink-0"
                     style={{ fontWeight: 600 }}
                   >
                     <NavigationArrow size={15} /> Directions
@@ -217,7 +217,7 @@ export default function ContactPageHealthCheck() {
                   <button
                     type="submit"
                     disabled={!valid}
-                    className="mt-5 inline-flex items-center gap-2 bg-brand-secondary text-white px-6 min-h-[48px] rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#00872D]/25 transition-all cursor-pointer"
+                    className="hc-btn-grad-green mt-5 inline-flex items-center gap-2 bg-brand-secondary text-white px-6 min-h-[48px] rounded-xl disabled:cursor-not-allowed transition-all cursor-pointer"
                     style={{ fontWeight: 600 }}
                   >
                     <PaperPlaneTilt size={16} /> Send message

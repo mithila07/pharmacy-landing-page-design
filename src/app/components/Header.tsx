@@ -1,4 +1,5 @@
 import { Phone, Mail, Clock, MapPin, Menu, X, ChevronRight, Calendar } from "lucide-react";
+import { Calendar as PhCalendar } from "@phosphor-icons/react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router";
@@ -18,6 +19,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
   const [bookOpen, setBookOpen] = useState(false);
   const navigate = useNavigate();
 
+  const isHC = brand.id === "healthcheck";
   const allServices = [...nhsServices, ...privateServices];
   // Quick-contact strip (single-location brands) — pull from the brand's own branch.
   const primaryBranch = brand.locations[0];
@@ -99,17 +101,17 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
             {bookNowServices ? (
               <button
                 onClick={() => setBookOpen(true)}
-                className="hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] hover:shadow-lg hover:shadow-teal-500/25 transition-all cursor-pointer"
+                className="hc-btn-grad-green hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] transition-all cursor-pointer"
                 style={{ fontWeight: 600 }}
               >
-                <Calendar size={14} /> Book Appointment Now
+                {isHC ? <PhCalendar size={15} weight="duotone" /> : <Calendar size={14} />} Book Appointment Now
               </button>
             ) : (
               <a
                 href="https://sandbox3.gallezone.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] hover:shadow-lg hover:shadow-teal-500/25 transition-all cursor-pointer no-underline"
+                className="hc-btn-grad-green hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] transition-all cursor-pointer no-underline"
                 style={{ fontWeight: 600 }}
               >
                 Order Prescription
@@ -179,17 +181,17 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
           {bookNowServices ? (
             <button
               onClick={() => { setMobileOpen(false); setBookOpen(true); }}
-              className="w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer flex items-center justify-center gap-1.5"
+              className="hc-btn-grad-green w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer flex items-center justify-center gap-1.5 transition-all"
               style={{ fontWeight: 600 }}
             >
-              <Calendar size={14} /> Book Appointment Now
+              {isHC ? <PhCalendar size={15} weight="duotone" /> : <Calendar size={14} />} Book Appointment Now
             </button>
           ) : (
             <a
               href="https://sandbox3.gallezone.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer no-underline"
+              className="hc-btn-grad-green block w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer no-underline transition-all"
               style={{ fontWeight: 600 }}
             >
               Order Prescription
