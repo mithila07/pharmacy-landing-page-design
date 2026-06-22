@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Keep transactional/utility steps out of the index
+Disallow: /strachans/questionnaire/
+Disallow: /questionnaire/
+
+Sitemap: https://www.strachanspharmacy.co.uk/sitemap.xml

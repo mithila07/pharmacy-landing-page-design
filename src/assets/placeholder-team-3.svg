@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 680" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Team member photo placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8faf4"/>
+      <stop offset="1" stop-color="#d6f3e9"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="680" fill="url(#bg)"/>
+  <circle cx="300" cy="285" r="170" fill="#ffffff" opacity="0.55"/>
+  <g fill="#198568" opacity="0.55">
+    <circle cx="300" cy="250" r="78"/>
+    <path d="M150 470 a150 130 0 0 1 300 0 z"/>
+  </g>
+  <text x="300" y="600" text-anchor="middle" font-family="Outfit, Segoe UI, sans-serif" font-size="26" font-weight="700" fill="#0f5a45">Team photo</text>
+  <text x="300" y="636" text-anchor="middle" font-family="Outfit, Segoe UI, sans-serif" font-size="18" fill="#8a9a95">placeholder-team-3.svg</text>
+</svg>

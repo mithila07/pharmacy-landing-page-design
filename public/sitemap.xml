@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Key Strachans Pharmacy URLs. Replace the domain with the live one, and
+  ideally generate this at build time from the services/blog data for full
+  coverage of every service booking page.
+-->
+<urlset xmlns="http://www.sitemap.org/schemas/sitemap/0.9">
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/contact</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Blog posts -->
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/blog/pharmacy-first-what-your-pharmacist-can-treat</loc><priority>0.6</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/blog/weight-loss-injections-wegovy-vs-mounjaro</loc><priority>0.6</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/blog/pre-travel-vaccination-checklist</loc><priority>0.6</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/blog/beat-hay-fever-pharmacist-guide</loc><priority>0.6</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/blog/ear-microsuction-vs-cotton-buds</loc><priority>0.6</priority></url>
+
+  <!-- NHS Pharmacy First conditions -->
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/nhs-pf-sore-throat</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/nhs-pf-sinusitis</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/nhs-pf-earache</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/nhs-pf-insect-bite</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/nhs-pf-impetigo</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/nhs-pf-shingles</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/nhs-pf-uti</loc><priority>0.8</priority></url>
+
+  <!-- Popular private clinics -->
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/prv-travel-consult</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/prv-weight-consult</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/prv-ear-wax</loc><priority>0.8</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/prv-flu-private</loc><priority>0.7</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/prv-blood-test</loc><priority>0.7</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/prv-vitamin-injection</loc><priority>0.7</priority></url>
+  <url><loc>https://www.strachanspharmacy.co.uk/strachans/book/prv-yellowfever</loc><priority>0.7</priority></url>
+</urlset>
