@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { ShieldCheck, Facebook, Instagram, Twitter, MapPin, Phone } from "lucide-react";
 import { carefirstBrand, homePath, type Brand } from "../branding";
+import { FooterHealthCheck } from "./FooterHealthCheck";
 import nhsBadge from "../../assets/Providing NHS Services RGB BLUE 2.svg";
 
 const LEGAL_LINKS = [
@@ -31,6 +32,11 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
   const navigate = useNavigate();
   const year = new Date().getFullYear();
   const multiBranch = brand.locations.length > 1;
+
+  // HealthCheck uses a bespoke full-footer layout (coloured logo mark, contact card).
+  if (variant === "full" && brand.id === "healthcheck") {
+    return <FooterHealthCheck brand={brand} />;
+  }
 
   if (variant === "compact") {
     return (

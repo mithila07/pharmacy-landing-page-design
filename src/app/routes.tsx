@@ -9,7 +9,10 @@ import BlogPostStrachans from "./pages/BlogPostStrachans";
 import ContactPageStrachans from "./pages/ContactPageStrachans";
 import BookingPage from "./pages/BookingPage";
 import QuestionnairePage from "./pages/QuestionnairePage";
-import { strachansBrand, canadaBrand } from "./branding";
+import LandingPageHealthCheck from "./pages/LandingPageHealthCheck";
+import AboutPageHealthCheck from "./pages/AboutPageHealthCheck";
+import ContactPageHealthCheck from "./pages/ContactPageHealthCheck";
+import { strachansBrand, canadaBrand, healthcheckBrand } from "./branding";
 
 export const router = createBrowserRouter([
   { path: "/", Component: LandingPage },
@@ -30,4 +33,11 @@ export const router = createBrowserRouter([
   { path: "/canada", Component: LandingPageCanada },
   { path: "/canada/book/:serviceId", element: <BookingPage brand={canadaBrand} /> },
   { path: "/canada/questionnaire/:serviceId", element: <QuestionnairePage brand={canadaBrand} /> },
+
+  // HealthCheck Pharmacy & Clinic (Bradford) — no blog
+  { path: "/healthcheck", Component: LandingPageHealthCheck },
+  { path: "/healthcheck/about", Component: AboutPageHealthCheck },
+  { path: "/healthcheck/contact", Component: ContactPageHealthCheck },
+  { path: "/healthcheck/book/:serviceId", element: <BookingPage brand={healthcheckBrand} /> },
+  { path: "/healthcheck/questionnaire/:serviceId", element: <QuestionnairePage brand={healthcheckBrand} /> },
 ]);

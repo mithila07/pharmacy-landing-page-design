@@ -4,7 +4,9 @@ import { ArrowRight, Clock, ShieldCheck, Sparkles } from "lucide-react";
 import { Header } from "../components/Header";
 import { HeroSection } from "../components/HeroSection";
 import { HeroSectionStrachans } from "../components/HeroSectionStrachans";
+import { HeroSectionHealthCheck } from "../components/HeroSectionHealthCheck";
 import { ReviewsSection } from "../components/ReviewsSection";
+import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
 import { BlogTeaserSection } from "../components/BlogTeaserSection";
 import { FaqSection } from "../components/FaqSection";
 import { ContactSection } from "../components/ContactSection";
@@ -199,6 +201,11 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         title: "Strachans Pharmacy | NHS & Private Pharmacy in Bury & Uppermill",
         description: "NHS Pharmacy First and private clinics across Bury and Uppermill — travel vaccines, weight management, ear wax removal, blood tests and more. Book a same-day pharmacist appointment online.",
       }
+    : brand.id === "healthcheck"
+    ? {
+        title: "Health-Check Pharmacy & Clinic — Bradford | NHS & Private Services",
+        description: "NHS Pharmacy First, repeat prescriptions and private clinics at Health-Check Pharmacy on Great Horton Road, Bradford. Book a same-day appointment online — travel jabs, blood pressure checks, ear wax removal and more.",
+      }
     : {
         title: `${brand.name} | NHS & Private Community Pharmacy`,
         description: `${brand.name} offers NHS Pharmacy First, vaccinations and private clinics. Book a same-day pharmacist appointment online — no GP referral needed.`,
@@ -207,9 +214,9 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
 
   return (
     <div className={`min-h-screen bg-white ${brand.themeClass}`}>
-      <JsonLd data={pharmacyGraph(brand)} />
+      <JsonLd data={pharmacyGraph(brand, brand.id === "healthcheck" ? ["Bradford", "West Yorkshire"] : undefined)} />
       <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCards.map((c) => c.id)]} />
-      {brand.id === "strachans" ? <HeroSectionStrachans /> : <HeroSection />}
+      {brand.id === "strachans" ? <HeroSectionStrachans /> : brand.id === "healthcheck" ? <HeroSectionHealthCheck /> : <HeroSection />}
 
       {/* NHS Pharmacy First */}
       <section id="nhs-services" className="relative py-20 overflow-hidden">
@@ -247,7 +254,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         </div>
       </section>
 
-      <ReviewsSection />
+      {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : <ReviewsSection />}
       {brand.blogPath && <BlogTeaserSection brand={brand} />}
       <FaqSection brand={brand} />
       {/* Inline "Find Us" only for single-location brands; multi-location brands use a dedicated Contact page. */}

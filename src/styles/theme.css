@@ -121,6 +121,58 @@
 }
 
 /* ------------------------------------------------------------------
+ * HealthCheck Pharmacy & Clinic — "Crisp Clinical".
+ * Electric medical blue + vivid health green on crisp white, with the
+ * logo's blue→cyan→green swoosh as the signature motif. Light mode only.
+ * Vivid green/cyan are graphics-only; white-text buttons use the AA
+ * --brand-secondary (#00872D), links/headings use blue (#005DE6).
+ * ------------------------------------------------------------------ */
+.theme-healthcheck {
+  --brand-primary: #005de6;       /* electric blue — headings, links, nav (AA on white) */
+  --brand-primary-mid: #00b6eb;   /* cyan — gradient stop toward the swoosh */
+  --brand-secondary: #00872d;     /* action green — white-text buttons + accent text (AA) */
+  --brand-accent: #00b6eb;        /* cyan — small icons / graphics */
+  --brand-dark: #003379;          /* crisp navy — footer gradient stop */
+  --brand-darkest: #001339;       /* ink — footer base */
+  --brand-light: #f2f7fd;         /* crisp cool section wash */
+  --brand-light-alt: #e8f7ee;     /* soft green section wash */
+  --brand-cta: #00872d;           /* green CTA */
+  --brand-alt: #00b6eb;           /* cyan — secondary accent */
+  --brand-light-cyan: #e6f7fd;    /* light cyan gradient stop */
+  --brand-primary-hover: #0049c2; /* blue hover on light bg */
+}
+
+/* Swoosh gradient — decorative only (no body text sits on it). */
+.theme-healthcheck .hc-swoosh-text {
+  background: linear-gradient(105deg, #005de6 0%, #00b6eb 48%, #00b23b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.theme-healthcheck .hc-swoosh-bar {
+  background: linear-gradient(105deg, #005de6 0%, #00b6eb 48%, #00b23b 100%);
+}
+
+/* Signature gradient button — the swoosh as a fill, with a gradient that
+ * slides + a subtle lift/glow on hover. */
+.theme-healthcheck .hc-btn-gradient {
+  background-image: linear-gradient(105deg, #005de6 0%, #00b6eb 35%, #00b23b 70%, #005de6 100%);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 93, 230, 0.22);
+  transition: background-position 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.theme-healthcheck .hc-btn-gradient:hover {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 178, 59, 0.32);
+}
+.theme-healthcheck .hc-btn-gradient:active {
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------------
  * Canada Pharmacy — a deliberately different design language.
  * Fresh lime-green (from the logo) + slate charcoal, on warm paper,
  * with Inter as the base UI font (headings use Fraunces via .font-display).

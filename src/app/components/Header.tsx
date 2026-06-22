@@ -19,6 +19,13 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
   const navigate = useNavigate();
 
   const allServices = [...nhsServices, ...privateServices];
+  // Quick-contact strip (single-location brands) — pull from the brand's own branch.
+  const primaryBranch = brand.locations[0];
+  const primaryPhone = primaryBranch?.phone ?? pharmacyInfo.phone;
+  const primaryHours = primaryBranch?.openingHours?.[0];
+  const primaryHoursLabel = primaryHours
+    ? `${primaryHours.day.replace("Monday - Friday", "Mon–Fri")} ${primaryHours.hours}`
+    : "Mon–Fri 8AM–8PM";
   const bookableServices = bookNowServices
     ? bookNowServices.map((id) => allServices.find((s) => s.id === id)).filter((s): s is NonNullable<typeof s> => Boolean(s))
     : [];
@@ -66,8 +73,8 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
             {/* Divider + quick contact — only for single-location brands (avoids confusion across branches) */}
             {brand.locations.length <= 1 && (
               <div className="hidden lg:flex items-center gap-4 pl-5 border-l border-gray-200 text-[0.78rem] text-gray-500">
-                <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-accent" /> {pharmacyInfo.phone}</span>
-                <span className="flex items-center gap-1.5"><Clock size={12} className="text-brand-accent" /> Mon–Fri 8AM–8PM</span>
+                <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-accent" /> {primaryPhone}</span>
+                <span className="flex items-center gap-1.5"><Clock size={12} className="text-brand-accent" /> {primaryHoursLabel}</span>
               </div>
             )}
           </div>
@@ -121,8 +128,8 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-1">
           {brand.locations.length <= 1 && (
             <div className="flex items-center gap-4 text-[0.8rem] text-gray-500 pb-3 mb-2 border-b border-gray-100">
-              <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-accent" /> {pharmacyInfo.phone}</span>
-              <span className="flex items-center gap-1.5"><Clock size={12} className="text-brand-accent" /> Mon–Fri 8–8</span>
+              <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-accent" /> {primaryPhone}</span>
+              <span className="flex items-center gap-1.5"><Clock size={12} className="text-brand-accent" /> {primaryHoursLabel}</span>
             </div>
           )}
           {[

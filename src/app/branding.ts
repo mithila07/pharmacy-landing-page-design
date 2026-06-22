@@ -1,7 +1,8 @@
 import strachansLogo from "../assets/strachans-logo.svg";
 import carefirstLogo from "../assets/d0b862ede6c0c3c9cbee51cd53c49828213cc4c9.png";
 import canadaLogo from "../assets/canada-pharmacy-logo-vector.svg";
-import { carefirstLocations, strachansLocations, canadaLocations, type PharmacyLocation } from "./data/locations";
+import healthcheckLogo from "../assets/health-check logo.png";
+import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, type PharmacyLocation } from "./data/locations";
 
 /**
  * A brand defines everything that differs between the white-label versions of
@@ -91,6 +92,26 @@ export const canadaBrand: Brand = {
     companyNumber: "09988776",
     superintendent: "Daniel Reid",
     gphcNumber: "9011892",
+  },
+};
+
+export const healthcheckBrand: Brand = {
+  id: "healthcheck",
+  name: "Health-Check Pharmacy & Clinic",
+  tagline: "Pharmacy & Clinic",
+  logo: healthcheckLogo,
+  logoIsWordmark: true,
+  themeClass: "theme-healthcheck",
+  basePath: "/healthcheck",
+  locations: healthcheckLocations,
+  aboutPath: "/healthcheck/about",
+  contactPath: "/healthcheck/contact",
+  // No blog for this brand.
+  legal: {
+    companyName: "Health-Check Pharmacy & Clinic",
+    companyNumber: "[REPLACE — Company No.]",
+    superintendent: "[REPLACE — Superintendent Pharmacist]",
+    gphcNumber: "[REPLACE — GPhC Reg. No.]",
   },
 };
 

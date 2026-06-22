@@ -115,6 +115,29 @@ export const canadaLocations: PharmacyLocation[] = [
   },
 ];
 
+/** HealthCheck Pharmacy & Clinic — single branch in Bradford. */
+const healthcheckHours = [
+  { day: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
+  { day: "Saturday", hours: "Closed" },
+  { day: "Sunday", hours: "Closed" },
+];
+
+export const healthcheckLocations: PharmacyLocation[] = [
+  {
+    id: "bradford",
+    name: "Health-Check Pharmacy & Clinic — Bradford",
+    shortName: "Bradford",
+    address: "127 Great Horton Road, Bradford, BD7 1PS",
+    phone: "01274 728502",
+    email: "healthcheck.pharmacy@nhs.net",
+    lat: 53.786,
+    lng: -1.762,
+    openingHours: healthcheckHours,
+    googleMapsEmbedUrl: embed("127 Great Horton Road, Bradford BD7 1PS"),
+    isDefault: true,
+  },
+];
+
 /** Straight-line distance in miles between two coordinates (Haversine). */
 export function distanceMiles(
   a: { lat: number; lng: number },
