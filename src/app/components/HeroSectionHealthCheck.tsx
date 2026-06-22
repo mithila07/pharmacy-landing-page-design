@@ -67,37 +67,39 @@ export function HeroSectionHealthCheck() {
         }}
       />
 
-      {/* Background image layers — default watermark + per-service photos.
-          A soft radial mask reveals only a feathered "hint" in the middle
-          (no harsh edges); only opacity animates so the layout never moves. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 overflow-hidden"
-        style={{
-          WebkitMaskImage: "radial-gradient(58% 72% at 50% 46%, #000 0%, rgba(0,0,0,0.55) 40%, transparent 75%)",
-          maskImage: "radial-gradient(58% 72% at 50% 46%, #000 0%, rgba(0,0,0,0.55) 40%, transparent 75%)",
-        }}
-      >
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-out"
-          style={{ backgroundImage: `url(${IMG.default})`, opacity: hovered ? 0 : 0.18 }}
-        />
-        {POPULAR.map((s) => (
-          <div
-            key={s.id}
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-out"
-            style={{ backgroundImage: `url(${s.img})`, opacity: hovered === s.id ? 0.34 : 0 }}
-          />
-        ))}
-      </div>
-
       {/* Legibility wash — keeps the headline crisp, fades to clear on the
-          right so the gradient + photo stay visible behind the card. */}
+          right so the gradient stays visible behind the card. */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
         style={{ background: "linear-gradient(90deg, rgba(242,247,253,0.80) 0%, rgba(242,247,253,0.38) 48%, rgba(242,247,253,0) 100%)" }}
       />
+
+      {/* Background image — a reduced, centred soft-edged medallion (not
+          full-bleed) so the whole photo reads without reaching the corners.
+          A smooth radial mask feathers its edges; only opacity animates so
+          the layout never moves. */}
+      <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center overflow-hidden">
+        <div
+          className="relative w-[min(680px,56%)] aspect-[3/2]"
+          style={{
+            WebkitMaskImage: "radial-gradient(54% 54% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 42%, transparent 82%)",
+            maskImage: "radial-gradient(54% 54% at 50% 50%, #000 0%, rgba(0,0,0,0.5) 42%, transparent 82%)",
+          }}
+        >
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-out"
+            style={{ backgroundImage: `url(${IMG.default})`, opacity: hovered ? 0 : 0.16 }}
+          />
+          {POPULAR.map((s) => (
+            <div
+              key={s.id}
+              className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-out"
+              style={{ backgroundImage: `url(${s.img})`, opacity: hovered === s.id ? 0.32 : 0 }}
+            />
+          ))}
+        </div>
+      </div>
 
       {/* Decorative swoosh shape, top-right */}
       <div
