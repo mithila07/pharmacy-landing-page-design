@@ -71,14 +71,14 @@ function downloadIcs({ date, time, title, location, description }: { date: Date;
 function ContactInputs({ phone, email, onPhone, onEmail }: { phone: string; email: string; onPhone: (v: string) => void; onEmail: (v: string) => void }) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
-      <div>
+      <div className="min-w-0">
         <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Phone number *</label>
         <div className="relative">
           <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={phone} onChange={(e) => onPhone(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="07123 456789" />
         </div>
       </div>
-      <div>
+      <div className="min-w-0">
         <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Email *</label>
         <div className="relative">
           <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -675,26 +675,26 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
 
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
-                <div>
+                <div className="min-w-0">
                   <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>First name *</label>
                   <input value={patient.firstName} onChange={(e) => setPatient({ ...patient, firstName: e.target.value })} className="w-full px-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="Enter your first name" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Last name *</label>
                   <input value={patient.lastName} onChange={(e) => setPatient({ ...patient, lastName: e.target.value })} className="w-full px-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="Enter your last name" />
                 </div>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                <div>
+                <div className="min-w-0">
                   <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Date of birth *</label>
                   <div className="flex gap-2">
-                    <input inputMode="numeric" maxLength={2} value={patient.dobDay} onChange={(e) => setPatient({ ...patient, dobDay: e.target.value.replace(/\D/g, "") })} className="w-16 px-3 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] text-center focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="DD" />
-                    <input inputMode="numeric" maxLength={2} value={patient.dobMonth} onChange={(e) => setPatient({ ...patient, dobMonth: e.target.value.replace(/\D/g, "") })} className="w-16 px-3 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] text-center focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="MM" />
-                    <input inputMode="numeric" maxLength={4} value={patient.dobYear} onChange={(e) => setPatient({ ...patient, dobYear: e.target.value.replace(/\D/g, "") })} className="flex-1 px-3 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] text-center focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="YYYY" />
+                    <input inputMode="numeric" maxLength={2} value={patient.dobDay} onChange={(e) => setPatient({ ...patient, dobDay: e.target.value.replace(/\D/g, "") })} className="w-14 px-2 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] text-center focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="DD" />
+                    <input inputMode="numeric" maxLength={2} value={patient.dobMonth} onChange={(e) => setPatient({ ...patient, dobMonth: e.target.value.replace(/\D/g, "") })} className="w-14 px-2 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] text-center focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="MM" />
+                    <input inputMode="numeric" maxLength={4} value={patient.dobYear} onChange={(e) => setPatient({ ...patient, dobYear: e.target.value.replace(/\D/g, "") })} className="flex-1 min-w-0 px-3 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] text-center focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="YYYY" />
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Gender at birth *</label>
                   <div className="flex gap-2">
                     {([
@@ -705,7 +705,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                         type="button"
                         key={g.value}
                         onClick={() => setPatient({ ...patient, gender: g.value })}
-                        className={`flex-1 px-4 py-2.5 rounded-lg border text-[0.85rem] transition-colors cursor-pointer flex items-center gap-2 ${patient.gender === g.value ? "border-brand-primary bg-brand-primary/5 text-brand-primary" : "border-brand-primary/30 text-gray-700 hover:border-brand-primary/60"}`}
+                        className={`flex-1 min-w-0 px-3 py-2.5 rounded-lg border text-[0.85rem] transition-colors cursor-pointer flex items-center justify-center gap-2 ${patient.gender === g.value ? "border-brand-primary bg-brand-primary/5 text-brand-primary" : "border-brand-primary/30 text-gray-700 hover:border-brand-primary/60"}`}
                         style={{ fontWeight: 600 }}
                       >
                         <span className={`w-4 h-4 rounded-full border flex items-center justify-center ${patient.gender === g.value ? "border-brand-primary" : "border-brand-primary/40"}`}>
