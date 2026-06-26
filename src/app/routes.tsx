@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router";
+import PharmacyIndex from "./pages/PharmacyIndex";
 import LandingPage from "./pages/LandingPage";
 import LandingPageSimple from "./pages/LandingPageSimple";
 import LandingPageStrachans from "./pages/LandingPageStrachans";
@@ -21,7 +22,9 @@ import { strachansBrand, canadaBrand, healthcheckBrand } from "./branding";
 const basename = import.meta.env.BASE_URL.replace(/\/+$/, "") || undefined;
 
 export const router = createBrowserRouter([
-  { path: "/", Component: LandingPage },
+  // Showcase index — links out to every white-label pharmacy build.
+  { path: "/", Component: PharmacyIndex },
+  { path: "/carefirst", Component: LandingPage },
   { path: "/simple", Component: LandingPageSimple },
   { path: "/book/:serviceId", Component: BookingPage },
   { path: "/questionnaire/:serviceId", Component: QuestionnairePage },
