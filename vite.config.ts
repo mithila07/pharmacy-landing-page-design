@@ -16,7 +16,11 @@ function figmaAssetResolver() {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // GitHub Pages serves a project site under /<repo>/, so production assets must
+  // be requested from that subpath. The deploy workflow sets VITE_BASE from the
+  // repo name; falls back to the repo path for manual builds. Dev stays at "/".
+  base: process.env.VITE_BASE ?? (command === 'build' ? '/pharmacy-landing-page-design/' : '/'),
   plugins: [
     figmaAssetResolver(),
     // The React and Tailwind plugins are both required for Make, even if
@@ -33,4 +37,4 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
-})
+}))

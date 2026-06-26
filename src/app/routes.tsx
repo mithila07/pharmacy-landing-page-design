@@ -16,6 +16,10 @@ import AboutPageHealthCheck from "./pages/AboutPageHealthCheck";
 import ContactPageHealthCheck from "./pages/ContactPageHealthCheck";
 import { strachansBrand, canadaBrand, healthcheckBrand } from "./branding";
 
+// Under GitHub Pages the app is served from /<repo>/, so routing is scoped to
+// Vite's configured base (BASE_URL). Locally this is just "/".
+const basename = import.meta.env.BASE_URL.replace(/\/+$/, "") || undefined;
+
 export const router = createBrowserRouter([
   { path: "/", Component: LandingPage },
   { path: "/simple", Component: LandingPageSimple },
@@ -44,4 +48,4 @@ export const router = createBrowserRouter([
   { path: "/healthcheck/contact", Component: ContactPageHealthCheck },
   { path: "/healthcheck/book/:serviceId", element: <BookingPage brand={healthcheckBrand} /> },
   { path: "/healthcheck/questionnaire/:serviceId", element: <QuestionnairePage brand={healthcheckBrand} /> },
-]);
+], { basename });
