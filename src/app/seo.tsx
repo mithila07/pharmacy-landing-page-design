@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import type { Brand } from "./branding";
+type OpeningHoursSpec = { "@type": "OpeningHoursSpecification"; dayOfWeek: string | string[]; opens: string; closes: string };
 import { pharmacyInfo, type Service } from "./data/services";
 import type { BlogPost } from "./data/blog";
 
@@ -86,18 +87,29 @@ const HOURS_SPEC = [
 
 const AREA_SERVED = ["Bury", "Uppermill", "Saddleworth", "Greater Manchester"];
 
-function postalAddress(address: string) {
+function postalAddress(address: string, addressRegion: string) {
   const parts = address.split(",").map((s) => s.trim());
   const postalCode = parts[parts.length - 1];
   const addressLocality = parts.length >= 3 ? parts[parts.length - 2] : parts[1];
   const streetAddress = parts.slice(0, Math.max(1, parts.length - 2)).join(", ");
-  return { "@type": "PostalAddress", streetAddress, addressLocality, addressRegion: "Greater Manchester", postalCode, addressCountry: "GB" };
+  return { "@type": "PostalAddress", streetAddress, addressLocality, addressRegion, postalCode, addressCountry: "GB" };
 }
 
-/** Organization + one Pharmacy node per branch (NAP, geo, hours, rating). */
-export function pharmacyGraph(brand: Brand, areaServed: string[] = AREA_SERVED) {
+/**
+ * Organization + one Pharmacy node per branch (NAP, geo, hours, rating).
+ * `opts.hoursSpec` / `opts.addressRegion` let a brand override the default
+ * (Greater Manchester) trading hours and region so each white-label emits
+ * accurate local structured data — important for SEO rich results and GEO.
+ */
+export function pharmacyGraph(
+  brand: Brand,
+  areaServed: string[] = AREA_SERVED,
+  opts: { hoursSpec?: OpeningHoursSpec[]; addressRegion?: string } = {},
+) {
   const base = abs(brand.basePath || "/");
   const logo = abs(SITE.ogImage);
+  const hoursSpec = opts.hoursSpec ?? HOURS_SPEC;
+  const addressRegion = opts.addressRegion ?? "Greater Manchester";
 
   const branches = brand.locations.map((loc) => ({
     "@type": "Pharmacy",
@@ -107,9 +119,9 @@ export function pharmacyGraph(brand: Brand, areaServed: string[] = AREA_SERVED) 
     image: logo,
     telephone: loc.phone,
     email: loc.email,
-    address: postalAddress(loc.address),
+    address: postalAddress(loc.address, addressRegion),
     geo: { "@type": "GeoCoordinates", latitude: loc.lat, longitude: loc.lng },
-    openingHoursSpecification: HOURS_SPEC,
+    openingHoursSpecification: hoursSpec,
     areaServed,
     priceRange: "££",
     parentOrganization: { "@id": `${base}#organization` },
@@ -144,15 +156,26 @@ export function faqPageSchema(items: { q: string; a: string }[]) {
   };
 }
 
-/** Title + meta description for a service/booking page. */
-export function serviceSeo(service: Service, isNHS: boolean): { title: string; description: string } {
+/** Local area label for a brand — woven into service-page SEO. Uses brand.seoArea, else derives from branch names. */
+function brandArea(brand?: Brand): string {
+  if (brand?.seoArea) return brand.seoArea;
+  const names = brand?.locations.map((l) => l.shortName) ?? [];
+  if (names.length === 0) return "Bury & Uppermill";
+  if (names.length === 1) return names[0];
+  return `${names.slice(0, -1).join(", ")} & ${names[names.length - 1]}`;
+}
+
+/** Title + meta description for a service/booking page — localised per brand for SEO/GEO. */
+export function serviceSeo(service: Service, isNHS: boolean, brand?: Brand): { title: string; description: string } {
+  const siteName = brand?.name ?? SITE.name;
+  const area = brandArea(brand);
   const price = isNHS
     ? "free on the NHS"
     : service.price
       ? service.price.replace(/From\s*(\d)/, "from £$1").toLowerCase()
       : "a private service";
-  const title = `${service.name} in Bury & Uppermill | ${SITE.name}`;
-  const description = `${service.name} at ${SITE.name} — ${price}. ${service.description}. Book a same-day appointment at our Bury or Uppermill branches.`;
+  const title = `${service.name} in ${area} | ${siteName}`;
+  const description = `${service.name} at ${siteName} — ${price}. ${service.description}. Book a same-day appointment in ${area}.`;
   return { title, description: description.length > 160 ? description.slice(0, 157) + "…" : description };
 }
 

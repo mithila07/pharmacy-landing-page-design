@@ -3,6 +3,8 @@ import LandingPage from "./pages/LandingPage";
 import LandingPageSimple from "./pages/LandingPageSimple";
 import LandingPageStrachans from "./pages/LandingPageStrachans";
 import LandingPageCanada from "./pages/LandingPageCanada";
+import AboutPageICare from "./pages/AboutPageICare";
+import ContactPageICare from "./pages/ContactPageICare";
 import AboutPageStrachans from "./pages/AboutPageStrachans";
 import BlogPageStrachans from "./pages/BlogPageStrachans";
 import BlogPostStrachans from "./pages/BlogPostStrachans";
@@ -29,10 +31,12 @@ export const router = createBrowserRouter([
   { path: "/strachans/book/:serviceId", element: <BookingPage brand={strachansBrand} /> },
   { path: "/strachans/questionnaire/:serviceId", element: <QuestionnairePage brand={strachansBrand} /> },
 
-  // Canada Pharmacy — separate brand & design language
-  { path: "/canada", Component: LandingPageCanada },
-  { path: "/canada/book/:serviceId", element: <BookingPage brand={canadaBrand} /> },
-  { path: "/canada/questionnaire/:serviceId", element: <QuestionnairePage brand={canadaBrand} /> },
+  // iCare Pharmacy (Ealing) — separate brand & design language
+  { path: "/icare", Component: LandingPageCanada },
+  { path: "/icare/about", Component: AboutPageICare },
+  { path: "/icare/contact", Component: ContactPageICare },
+  { path: "/icare/book/:serviceId", element: <BookingPage brand={canadaBrand} /> },
+  { path: "/icare/questionnaire/:serviceId", element: <QuestionnairePage brand={canadaBrand} /> },
 
   // HealthCheck Pharmacy & Clinic (Bradford) — no blog
   { path: "/healthcheck", Component: LandingPageHealthCheck },

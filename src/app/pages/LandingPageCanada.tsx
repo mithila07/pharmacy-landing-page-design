@@ -2,10 +2,14 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useNavigate } from "react-router";
-import { ArrowRight, ArrowUpRight, MapPin, Phone, Star, Quote, ShieldCheck, Navigation, CalendarCheck, MousePointerClick, Truck, Syringe, Plane, Ear, Scale, TestTube, Clock, Plus, Check } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Phone, Star, Quote, ShieldCheck, CalendarCheck, MousePointerClick, Truck, Syringe, Plane, Ear, Scale, TestTube, Clock, Plus } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { HeaderICare } from "../components/HeaderICare";
+import { FooterICare } from "../components/FooterICare";
+import { Watermark, GRAD_HERO, GRAD_MIST, GRAD_DEEP, GRAD_WHITE, GRAD_INK } from "../components/icareUi";
 import { canadaBrand } from "../branding";
 import { pharmacyInfo } from "../data/services";
+import { useOpenStatus } from "../openStatus";
 import { useSeo, JsonLd, pharmacyGraph, faqPageSchema } from "../seo";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -15,32 +19,33 @@ const cover = (id: string) => `https://images.unsplash.com/photo-${id}?crop=entr
 // Real-face avatars for the (more visual) reviews section.
 const avatar = (i: number) => `https://i.pravatar.cc/120?img=${[32, 5, 12, 47, 60][i % 5]}`;
 
-type Card = { id: string; name: string; img: string; tag: string; isNew?: boolean };
+type Card = { id: string; name: string; img: string; chip: string; desc: string; isNew?: boolean };
 
+// NHS cards lead with the eligible age group (the key "can I use this?" cue).
 const NHS_CARDS: Card[] = [
-  { id: "nhs-men-b", name: "Meningitis B", img: cover("1632053002434-1bb03f1c80a1"), tag: "Free · NHS", isNew: true },
-  { id: "nhs-pf-sore-throat", name: "Sore Throat", img: cover("1576091160550-2173dba999ef"), tag: "Free · NHS" },
-  { id: "nhs-pf-earache", name: "Earache", img: cover("1758598738326-3bc889d1558d"), tag: "Free · NHS" },
-  { id: "nhs-flu", name: "Flu Jab", img: cover("1608326389386-0305acbe600f"), tag: "Free · NHS" },
-  { id: "nhs-pf-uti", name: "UTI (women)", img: cover("1559757175-080c2c66f6c8"), tag: "Free · NHS" },
-  { id: "nhs-pf-sinusitis", name: "Sinusitis", img: cover("1502741224143-90386d7f8c82"), tag: "Free · NHS" },
-  { id: "nhs-pf-shingles", name: "Shingles", img: cover("1522844990619-4951c40f7eda"), tag: "Free · NHS" },
-  { id: "nhs-pf-insect-bite", name: "Insect Bites", img: cover("1488646953014-85cb44e25828"), tag: "Free · NHS" },
-  { id: "nhs-pf-impetigo", name: "Impetigo", img: cover("1607619056574-7b8d3ee536b2"), tag: "Free · NHS" },
+  { id: "nhs-men-b", name: "Meningitis B", img: cover("1632053002434-1bb03f1c80a1"), chip: "Babies", desc: "Free MenB jab on the NHS childhood schedule.", isNew: true },
+  { id: "nhs-pf-sore-throat", name: "Sore Throat", img: cover("1576091160550-2173dba999ef"), chip: "Age 5+", desc: "Assessment and treatment without seeing a GP." },
+  { id: "nhs-pf-earache", name: "Earache", img: cover("1758598738326-3bc889d1558d"), chip: "Ages 1–17", desc: "Same-day relief for children with earache." },
+  { id: "nhs-flu", name: "Flu Jab", img: cover("1608326389386-0305acbe600f"), chip: "65+ & at-risk", desc: "Walk-in seasonal flu protection, no appointment." },
+  { id: "nhs-pf-uti", name: "UTI (women)", img: cover("1559757175-080c2c66f6c8"), chip: "Women 16–64", desc: "Fast UTI treatment without a GP visit." },
+  { id: "nhs-pf-sinusitis", name: "Sinusitis", img: cover("1502741224143-90386d7f8c82"), chip: "Age 12+", desc: "Ease blocked, painful sinuses quickly." },
+  { id: "nhs-pf-shingles", name: "Shingles", img: cover("1522844990619-4951c40f7eda"), chip: "Adults 18+", desc: "Early antiviral treatment for shingles." },
+  { id: "nhs-pf-insect-bite", name: "Insect Bites", img: cover("1488646953014-85cb44e25828"), chip: "Age 1+", desc: "Treatment for infected insect bites." },
+  { id: "nhs-pf-impetigo", name: "Impetigo", img: cover("1607619056574-7b8d3ee536b2"), chip: "Age 1+", desc: "Clear up impetigo skin infections fast." },
 ];
 
 const PRIVATE_CARDS: Card[] = [
-  { id: "prv-men-b", name: "Meningitis B", img: cover("1632053002434-1bb03f1c80a1"), tag: "From £120", isNew: true },
-  { id: "prv-travel-consult", name: "Travel Health", img: cover("1488646953014-85cb44e25828"), tag: "From £25" },
-  { id: "prv-weight-consult", name: "Weight Management", img: cover("1607619056574-7b8d3ee536b2"), tag: "From £30" },
-  { id: "prv-ear-wax", name: "Ear Wax Removal", img: cover("1758598738326-3bc889d1558d"), tag: "From £40" },
-  { id: "prv-vitamin-injection", name: "Vitamin B12 Boost", img: cover("1608326389386-0305acbe600f"), tag: "From £30" },
-  { id: "prv-blood-test", name: "Blood Tests", img: cover("1576091160550-2173dba999ef"), tag: "From £50" },
-  { id: "prv-flu-private", name: "Private Flu Jab", img: cover("1522844990619-4951c40f7eda"), tag: "From £15" },
+  { id: "prv-men-b", name: "Meningitis B", img: cover("1632053002434-1bb03f1c80a1"), chip: "From £120", desc: "Private Bexsero vaccine for all ages.", isNew: true },
+  { id: "prv-travel-consult", name: "Travel Health", img: cover("1488646953014-85cb44e25828"), chip: "From £25", desc: "Vaccines and advice for a safe trip abroad." },
+  { id: "prv-weight-consult", name: "Weight Management", img: cover("1607619056574-7b8d3ee536b2"), chip: "From £30", desc: "GLP-1 plans tailored to your goals." },
+  { id: "prv-ear-wax", name: "Ear Wax Removal", img: cover("1758598738326-3bc889d1558d"), chip: "From £40", desc: "Gentle microsuction — relief in one visit." },
+  { id: "prv-vitamin-injection", name: "Vitamin B12 Boost", img: cover("1608326389386-0305acbe600f"), chip: "From £30", desc: "Energy-boosting B12 intramuscular injection." },
+  { id: "prv-blood-test", name: "Blood Tests", img: cover("1576091160550-2173dba999ef"), chip: "From £50", desc: "Comprehensive panels with fast, clear results." },
+  { id: "prv-flu-private", name: "Private Flu Jab", img: cover("1522844990619-4951c40f7eda"), chip: "From £15", desc: "Flu protection any time, no NHS criteria." },
 ];
 
 const ACCORDION = [
-  { id: "nhs-flu", name: "Flu Jab", desc: "Walk-in flu shots — no appointment needed.", img: cover("1608326389386-0305acbe600f"), tag: "Free · NHS", icon: Syringe },
+  { id: "nhs-flu", name: "Flu Jab", desc: "Walk-in flu shots in Ealing — no appointment needed.", img: cover("1608326389386-0305acbe600f"), tag: "Free · NHS", icon: Syringe },
   { id: "prv-travel-consult", name: "Travel Health", desc: "Vaccines & tailored advice for a safe trip abroad.", img: cover("1488646953014-85cb44e25828"), tag: "From £25", icon: Plane },
   { id: "prv-ear-wax", name: "Ear Wax Removal", desc: "Gentle microsuction — relief in a single visit.", img: cover("1758598738326-3bc889d1558d"), tag: "From £40", icon: Ear },
   { id: "prv-weight-consult", name: "Weight Loss", desc: "Personalised plans, including GLP-1 options.", img: cover("1607619056574-7b8d3ee536b2"), tag: "From £30", icon: Scale },
@@ -49,34 +54,31 @@ const ACCORDION = [
 
 const STEPS = [
   { icon: MousePointerClick, title: "Choose your service", text: "Browse NHS Pharmacy First treatments and private clinics — from flu jabs to weight management." },
-  { icon: CalendarCheck, title: "Book a time", text: "Pick a same-day or future slot at our Manchester or Salford branch in seconds." },
-  { icon: Truck, title: "Visit or get it delivered", text: "Pop in for your appointment, or have your prescription delivered to your door." },
+  { icon: CalendarCheck, title: "Book a time", text: "Pick a same-day or future slot at our Queens Parade pharmacy in Ealing in seconds." },
+  { icon: Truck, title: "Visit or get it delivered", text: "Pop in for your appointment, or have your prescription delivered to your door across Ealing and W5." },
 ];
 
 // Local + service keywords woven into genuine answers — strong for SEO rich
 // results and for AI engines that quote FAQ content directly (GEO).
 const FAQS = [
-  { q: "Do I need to see a GP first?", a: "No. Under NHS Pharmacy First, our Manchester and Salford pharmacists can assess and treat seven common conditions — including supplying prescription medicines such as antibiotics where clinically appropriate — without a GP appointment." },
-  { q: "Are your NHS services really free?", a: "Yes. NHS Pharmacy First consultations, blood pressure checks and eligible flu and travel vaccinations are funded by the NHS and free to those who qualify. We always tell you upfront if a service is private and exactly what it costs." },
-  { q: "Can I get a same-day appointment?", a: "Most services offer same-day slots at both our Deansgate (Manchester) and Chapel Street (Salford) branches. Choose a service above and pick the soonest time that suits you — it takes about two minutes." },
-  { q: "Which private clinics do you offer?", a: "Travel health and vaccinations, ear wax removal by microsuction, weight management including GLP-1 options, vitamin B12 injections, and a range of blood tests — most available on the same day." },
-  { q: "Where are your pharmacies?", a: "We have two branches in central Greater Manchester: 88 Deansgate, Manchester (M3 2ER) and 21 Chapel Street, Salford (M3 5BH). Both are open seven days a week." },
+  { q: "Do I need to see a GP first?", a: "No. Under NHS Pharmacy First, our Ealing pharmacists can assess and treat seven common conditions — including supplying prescription medicines such as antibiotics where clinically appropriate — without a GP appointment." },
+  { q: "Are your NHS services really free?", a: "Yes. NHS Pharmacy First consultations, the New Medicine Service (NMS) and eligible flu vaccinations are funded by the NHS and free to those who qualify. We always tell you upfront if a service is private and exactly what it costs." },
+  { q: "Can I get a same-day appointment in Ealing?", a: "Most services offer same-day slots at our Queens Parade pharmacy in Ealing (W5 3HU). Choose a service above and pick the soonest time that suits you — it takes about two minutes." },
+  { q: "Which private clinics do you offer?", a: "Private prescriptions, weight loss management including GLP-1 options, travel health and vaccinations, ear wax removal by microsuction, vitamin B12 injections, and a range of blood tests — most available on the same day." },
+  { q: "Where is your pharmacy?", a: "You'll find iCare Pharmacy at 15 Queens Parade, Ealing, London W5 3HU — easy to reach from Ealing Broadway, West Ealing, Pitshanger, Hanwell and North Ealing. We're open Monday to Friday, 9am–6pm." },
   { q: "How do I book and prepare?", a: "Choose a service on this page, pick a time and confirm your details. You can also complete a short pre-consultation questionnaire beforehand so your pharmacist is fully prepared before you arrive." },
 ];
 
-const CANADA_AREA = ["Manchester", "Salford", "Greater Manchester"];
+const CANADA_AREA = ["Ealing", "Ealing Broadway", "West Ealing", "Pitshanger", "Hanwell", "Acton", "North Ealing", "Greenford", "Perivale", "Greater London"];
 
 const STATS = [
-  { to: 2, decimals: 0, suffix: "", label: "Local branches" },
-  { to: 15000, decimals: 0, suffix: "+", label: "Prescriptions filled" },
+  { to: 7, decimals: 0, suffix: "", label: "Pharmacy First conditions" },
+  { to: 15000, decimals: 0, suffix: "+", label: "Prescriptions dispensed" },
   { to: pharmacyInfo.googleRating, decimals: 1, suffix: "★", label: "Patient rating" },
   { to: 98, decimals: 0, suffix: "%", label: "Same-day ready" },
 ];
 
-const directionsUrl = (address: string) => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
-
-const PAPER = "#faf7f0";
-const LINE = "#e7e1d5";
+const LINE = "#d3e3d8";       // soft sage border
 const SLANT = 40; // px — angle of the accordion's leaning dividers
 
 export default function LandingPageCanada() {
@@ -86,16 +88,25 @@ export default function LandingPageCanada() {
 
   const [active, setActive] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const status = useOpenStatus(brand.locations[0]);
 
   useSeo({
-    title: "Canada Pharmacy | NHS & Private Pharmacy in Manchester & Salford",
+    title: "iCare Pharmacy Ealing | NHS & Private Pharmacy in Ealing, London W5",
     description:
-      "NHS Pharmacy First and private clinics at Canada Pharmacy in Manchester & Salford. Same-day flu jabs, travel health, ear wax removal, weight loss and blood tests. Book online in minutes.",
+      "iCare Pharmacy on Queens Parade, Ealing (W5 3HU) — NHS Pharmacy First, repeat prescriptions, flu jabs, weight loss management and private clinics. Your trusted local Ealing pharmacy. Book online in minutes.",
     path: brand.basePath,
   });
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   const book = (id: string) => navigate(`${brand.basePath}/book/${id}`);
+
+  // Arrived from another page with a hash (e.g. Footer "Services" link) — scroll to it.
+  useLayoutEffect(() => {
+    const id = window.location.hash.replace("#", "");
+    if (id) {
+      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }));
+    }
+  }, []);
 
   useLayoutEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -109,7 +120,6 @@ export default function LandingPageCanada() {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.from(".hero-eyebrow", { y: 16, autoAlpha: 0, duration: 0.5 })
         .from(".hero-line", { yPercent: 115, duration: 0.8, stagger: 0.12 }, "-=0.2")
-        .fromTo(".hero-mark", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.out" }, "-=0.15")
         .from(".hero-sub", { y: 16, autoAlpha: 0, duration: 0.5 }, "-=0.4")
         .from(".hero-cta", { y: 14, autoAlpha: 0, duration: 0.45, clearProps: "transform" }, "-=0.3")
         .from(".hero-trust", { y: 14, autoAlpha: 0, duration: 0.45 }, "-=0.25")
@@ -152,14 +162,6 @@ export default function LandingPageCanada() {
     return () => ctx.revert();
   }, []);
 
-  const navLinks = [
-    { label: "NHS", id: "nhs" },
-    { label: "Private", id: "private" },
-    { label: "Locations", id: "locations" },
-    { label: "Reviews", id: "reviews" },
-    { label: "FAQs", id: "faq" },
-  ];
-
   const Cards = ({ items }: { items: Card[] }) => (
     <>
       {items.map((c) => (
@@ -168,20 +170,29 @@ export default function LandingPageCanada() {
           href={`${brand.basePath}/book/${c.id}`}
           onClick={(e) => { e.preventDefault(); book(c.id); }}
           aria-label={`Book ${c.name}`}
-          className="pop group relative block overflow-hidden rounded-3xl aspect-[4/5] cursor-pointer no-underline shadow-lg shadow-brand-primary/10"
+          className="pop group relative flex flex-col justify-end overflow-hidden rounded-3xl aspect-[4/5] cursor-pointer no-underline shadow-lg shadow-brand-primary/10 transition-shadow duration-300 hover:shadow-2xl hover:shadow-brand-primary/20"
         >
           <ImageWithFallback src={c.img} alt={c.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-          <span className="absolute top-3 left-3 text-[0.72rem] px-2.5 py-1 rounded-full bg-white/95 text-brand-primary" style={{ fontWeight: 700 }}>{c.tag}</span>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+          <span
+            className="absolute top-3 left-3 inline-flex items-center gap-1.5 text-[0.72rem] px-2.5 py-1 rounded-full bg-white/95 text-brand-primary"
+            style={{ fontWeight: 700 }}
+          >
+            {c.chip}
+          </span>
           {c.isNew && (
             <span className="chip-new absolute top-3 right-3 inline-flex items-center gap-1 text-[0.66rem] uppercase tracking-[0.12em] px-2.5 py-1 rounded-full text-white" style={{ fontWeight: 800 }}>
               <span className="chip-new-dot" /> New
             </span>
           )}
-          <div className="absolute inset-x-0 bottom-0 p-5">
-            <h3 className="font-display text-white text-[1.4rem] leading-tight" style={{ fontWeight: 600 }}>{c.name}</h3>
-            <span className="mt-2 inline-flex items-center gap-1.5 text-white text-[0.85rem] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300" style={{ fontWeight: 600 }}>
-              <span className="cta cta-primary inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full">Book now <ArrowUpRight size={14} /></span>
+          {/* Bottom-aligned content that lifts on hover to reveal the Book button */}
+          <div className="relative p-5 transition-transform duration-300 ease-out group-hover:-translate-y-1">
+            <h3 className="font-display text-white text-[1.35rem] leading-tight" style={{ fontWeight: 600 }}>{c.name}</h3>
+            <p className="mt-1.5 text-white/75 text-[0.84rem] leading-snug">{c.desc}</p>
+            <span className="grid grid-rows-[0fr] opacity-0 group-hover:grid-rows-[1fr] group-hover:opacity-100 transition-all duration-300 ease-out">
+              <span className="overflow-hidden">
+                <span className="cta cta-primary mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[0.82rem]" style={{ fontWeight: 600 }}>Book now <ArrowUpRight size={14} /></span>
+              </span>
             </span>
           </div>
         </a>
@@ -190,47 +201,32 @@ export default function LandingPageCanada() {
   );
 
   return (
-    <div ref={root} className="theme-canada min-h-screen" style={{ backgroundColor: PAPER }}>
-      <JsonLd data={pharmacyGraph(brand, CANADA_AREA)} />
+    <div ref={root} className="theme-canada min-h-screen" style={{ background: GRAD_MIST }}>
+      <JsonLd data={pharmacyGraph(brand, CANADA_AREA, {
+        addressRegion: "London",
+        hoursSpec: [
+          { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:00", closes: "18:00" },
+        ],
+      })} />
       <JsonLd data={faqPageSchema(FAQS)} />
 
-      {/* ───────── Header (logo only) ───────── */}
-      <header className="sticky top-0 z-50 backdrop-blur border-b" style={{ backgroundColor: `${PAPER}e6`, borderColor: LINE }}>
-        <div className="max-w-7xl mx-auto px-5 h-[88px] flex items-center justify-between">
-          <a href={brand.basePath} onClick={(e) => { e.preventDefault(); navigate(brand.basePath); }} aria-label="Canada Pharmacy — home" className="flex items-center no-underline">
-            <img src={brand.logo} alt="Canada Pharmacy" className="h-12 w-auto" />
-          </a>
-          <nav className="hidden md:flex items-center gap-8 text-[0.9rem] text-brand-primary/70">
-            {navLinks.map((l) => (
-              <button key={l.id} onClick={() => scrollTo(l.id)} className="hover:text-brand-primary transition-colors cursor-pointer">{l.label}</button>
-            ))}
-          </nav>
-          <button onClick={() => scrollTo("nhs")} className="cta cta-primary inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[0.88rem] cursor-pointer" style={{ fontWeight: 600 }}>
-            Book now
-          </button>
-        </div>
-      </header>
+      {/* ───────── Header ───────── */}
+      <HeaderICare brand={brand} onSection={scrollTo} />
 
       {/* ───────── Hero (CTA + tilted hover accordion) ───────── */}
-      <section className="hero-sec relative overflow-x-clip min-h-[calc(100vh-88px)] lg:h-[calc(100vh-88px)]" style={{ backgroundColor: PAPER }}>
-        {/* Ambient depth behind the CTA column */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-28 -left-24 w-[34rem] h-[34rem] rounded-full" style={{ background: "radial-gradient(circle, rgba(61,181,74,0.14), transparent 68%)" }} />
-          <div className="absolute top-1/3 left-[14%] w-[22rem] h-[22rem] rounded-full" style={{ background: "radial-gradient(circle, rgba(54,65,76,0.06), transparent 70%)" }} />
-          <div className="absolute -bottom-24 left-[1%] w-[30rem] h-[30rem] rounded-full" style={{ background: "radial-gradient(circle, rgba(61,181,74,0.10), transparent 70%)" }} />
-        </div>
+      <section className="hero-sec relative overflow-x-clip min-h-[calc(100vh-80px)] lg:h-[calc(100vh-80px)]" style={{ background: GRAD_HERO }}>
         <div className="relative w-full lg:h-full grid lg:grid-cols-[1fr_1.25fr] lg:gap-0 items-stretch">
           {/* Left — CTA (aligned to the site container) */}
           <div className="flex flex-col justify-center pr-6 lg:pr-10 py-10" style={{ paddingLeft: "max(1.5rem, calc((100vw - 80rem) / 2 + 1.5rem))" }}>
             <p className="hero-eyebrow inline-flex items-center gap-2 text-[0.78rem] tracking-[0.18em] uppercase text-brand-green-ink mb-4" style={{ fontWeight: 700 }}>
-              <ShieldCheck size={15} /> Your NHS &amp; private pharmacy
+              <ShieldCheck size={15} /> Your NHS &amp; private pharmacy in Ealing
             </p>
             <h1 className="font-display text-brand-primary text-[2.8rem] lg:text-[3.9rem] leading-[1.05] mb-5 pb-[0.06em]" style={{ fontWeight: 700 }}>
               <span className="block overflow-hidden pb-[0.08em]"><span className="hero-line block">Feel better,</span></span>
-              <span className="block overflow-hidden pb-[0.08em]"><span className="hero-line block">the{" "}<span className="relative inline-block"><span aria-hidden="true" className="hero-mark absolute inset-x-[-0.08em] bottom-[0.12em] h-[0.4em] rounded-[3px] bg-brand-secondary/25 origin-left" /><span className="relative italic text-brand-green-ink">easy</span></span>{" "}way.</span></span>
+              <span className="block overflow-hidden pb-[0.08em]"><span className="hero-line block">the easy way.</span></span>
             </h1>
             <p className="hero-sub text-brand-primary/65 text-[1.05rem] leading-relaxed mb-8 max-w-md">
-              Same-day NHS and private appointments with friendly pharmacists. Pick a service and you're sorted in minutes.
+              Same-day NHS and private appointments with friendly pharmacists on Queens Parade, Ealing. Pick a service and you're sorted in minutes.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <button onClick={() => scrollTo("nhs")} className="hero-cta cta cta-primary group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-[1rem] cursor-pointer" style={{ fontWeight: 700 }}>
@@ -241,20 +237,19 @@ export default function LandingPageCanada() {
               </a>
             </div>
 
-            {/* Social proof */}
-            <div className="hero-trust mt-8 flex items-center gap-3.5">
-              <div className="flex -space-x-2.5">
-                {[0, 1, 2, 3].map((i) => (
-                  <ImageWithFallback key={i} src={avatar(i)} alt="" className="w-9 h-9 rounded-full border-2 object-cover bg-brand-light" style={{ borderColor: PAPER }} />
-                ))}
-              </div>
-              <div className="text-[0.85rem] leading-snug">
-                <div className="flex items-center gap-1.5 text-brand-primary" style={{ fontWeight: 700 }}>
-                  <span className="flex">{[...Array(5)].map((_, i) => <Star key={i} size={13} className="fill-brand-secondary text-brand-secondary" />)}</span>
-                  <span>{pharmacyInfo.googleRating}</span>
-                </div>
-                <p className="text-brand-primary/55">Loved by {pharmacyInfo.totalReviews}+ local patients</p>
-              </div>
+            {/* Live opening status — a compact pill that matches the CTA shapes */}
+            <div className="hero-trust mt-7 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span className="inline-flex items-center gap-2 rounded-full border bg-white/75 backdrop-blur-sm px-3.5 py-2 text-[0.84rem]" style={{ borderColor: LINE, fontWeight: 600 }}>
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  {status.open && <span className="absolute inline-flex h-full w-full rounded-full bg-brand-secondary opacity-75 animate-ping" />}
+                  <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${status.open ? "bg-brand-secondary" : "bg-amber-400"}`} />
+                </span>
+                <span className="text-brand-primary">{status.label}</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-[0.84rem] text-brand-primary/55">
+                <Clock size={14} className="text-brand-primary/40" />
+                {status.detail ? `${status.detail} · ` : ""}Queens Parade, Ealing
+              </span>
             </div>
           </div>
 
@@ -330,7 +325,7 @@ export default function LandingPageCanada() {
       </section>
 
       {/* ───────── NHS services ───────── */}
-      <section id="nhs" className="py-14 lg:py-20" style={{ backgroundColor: PAPER }}>
+      <section id="nhs" className="relative overflow-hidden py-14 lg:py-20" style={{ background: GRAD_MIST }}>
         <div className="max-w-7xl mx-auto px-5">
           <div className="c-reveal flex items-end justify-between flex-wrap gap-3 mb-8">
             <div>
@@ -345,7 +340,7 @@ export default function LandingPageCanada() {
       </section>
 
       {/* ───────── Private clinics ───────── */}
-      <section id="private" className="py-14 lg:py-20 bg-white border-y" style={{ borderColor: LINE }}>
+      <section id="private" className="relative overflow-hidden py-14 lg:py-20 border-y" style={{ background: GRAD_WHITE, borderColor: LINE }}>
         <div className="max-w-7xl mx-auto px-5">
           <div className="c-reveal flex items-end justify-between flex-wrap gap-3 mb-8">
             <div>
@@ -360,12 +355,12 @@ export default function LandingPageCanada() {
       </section>
 
       {/* ───────── How it works ───────── */}
-      <section className="py-14 lg:py-20" style={{ backgroundColor: PAPER }}>
-        <div className="max-w-6xl mx-auto px-5">
+      <section className="relative overflow-hidden py-14 lg:py-20" style={{ background: GRAD_DEEP }}>
+        <div className="relative z-10 max-w-6xl mx-auto px-5">
           <div className="c-reveal text-center max-w-2xl mx-auto mb-12">
             <p className="text-[0.76rem] tracking-[0.2em] uppercase text-brand-green-ink mb-2" style={{ fontWeight: 600 }}>Simple from start to finish</p>
             <h2 className="font-display text-[2.2rem] md:text-[2.9rem] text-brand-primary leading-[1.05]" style={{ fontWeight: 700 }}>How it works</h2>
-            <p className="text-brand-primary/60 text-[1rem] mt-3 leading-relaxed">Three steps to same-day care at our Manchester and Salford pharmacies — no GP referral needed.</p>
+            <p className="text-brand-primary/60 text-[1rem] mt-3 leading-relaxed">Three steps to same-day care at our Ealing pharmacy — no GP referral needed.</p>
           </div>
           <div className="relative grid sm:grid-cols-3 gap-8 lg:gap-10">
             {/* Connector line behind the badges (desktop) */}
@@ -387,9 +382,10 @@ export default function LandingPageCanada() {
       </section>
 
       {/* ───────── Stats (animated count-up) ───────── */}
-      <section className="bg-brand-primary text-white py-16 relative overflow-hidden">
+      <section className="text-white py-16 relative overflow-hidden" style={{ background: GRAD_INK }}>
         <div aria-hidden="true" className="absolute -right-20 -top-24 w-[28rem] h-[28rem] rounded-full" style={{ background: "radial-gradient(circle, rgba(61,181,74,0.18), transparent 70%)" }} />
-        <div className="max-w-7xl mx-auto px-5 grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative">
+        <Watermark light className="-left-10 -bottom-14 w-72 opacity-[0.06]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-5 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {STATS.map((s) => (
             <div key={s.label}>
               <p className="stat-num font-display text-[2.8rem] text-brand-secondary leading-none" style={{ fontWeight: 700 }} data-to={s.to} data-decimals={s.decimals} data-suffix={s.suffix}>
@@ -401,67 +397,9 @@ export default function LandingPageCanada() {
         </div>
       </section>
 
-      {/* ───────── Locations ───────── */}
-      <section id="locations" className="py-14 lg:py-20" style={{ backgroundColor: PAPER }}>
-        <div className="max-w-7xl mx-auto px-5">
-          <div className="c-reveal mb-10 max-w-2xl">
-            <p className="text-[0.76rem] tracking-[0.2em] uppercase text-brand-green-ink mb-2" style={{ fontWeight: 600 }}>Visit us</p>
-            <h2 className="font-display text-[2.2rem] md:text-[2.9rem] text-brand-primary leading-[1.05]" style={{ fontWeight: 700 }}>Two branches across Greater Manchester</h2>
-            <p className="text-brand-primary/60 text-[1rem] mt-3 leading-relaxed">Find us in the heart of Manchester and Salford — both open seven days a week for NHS and private appointments.</p>
-          </div>
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
-            {brand.locations.map((loc) => (
-              <div key={loc.id} className="c-reveal bg-white border rounded-3xl overflow-hidden flex flex-col" style={{ borderColor: LINE }}>
-                {/* Map */}
-                <div className="relative h-48 bg-brand-light">
-                  <iframe
-                    src={loc.googleMapsEmbedUrl}
-                    title={`Map of ${loc.name}`}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="absolute inset-0 w-full h-full grayscale-[0.2]"
-                    style={{ border: 0 }}
-                  />
-                </div>
-                <div className="p-7 flex-1 flex flex-col">
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <h3 className="font-display text-[1.5rem] text-brand-primary" style={{ fontWeight: 600 }}>{loc.shortName}</h3>
-                    <span className="inline-flex items-center gap-1.5 text-[0.72rem] px-2.5 py-1 rounded-full bg-brand-secondary/12 text-brand-green-ink" style={{ fontWeight: 700 }}><Check size={12} /> Open 7 days</span>
-                  </div>
-                  <ul className="space-y-2.5 text-[0.9rem] text-brand-primary/65 mb-5">
-                    <li className="flex items-start gap-2.5"><MapPin size={16} className="text-brand-green-ink mt-0.5 shrink-0" /> {loc.address}</li>
-                    <li className="flex items-center gap-2.5"><Phone size={15} className="text-brand-green-ink shrink-0" /> <a href={`tel:${loc.phone.replace(/\s/g, "")}`} className="hover:text-brand-primary transition-colors">{loc.phone}</a></li>
-                  </ul>
-                  {/* Opening hours */}
-                  <div className="rounded-2xl border p-4 mb-6" style={{ borderColor: LINE, backgroundColor: PAPER }}>
-                    <p className="flex items-center gap-2 text-[0.8rem] text-brand-primary mb-2.5" style={{ fontWeight: 700 }}><Clock size={14} className="text-brand-green-ink" /> Opening hours</p>
-                    <ul className="space-y-1.5">
-                      {loc.openingHours.map((h) => (
-                        <li key={h.day} className="flex items-center justify-between text-[0.84rem]">
-                          <span className="text-brand-primary/55">{h.day}</span>
-                          <span className="text-brand-primary" style={{ fontWeight: 600 }}>{h.hours}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="mt-auto flex flex-wrap gap-3">
-                    <a href={directionsUrl(loc.address)} target="_blank" rel="noopener noreferrer" className="cta cta-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[0.85rem] no-underline" style={{ fontWeight: 600 }}>
-                      <Navigation size={15} /> Directions
-                    </a>
-                    <a href={`tel:${loc.phone.replace(/\s/g, "")}`} className="cta cta-outline inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[0.85rem] no-underline" style={{ fontWeight: 600 }}>
-                      <Phone size={15} className="text-brand-green-ink" /> Call branch
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ───────── Reviews (visual: faces + big rating) ───────── */}
-      <section id="reviews" className="bg-white py-14 lg:py-20 border-y" style={{ borderColor: LINE }}>
-        <div className="max-w-7xl mx-auto px-5 grid lg:grid-cols-12 gap-10 items-start">
+      <section id="reviews" className="relative overflow-hidden py-14 lg:py-20 border-y" style={{ background: GRAD_WHITE, borderColor: LINE }}>
+        <div className="relative max-w-7xl mx-auto px-5 grid lg:grid-cols-12 gap-10 items-start">
           {/* Aggregate */}
           <div className="c-reveal lg:col-span-4 lg:sticky lg:top-24">
             <span className="inline-flex items-center gap-1.5 mb-4 bg-brand-secondary/12 text-brand-green-ink px-3 py-1.5 rounded-full text-[0.76rem]" style={{ fontWeight: 700 }}>
@@ -485,7 +423,7 @@ export default function LandingPageCanada() {
           {/* Review cards with faces */}
           <div className="lg:col-span-8 grid sm:grid-cols-2 gap-5">
             {pharmacyInfo.reviews.slice(0, 4).map((r, i) => (
-              <div key={r.name} className="c-reveal rounded-3xl p-6 border" style={{ backgroundColor: PAPER, borderColor: LINE }}>
+              <div key={r.name} className="c-reveal rounded-3xl p-6 border" style={{ background: GRAD_MIST, borderColor: LINE }}>
                 <div className="flex items-center gap-3 mb-3">
                   <ImageWithFallback src={avatar(i)} alt={r.name} className="w-12 h-12 rounded-full object-cover bg-brand-light shrink-0" />
                   <div className="min-w-0">
@@ -502,12 +440,12 @@ export default function LandingPageCanada() {
       </section>
 
       {/* ───────── FAQ (schema-backed for SEO rich results + AI citations) ───────── */}
-      <section id="faq" className="py-14 lg:py-20" style={{ backgroundColor: PAPER }}>
-        <div className="max-w-5xl mx-auto px-5">
+      <section id="faq" className="relative overflow-hidden py-14 lg:py-20" style={{ background: GRAD_DEEP }}>
+        <div className="relative z-10 max-w-5xl mx-auto px-5">
           <div className="c-reveal text-center max-w-2xl mx-auto mb-10">
             <p className="text-[0.76rem] tracking-[0.2em] uppercase text-brand-green-ink mb-2" style={{ fontWeight: 600 }}>Good to know</p>
             <h2 className="font-display text-[2.2rem] md:text-[2.9rem] text-brand-primary leading-[1.05]" style={{ fontWeight: 700 }}>Frequently asked questions</h2>
-            <p className="text-brand-primary/60 text-[1rem] mt-3 leading-relaxed">Everything about NHS eligibility, our private clinics and booking at our Manchester &amp; Salford pharmacies.</p>
+            <p className="text-brand-primary/60 text-[1rem] mt-3 leading-relaxed">Everything about NHS eligibility, our private clinics and booking at our Ealing pharmacy on Queens Parade.</p>
           </div>
           <div className="space-y-3">
             {FAQS.map((f, i) => {
@@ -536,39 +474,8 @@ export default function LandingPageCanada() {
         </div>
       </section>
 
-      {/* ───────── CTA ───────── */}
-      <section className="bg-brand-green-ink py-16">
-        <div className="max-w-4xl mx-auto px-5 text-center">
-          <h2 className="c-reveal font-display text-white text-[2.4rem] md:text-[3.2rem] leading-[1.05] mb-5" style={{ fontWeight: 700 }}>Ready when you are.</h2>
-          <p className="c-reveal text-white/85 text-[1.05rem] max-w-lg mx-auto mb-8">Tap a service and book in under two minutes.</p>
-          <button onClick={() => scrollTo("nhs")} className="c-reveal cta cta-light group inline-flex items-center gap-2 px-7 py-3.5 rounded-full cursor-pointer" style={{ fontWeight: 600 }}>
-            Get started <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-      </section>
-
       {/* ───────── Footer ───────── */}
-      <footer className="bg-brand-darkest text-white/70">
-        <div className="max-w-7xl mx-auto px-5 py-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center">
-            <span className="bg-white rounded-lg px-3 py-2 inline-flex"><img src={brand.logo} alt="Canada Pharmacy" className="h-7 w-auto" /></span>
-          </div>
-          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[0.88rem]">
-            {navLinks.map((l) => (
-              <button key={l.id} onClick={() => scrollTo(l.id)} className="hover:text-white transition-colors cursor-pointer">{l.label}</button>
-            ))}
-            {["Privacy", "Terms", "Accessibility"].map((l) => (
-              <a key={l} href="#" className="hover:text-white transition-colors">{l}</a>
-            ))}
-          </nav>
-        </div>
-        <div className="border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-5 py-5 flex flex-col md:flex-row md:items-center justify-between gap-2 text-[0.74rem] text-white/40">
-            <p>© {new Date().getFullYear()} {brand.legal?.companyName}. All rights reserved.</p>
-            <p>Superintendent Pharmacist: {brand.legal?.superintendent} · GPhC Reg. No. {brand.legal?.gphcNumber}. {brand.legal?.companyName} is registered in England &amp; Wales (Company No. {brand.legal?.companyNumber}).</p>
-          </div>
-        </div>
-      </footer>
+      <FooterICare brand={brand} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import strachansLogo from "../assets/strachans-logo.svg";
 import carefirstLogo from "../assets/d0b862ede6c0c3c9cbee51cd53c49828213cc4c9.png";
-import canadaLogo from "../assets/canada-pharmacy-logo-vector.svg";
+import icareLogo from "../assets/icare Full logo dark.svg";
+import icareLogoMark from "../assets/icare Logo mark dark.svg";
 import healthcheckLogo from "../assets/health-check logo.png";
 import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, type PharmacyLocation } from "./data/locations";
 
@@ -18,6 +19,8 @@ export type Brand = {
   name: string;
   tagline: string;
   logo: string;
+  /** Compact square logo mark (icon only) — used in tight spots like the booking/service header. */
+  logoMark?: string;
   /** Logo already spells out the brand name — render it alone, no separate text. */
   logoIsWordmark: boolean;
   /** Class that re-scopes the `--brand-*` palette. "" = default (root) palette. */
@@ -32,6 +35,8 @@ export type Brand = {
   blogPath?: string;
   /** Route to this brand's dedicated Contact page. When set, the inline "Find Us" is hidden. */
   contactPath?: string;
+  /** Human-readable area label woven into service/booking page SEO titles & descriptions (local SEO/GEO). When unset, it's derived from the branch short names. */
+  seoArea?: string;
   /** Regulatory / company details shown in the footer (GPhC, company registration). */
   legal?: {
     companyName: string;
@@ -66,6 +71,7 @@ export const strachansBrand: Brand = {
   logoIsWordmark: true,
   themeClass: "theme-strachans",
   basePath: "/strachans",
+  seoArea: "Bury & Uppermill",
   locations: strachansLocations,
   aboutPath: "/strachans/about",
   blogPath: "/strachans/blog",
@@ -79,19 +85,23 @@ export const strachansBrand: Brand = {
 };
 
 export const canadaBrand: Brand = {
-  id: "canada",
-  name: "Canada Pharmacy",
-  tagline: "Pharmacy & Wellness",
-  logo: canadaLogo,
+  id: "icare",
+  name: "iCare Pharmacy",
+  tagline: "Your first stop for trusted healthcare in Ealing",
+  logo: icareLogo,
+  logoMark: icareLogoMark,
   logoIsWordmark: true,
   themeClass: "theme-canada",
-  basePath: "/canada",
+  basePath: "/icare",
+  seoArea: "Ealing",
   locations: canadaLocations,
+  aboutPath: "/icare/about",
+  contactPath: "/icare/contact",
   legal: {
-    companyName: "Canada Pharmacy Ltd",
-    companyNumber: "09988776",
-    superintendent: "Daniel Reid",
-    gphcNumber: "9011892",
+    companyName: "iCare Pharmacy Ltd",
+    companyNumber: "[REPLACE — Company No.]",
+    superintendent: "[REPLACE — Superintendent Pharmacist]",
+    gphcNumber: "[REPLACE — GPhC Reg. No.]",
   },
 };
 

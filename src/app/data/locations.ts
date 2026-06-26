@@ -87,31 +87,26 @@ export const carefirstLocations: PharmacyLocation[] = [
   },
 ];
 
+/** iCare Pharmacy — single community pharmacy on Queens Parade, Ealing (West London). */
+const icareHours = [
+  { day: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
+  { day: "Saturday", hours: "Closed" },
+  { day: "Sunday", hours: "Closed" },
+];
+
 export const canadaLocations: PharmacyLocation[] = [
   {
-    id: "manchester",
-    name: "Canada Pharmacy — Manchester",
-    shortName: "Manchester",
-    address: "88 Deansgate, Manchester, M3 2ER",
-    phone: "0161 555 0100",
-    email: "manchester@canadapharmacy.co.uk",
-    lat: 53.4795,
-    lng: -2.2452,
-    openingHours: standardHours,
-    googleMapsEmbedUrl: embed("88 Deansgate, Manchester M3 2ER"),
+    id: "ealing",
+    name: "iCare Pharmacy — Ealing",
+    shortName: "Ealing",
+    address: "15 Queens Parade, Ealing, London, W5 3HU",
+    phone: "020 8997 1100",
+    email: "icare.pharmacy@nhs.net",
+    lat: 51.5247,
+    lng: -0.2998,
+    openingHours: icareHours,
+    googleMapsEmbedUrl: embed("iCare Pharmacy, 15 Queens Parade, Ealing, London W5 3HU"),
     isDefault: true,
-  },
-  {
-    id: "salford",
-    name: "Canada Pharmacy — Salford",
-    shortName: "Salford",
-    address: "21 Chapel Street, Salford, M3 5BH",
-    phone: "0161 555 0200",
-    email: "salford@canadapharmacy.co.uk",
-    lat: 53.4839,
-    lng: -2.2519,
-    openingHours: standardHours,
-    googleMapsEmbedUrl: embed("21 Chapel Street, Salford M3 5BH"),
   },
 ];
 

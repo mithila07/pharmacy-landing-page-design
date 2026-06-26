@@ -9,6 +9,9 @@ import { BranchSelector } from "../components/BranchSelector";
 import { carefirstBrand, homePath, type Brand } from "../branding";
 import { useResolvedLocation } from "../useLocation";
 import { useSeo, serviceSeo } from "../seo";
+import { getEligibilityFlow, type EligOutcome } from "../data/eligibility";
+import { getBookingConfig, STAGE_LABELS, type StageKind } from "../data/bookingConfig";
+import { EligibilityChat, EligibilityGate } from "../components/EligibilityChat";
 
 const allServices = [...nhsServices, ...privateServices];
 
@@ -141,6 +144,17 @@ function getNextAvailable(): { date: Date; time: string } | null {
   return null;
 }
 
+/** Whole-years age from a DD/MM/YYYY trio, or undefined if incomplete/invalid. */
+function computeAge(dd: string, mm: string, yyyy: string): number | undefined {
+  const d = parseInt(dd, 10), m = parseInt(mm, 10), y = parseInt(yyyy, 10);
+  if (!d || !m || !y || y < 1900) return undefined;
+  const now = new Date();
+  let age = now.getFullYear() - y;
+  const hadBirthday = now.getMonth() + 1 > m || (now.getMonth() + 1 === m && now.getDate() >= d);
+  if (!hadBirthday) age--;
+  return age >= 0 && age < 130 ? age : undefined;
+}
+
 function getWeekFromOffset(offset: number) {
   const days = [];
   const today = new Date();
@@ -159,7 +173,8 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   const { selected: branch, reason: branchReason, locations: branches, userCoords, selectLocation } = useResolvedLocation(brand);
   const multiBranch = branches.length > 1;
   const service = allServices.find((s) => s.id === serviceId);
-  const [step, setStep] = useState(1);
+  const triageFlow = getEligibilityFlow(service?.id); // NHS Pharmacy First eligibility gate (undefined = no triage)
+  const [stageIdx, setStageIdx] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState("");
   const [appointmentType, setAppointmentType] = useState<"face-to-face" | "video" | "telephone">("face-to-face");
@@ -187,14 +202,40 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   const [continuePrivate, setContinuePrivate] = useState(false); // no-match: acknowledge private session
   const [demoMode, setDemoMode] = useState<"match" | "no-match">("match"); // demo-only — drop when real PDS is wired
 
+  // NHS eligibility triage gate
+  const [eligibility, setEligibility] = useState<"pending" | "passed">("pending");
+  const [triageOutcome, setTriageOutcome] = useState<EligOutcome | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [serviceId]);
 
+  // Reset the journey for each service.
+  useEffect(() => {
+    setStageIdx(0);
+    setEligibility("pending");
+    setTriageOutcome(null);
+    setChatOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceId]);
+
+  // Backend-configurable journey: the ordered stages, incl. where the questionnaire sits.
+  const isNHS = !!service && service.id.startsWith("nhs-");
+  const config = getBookingConfig({ isNHS, hasTriage: !!triageFlow });
+  const stages = config.steps;
+  const stage = stages[stageIdx];
+
+  // Open the chat automatically as soon as the patient reaches the eligibility stage.
+  useEffect(() => {
+    if (stage === "triage" && eligibility !== "passed") setChatOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
+
   useSeo(
     service
-      ? { ...serviceSeo(service, service.id.startsWith("nhs-")), path: `${brand.basePath}/book/${service.id}` }
-      : { title: "Service not found | Strachans Pharmacy", description: "Sorry, we couldn't find that service.", index: false },
+      ? { ...serviceSeo(service, service.id.startsWith("nhs-"), brand), path: `${brand.basePath}/book/${service.id}` }
+      : { title: `Service not found | ${brand.name}`, description: "Sorry, we couldn't find that service.", index: false },
   );
 
   if (!service) {
@@ -208,7 +249,30 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     );
   }
 
-  const isNHS = service.id.startsWith("nhs-");
+  const patientAge = computeAge(patient.dobDay, patient.dobMonth, patient.dobYear);
+
+  const goStage = (kind: StageKind) => { const i = stages.indexOf(kind); if (i >= 0) setStageIdx(i); };
+  const goBack = () => setStageIdx((i) => Math.max(0, i - 1));
+  const goNext = () => {
+    const target = stages[stageIdx + 1];
+    if (!target) return;
+    // Verifying contact needs the patient details + an NHS PDS lookup first.
+    if (target === "contact" && !pdsResult) {
+      setPdsLoading(true);
+      setTimeout(() => {
+        setPdsResult(mockPdsLookup(patient, demoMode));
+        setUseNewContact(false);
+        setContinuePrivate(false);
+        setContactPhone("");
+        setContactEmail("");
+        setPdsLoading(false);
+        setStageIdx((i) => i + 1);
+      }, 600);
+    } else {
+      setStageIdx((i) => i + 1);
+    }
+  };
+
   const days = getWeekFromOffset(weekOffset);
   const maxOffset = Math.floor((MAX_DAYS_AHEAD - 1) / 7);
   const canGoPrev = weekOffset > 0;
@@ -318,28 +382,45 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
         </div>
       )}
 
-      {/* Steps indicator */}
+      {/* Steps indicator — driven by the configured stage order */}
       <div className="max-w-3xl mx-auto px-4 py-6">
         <div className="flex items-center gap-2 mb-8">
-          {[
-            { n: 1, label: "Date & Time" },
-            { n: 2, label: "Patient Info" },
-            { n: 3, label: "Verify Contact" },
-          ].map(({ n, label }) => (
-            <div key={n} className="flex items-center gap-2 flex-1">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[0.8rem] shrink-0 ${step >= n ? "bg-brand-primary text-white" : "bg-gray-200 text-gray-500"}`} style={{ fontWeight: 600 }}>{n}</div>
-              <span className={`text-[0.85rem] hidden sm:inline ${step >= n ? "text-gray-900" : "text-gray-400"}`} style={{ fontWeight: 500 }}>{label}</span>
-              {n < 3 && <div className={`flex-1 h-0.5 ${step > n ? "bg-brand-primary" : "bg-gray-200"}`} />}
+          {stages.map((kind, i) => (
+            <div key={kind} className="flex items-center gap-2 flex-1">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[0.8rem] shrink-0 ${i <= stageIdx ? "bg-brand-primary text-white" : "bg-gray-200 text-gray-500"}`} style={{ fontWeight: 600 }}>{i + 1}</div>
+              <span className={`text-[0.85rem] hidden sm:inline ${i <= stageIdx ? "text-gray-900" : "text-gray-400"}`} style={{ fontWeight: 500 }}>{STAGE_LABELS[kind]}</span>
+              {i < stages.length - 1 && <div className={`flex-1 h-0.5 ${i < stageIdx ? "bg-brand-primary" : "bg-gray-200"}`} />}
             </div>
           ))}
         </div>
 
-        {step === 1 && (
+        {/* Eligibility stage */}
+        {stage === "triage" && triageFlow && (
+          eligibility === "passed" ? (
+            <div className="max-w-xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 text-center">
+              <span className="w-14 h-14 rounded-2xl bg-brand-secondary/12 text-brand-green-ink flex items-center justify-center mx-auto mb-4"><ShieldCheck size={26} /></span>
+              <h3 className="text-gray-900 text-[1.25rem] mb-2" style={{ fontWeight: 700 }}>Eligibility confirmed</h3>
+              <p className="text-gray-500 text-[0.92rem] max-w-md mx-auto mb-6">You're good to go — let's get the rest of your booking sorted.</p>
+              <div className="flex items-center justify-center gap-3">
+                {stageIdx > 0 && <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>}
+                <button onClick={goNext} className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg cursor-pointer inline-flex items-center gap-2" style={{ fontWeight: 600 }}>Continue <ChevronRight size={16} /></button>
+              </div>
+            </div>
+          ) : (
+            <EligibilityGate flow={triageFlow} brand={brand} outcome={triageOutcome} onStart={() => setChatOpen(true)} />
+          )
+        )}
+
+        {stage === "datetime" && (
           <>
             {/* Pharmacy & Appointment Type card */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
               <div className="flex items-start gap-4 mb-6">
-                {brand.logoIsWordmark ? (
+                {brand.logoMark ? (
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+                    <img src={brand.logoMark} alt={brand.name} className="w-full h-full object-contain" />
+                  </div>
+                ) : brand.logoIsWordmark ? (
                   <img src={brand.logo} alt={brand.name} className="h-9 w-auto shrink-0" />
                 ) : (
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
@@ -504,7 +585,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
               <div className="mt-8 flex justify-end">
                 <button
                   disabled={!selectedDate || !selectedTime}
-                  onClick={() => setStep(2)}
+                  onClick={goNext}
                   className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer"
                 >
                   Continue
@@ -514,12 +595,16 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           </>
         )}
 
-        {(step === 2 || step === 3) && (
+        {(stage === "details" || stage === "contact") && selectedDate && selectedTime && (
           <>
             {/* Pharmacy & Booking Summary */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
               <div className="flex items-start gap-4 mb-5">
-                {brand.logoIsWordmark ? (
+                {brand.logoMark ? (
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+                    <img src={brand.logoMark} alt={brand.name} className="w-full h-full object-contain" />
+                  </div>
+                ) : brand.logoIsWordmark ? (
                   <img src={brand.logo} alt={brand.name} className="h-9 w-auto shrink-0" />
                 ) : (
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
@@ -536,7 +621,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
               <div className="border-t border-gray-100 pt-4">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-[0.85rem] text-gray-900" style={{ fontWeight: 600 }}>Appointment Summary</h4>
-                  <button onClick={() => setStep(1)} className="flex items-center gap-1.5 text-[0.8rem] text-brand-primary hover:text-brand-primary-hover transition-colors cursor-pointer" style={{ fontWeight: 500 }}>
+                  <button onClick={() => goStage("datetime")} className="flex items-center gap-1.5 text-[0.8rem] text-brand-primary hover:text-brand-primary-hover transition-colors cursor-pointer" style={{ fontWeight: 500 }}>
                     <Pencil size={13} /> Change
                   </button>
                 </div>
@@ -559,7 +644,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           </>
         )}
 
-        {step === 2 && (
+        {stage === "details" && (
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h3 className="text-gray-900 text-[1rem] mb-1.5" style={{ fontWeight: 600 }}>Patient information</h3>
             <p className="text-[0.82rem] text-gray-500 mb-5 flex items-center gap-1.5"><ShieldCheck size={14} className="text-brand-accent" /> We'll check this against your NHS records to verify your identity.</p>
@@ -640,7 +725,9 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <button onClick={() => setStep(1)} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>
+              {stageIdx > 0 ? (
+                <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>
+              ) : <span />}
               <div className="flex items-center gap-3 sm:ml-auto">
                 <p className="text-[0.78rem] text-gray-500 max-w-[16rem] hidden sm:block">Check the entered information matches your NHS records.</p>
                 <button
@@ -654,31 +741,18 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                     !patient.gender ||
                     !patient.postcode
                   }
-                  onClick={() => {
-                    setPdsLoading(true);
-                    // Simulate network latency for the PDS lookup.
-                    setTimeout(() => {
-                      const result = mockPdsLookup(patient, demoMode);
-                      setPdsResult(result);
-                      setUseNewContact(false);
-                      setContinuePrivate(false);
-                      setContactPhone("");
-                      setContactEmail("");
-                      setPdsLoading(false);
-                      setStep(3);
-                    }, 600);
-                  }}
+                  onClick={goNext}
                   className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center gap-2"
                   style={{ fontWeight: 600 }}
                 >
-                  {pdsLoading ? "Checking NHS records…" : "Submit"}
+                  {pdsLoading ? "Checking NHS records…" : "Continue"}
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {step === 3 && pdsResult && (
+        {stage === "contact" && pdsResult && (
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h3 className="text-gray-900 text-[1rem] mb-5" style={{ fontWeight: 600 }}>Verify contact details</h3>
 
@@ -763,7 +837,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                   <div className="grid sm:grid-cols-2 gap-3 mb-2">
                     <button
                       type="button"
-                      onClick={() => setStep(2)}
+                      onClick={() => { setPdsResult(null); goStage("details"); }}
                       className="cta cta-outline px-5 py-3 rounded-lg border-2 border-brand-primary text-brand-primary bg-white hover:bg-brand-light/60 transition-colors cursor-pointer flex items-center justify-center gap-2"
                       style={{ fontWeight: 600 }}
                     >
@@ -799,7 +873,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <button onClick={() => setStep(2)} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer text-left">Back</button>
+              <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer text-left">Back</button>
               <div className="flex flex-col sm:items-end gap-1.5">
                 <button
                   disabled={
@@ -831,6 +905,24 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
       />
 
       <Footer brand={brand} variant="compact" />
+
+      {/* NHS eligibility triage — chat-style, gates booking for Pharmacy First conditions */}
+      {triageFlow && (
+        <EligibilityChat
+          flow={triageFlow}
+          brand={brand}
+          open={chatOpen}
+          context={{ age: patientAge }}
+          onClose={() => setChatOpen(false)}
+          onEligible={() => {
+            setEligibility("passed");
+            setChatOpen(false);
+            if (stage === "triage") setStageIdx((i) => i + 1); // advance past the eligibility stage
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }}
+          onOutcome={(o) => setTriageOutcome(o)}
+        />
+      )}
     </div>
   );
 }

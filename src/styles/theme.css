@@ -245,26 +245,36 @@
  * with Inter as the base UI font (headings use Fraunces via .font-display).
  * ------------------------------------------------------------------ */
 .theme-canada {
-  --brand-primary: #36414c;       /* slate charcoal — headings, primary buttons, ink */
-  --brand-primary-mid: #485561;   /* lighter slate — gradient stop */
-  --brand-secondary: #3db54a;     /* fresh maple-leaf green — accents, tags, CTAs */
-  --brand-accent: #2e9a3c;        /* deeper green — icons */
-  --brand-dark: #2a323b;          /* footer gradient stop */
-  --brand-darkest: #1b2127;       /* footer base */
-  --brand-light: #eef4ec;         /* light green wash */
-  --brand-light-alt: #f6f3ec;     /* warm paper */
-  --brand-cta: #3db54a;           /* green CTA */
-  --brand-alt: #3db54a;
-  --brand-light-cyan: #eef1f3;    /* cool light */
-  --brand-primary-hover: #2a323b; /* darker slate hover */
-  --brand-green-ink: #1a6e2d;     /* readable forest green for text & solid buttons (WCAG AA) */
+  --brand-primary: #1f2a31;       /* deep slate (from iCare logo) — headings, primary buttons, ink */
+  --brand-primary-mid: #2c3a43;   /* lighter slate — gradient stop */
+  --brand-secondary: #34b44a;     /* iCare brand green — accents, tags, CTAs */
+  --brand-accent: #2a9a3d;        /* deeper green — icons */
+  --brand-dark: #1a242a;          /* footer gradient stop */
+  --brand-darkest: #131b20;       /* footer base */
+  --brand-light: #e9f1ec;         /* light green wash */
+  --brand-light-alt: #eef4f1;     /* cool mint surface */
+  --brand-cta: #34b44a;           /* green CTA */
+  --brand-alt: #34b44a;
+  --brand-light-cyan: #eef3f2;    /* cool light */
+  --brand-primary-hover: #16201f; /* darker slate hover */
+  --brand-green-ink: #1a7d31;     /* readable forest green for text & solid buttons (WCAG AA) */
+  /* iCare page surfaces */
+  --icare-paper: #eaf2ed;         /* unique cool-mint canvas (replaces beige) */
+  --icare-paper-deep: #e2ede6;    /* slightly deeper mint for alt sections */
+  --icare-line: #d3e3d8;          /* soft sage border */
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* Modern display face for Canada headings — geometric sans, tightly tracked. */
+/* Modern display face for headings — geometric sans, tightly tracked. */
 .font-display {
   font-family: "Outfit", "Inter", system-ui, -apple-system, sans-serif;
   letter-spacing: -0.025em;
+}
+
+/* iCare titles use Zalando Sans SemiExpanded for a distinctive, premium wordmark feel. */
+.theme-canada .font-display {
+  font-family: "Zalando Sans SemiExpanded", "Zalando Sans Expanded", "Outfit", system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.018em;
 }
 
 /* ------------------------------------------------------------------
