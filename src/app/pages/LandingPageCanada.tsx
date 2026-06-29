@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useNavigate } from "react-router";
-import { ArrowRight, ArrowUpRight, Phone, Star, Quote, ShieldCheck, CalendarCheck, MousePointerClick, Truck, Syringe, Plane, Ear, Scale, TestTube, Clock, Plus } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Phone, Star, Quote, ShieldCheck, CalendarCheck, MousePointerClick, Truck, Syringe, Plane, Ear, Scale, Clock, Plus } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { HeaderICare } from "../components/HeaderICare";
 import { FooterICare } from "../components/FooterICare";
@@ -40,7 +40,6 @@ const PRIVATE_CARDS: Card[] = [
   { id: "prv-weight-consult", name: "Weight Management", img: cover("1607619056574-7b8d3ee536b2"), chip: "From £30", desc: "GLP-1 plans tailored to your goals." },
   { id: "prv-ear-wax", name: "Ear Wax Removal", img: cover("1758598738326-3bc889d1558d"), chip: "From £40", desc: "Gentle microsuction — relief in one visit." },
   { id: "prv-vitamin-injection", name: "Vitamin B12 Boost", img: cover("1608326389386-0305acbe600f"), chip: "From £30", desc: "Energy-boosting B12 intramuscular injection." },
-  { id: "prv-blood-test", name: "Blood Tests", img: cover("1576091160550-2173dba999ef"), chip: "From £50", desc: "Comprehensive panels with fast, clear results." },
   { id: "prv-flu-private", name: "Private Flu Jab", img: cover("1522844990619-4951c40f7eda"), chip: "From £15", desc: "Flu protection any time, no NHS criteria." },
 ];
 
@@ -49,7 +48,6 @@ const ACCORDION = [
   { id: "prv-travel-consult", name: "Travel Health", desc: "Vaccines & tailored advice for a safe trip abroad.", img: cover("1488646953014-85cb44e25828"), tag: "From £25", icon: Plane },
   { id: "prv-ear-wax", name: "Ear Wax Removal", desc: "Gentle microsuction — relief in a single visit.", img: cover("1758598738326-3bc889d1558d"), tag: "From £40", icon: Ear },
   { id: "prv-weight-consult", name: "Weight Loss", desc: "Personalised plans, including GLP-1 options.", img: cover("1607619056574-7b8d3ee536b2"), tag: "From £30", icon: Scale },
-  { id: "prv-blood-test", name: "Blood Tests", desc: "Comprehensive panels with fast, clear results.", img: cover("1576091160550-2173dba999ef"), tag: "From £50", icon: TestTube },
 ];
 
 const STEPS = [
@@ -64,7 +62,7 @@ const FAQS = [
   { q: "Do I need to see a GP first?", a: "No. Under NHS Pharmacy First, our Ealing pharmacists can assess and treat seven common conditions — including supplying prescription medicines such as antibiotics where clinically appropriate — without a GP appointment." },
   { q: "Are your NHS services really free?", a: "Yes. NHS Pharmacy First consultations, the New Medicine Service (NMS) and eligible flu vaccinations are funded by the NHS and free to those who qualify. We always tell you upfront if a service is private and exactly what it costs." },
   { q: "Can I get a same-day appointment in Ealing?", a: "Most services offer same-day slots at our Queens Parade pharmacy in Ealing (W5 3HU). Choose a service above and pick the soonest time that suits you — it takes about two minutes." },
-  { q: "Which private clinics do you offer?", a: "Private prescriptions, weight loss management including GLP-1 options, travel health and vaccinations, ear wax removal by microsuction, vitamin B12 injections, and a range of blood tests — most available on the same day." },
+  { q: "Which private clinics do you offer?", a: "Private prescriptions, weight loss management including GLP-1 options, travel health and vaccinations, ear wax removal by microsuction, and vitamin B12 injections — most available on the same day." },
   { q: "Where is your pharmacy?", a: "You'll find iCare Pharmacy at 15 Queens Parade, Ealing, London W5 3HU — easy to reach from Ealing Broadway, West Ealing, Pitshanger, Hanwell and North Ealing. We're open Monday to Friday, 9am–6pm." },
   { q: "How do I book and prepare?", a: "Choose a service on this page, pick a time and confirm your details. You can also complete a short pre-consultation questionnaire beforehand so your pharmacist is fully prepared before you arrive." },
 ];

@@ -129,7 +129,7 @@ export function HeroSectionStrachans() {
 
             <p className="hero-copy text-gray-500 text-[1.05rem] mb-8 leading-relaxed max-w-lg">
               Skip the GP queue. Book NHS Pharmacy First and private clinics — vaccinations, weight management,
-              blood tests and more — with trained pharmacists across our Bury and Uppermill branches.
+              ear wax removal and more — with trained pharmacists across our Bury and Uppermill branches.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 mb-10">

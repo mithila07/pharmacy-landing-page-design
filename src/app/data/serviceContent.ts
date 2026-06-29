@@ -583,15 +583,15 @@ export const categoryContent: Record<string, ServiceContent> = {
   },
 
   "Diagnostic & Testing": {
-    headline: "Private Blood Tests & Diagnostic Screening — Fast Results",
+    headline: "Private Diagnostic & Health Screening — Fast Results",
     intro:
-      "Get clarity about your health with our comprehensive private blood testing and diagnostic screening service. From cholesterol and HbA1c to full thyroid panels, vitamin D, and allergy testing, results are typically available within 24–72 hours with a full pharmacist consultation to explain your findings.",
+      "Get clarity about your health with our comprehensive private diagnostic and health screening service. From cholesterol and HbA1c to full thyroid panels, vitamin D, and allergy testing, results are typically available within 24–72 hours with a full pharmacist consultation to explain your findings.",
     benefits: [
-      "Comprehensive blood test panels covering 50+ health markers",
+      "Comprehensive diagnostic panels covering 50+ health markers",
       "Fast turnaround — results in 24–72 hours via online portal",
       "Results explained in a follow-up consultation with our pharmacist",
       "No GP referral needed — self-refer for any test",
-      "Significantly faster than NHS waiting times for blood test results",
+      "Significantly faster than NHS waiting times for results",
     ],
     whatToExpect: [
       "Book a convenient morning appointment (fasting tests require 8–12 hours without food)",
@@ -608,7 +608,7 @@ export const categoryContent: Record<string, ServiceContent> = {
     ],
     faqs: [
       {
-        q: "Do I need to fast before a blood test?",
+        q: "Do I need to fast before a test?",
         a: "Fasting is required for cholesterol, glucose, HbA1c, and liver function tests. Fast for 8–12 hours (water is fine). Other tests such as Vitamin D or thyroid function do not require fasting.",
       },
       {
@@ -626,7 +626,7 @@ export const categoryContent: Record<string, ServiceContent> = {
     ],
     image:
       "https://images.unsplash.com/photo-1768498993096-6db9950eeb1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
-    imageAlt: "Blood test and diagnostic laboratory testing at pharmacy",
+    imageAlt: "Diagnostic laboratory testing at pharmacy",
   },
 
   "Lifestyle Treatments": {

@@ -200,7 +200,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
   const seo = brand.id === "strachans"
     ? {
         title: "Strachans Pharmacy | NHS & Private Pharmacy in Bury & Uppermill",
-        description: "NHS Pharmacy First and private clinics across Bury and Uppermill — travel vaccines, weight management, ear wax removal, blood tests and more. Book a same-day pharmacist appointment online.",
+        description: "NHS Pharmacy First and private clinics across Bury and Uppermill — travel vaccines, weight management, ear wax removal and more. Book a same-day pharmacist appointment online.",
       }
     : brand.id === "healthcheck"
     ? {

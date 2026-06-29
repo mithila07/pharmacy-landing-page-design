@@ -87,12 +87,11 @@ export const privateServices: Service[] = [
   { id: "prv-ear-wax", name: "Ear Wax Removal", description: "Microsuction ear wax removal by trained clinicians", price: "From 40", icon: "Ear", category: "Ear Health" },
   { id: "prv-ear-infection", name: "Ear Infection Treatment", description: "Assessment and treatment for ear infections", price: "From 25", icon: "Stethoscope", category: "Ear Health" },
   // Diagnostic & Testing
-  { id: "prv-blood-test", name: "Private Blood Tests", description: "Comprehensive blood test panels available", price: "From 50", icon: "TestTube", category: "Diagnostic & Testing" },
   { id: "prv-cholesterol", name: "Cholesterol Check", description: "Lipid profile testing with results in minutes", price: "From 20", icon: "Activity", category: "Diagnostic & Testing" },
   { id: "prv-diabetes", name: "Diabetes Screening (HbA1c)", description: "Blood sugar level testing for diabetes risk", price: "From 25", icon: "Droplets", category: "Diagnostic & Testing" },
   { id: "prv-thyroid", name: "Thyroid Function Test", description: "TSH and thyroid hormone level testing", price: "From 35", icon: "TestTube", category: "Diagnostic & Testing" },
   { id: "prv-vitamin-d", name: "Vitamin D Testing", description: "Check your vitamin D levels", price: "From 30", icon: "Sun", category: "Diagnostic & Testing" },
-  { id: "prv-iron", name: "Iron Level Testing", description: "Ferritin and iron panel blood test", price: "From 30", icon: "TestTube", category: "Diagnostic & Testing" },
+  { id: "prv-iron", name: "Iron Level Testing", description: "Ferritin and iron panel test", price: "From 30", icon: "TestTube", category: "Diagnostic & Testing" },
   { id: "prv-allergy", name: "Allergy Testing", description: "Identify common allergens causing symptoms", price: "From 60", icon: "Flower", category: "Diagnostic & Testing" },
   { id: "prv-covid-test", name: "COVID-19 PCR & Antigen Test", description: "Fit to fly and day 2 arrival testing", price: "From 30", icon: "TestTube", category: "Diagnostic & Testing" },
   { id: "prv-dna", name: "DNA Health Test", description: "Genetic predisposition health screening", price: "From 149", icon: "Dna", category: "Diagnostic & Testing" },
