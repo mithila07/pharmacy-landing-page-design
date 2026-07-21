@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ArrowUpRight, LayoutGrid } from "lucide-react";
-import { carefirstBrand, strachansBrand, canadaBrand, healthcheckBrand } from "../branding";
+import { carefirstBrand, strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand } from "../branding";
 import { useSeo } from "../seo";
 
 /** Prefix a route with Vite's base so previews work locally and on GitHub Pages. */
@@ -14,6 +14,7 @@ const SITES: Entry[] = [
   { name: strachansBrand.name, tagline: strachansBrand.tagline, location: "Bury & Uppermill", path: "/strachans" },
   { name: canadaBrand.name, tagline: "NHS & private pharmacy", location: "Ealing, London", path: "/icare" },
   { name: healthcheckBrand.name, tagline: healthcheckBrand.tagline, location: "Bradford", path: "/healthcheck" },
+  { name: kepplelaneBrand.name, tagline: kepplelaneBrand.tagline, location: "Garstang, Lancashire", path: "/kepple-lane" },
 ];
 
 /** A live, scaled-down preview of a page rendered in an iframe (a self-updating "screenshot"). */
@@ -52,7 +53,7 @@ function SitePreview({ path, title }: { path: string; title: string }) {
 export default function PharmacyIndex() {
   useSeo({
     title: "Pharmacy Landing Pages — Showcase",
-    description: "A showcase of white-label pharmacy landing pages built from one codebase — CareFirst, Strachans, iCare and Health-Check. Open any to explore.",
+    description: "A showcase of white-label pharmacy landing pages built from one codebase — CareFirst, Strachans, iCare, Health-Check and Kepple Lane. Open any to explore.",
     path: "/",
   });
 
@@ -68,7 +69,7 @@ export default function PharmacyIndex() {
             Pharmacy landing pages
           </h1>
           <p className="text-slate-500 text-[1.05rem] leading-relaxed">
-            Four white-label pharmacy sites built from a single codebase. Open any one to explore its design, services and booking flow.
+            Five white-label pharmacy sites built from a single codebase. Open any one to explore its design, services and booking flow.
           </p>
         </header>
 

@@ -271,6 +271,19 @@
   letter-spacing: -0.025em;
 }
 
+/* Kepple Lane runs Elms Sans throughout — body and headings — so the brand
+ * reads as one voice rather than a display/body pairing. */
+.theme-kepple {
+  font-family: "Elms Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.theme-kepple .font-display,
+.theme-kepple h1,
+.theme-kepple h2,
+.theme-kepple h3,
+.theme-kepple h4 {
+  font-family: "Elms Sans", "Inter", system-ui, -apple-system, sans-serif;
+}
+
 /* iCare titles use Zalando Sans SemiExpanded for a distinctive, premium wordmark feel. */
 .theme-canada .font-display {
   font-family: "Zalando Sans SemiExpanded", "Zalando Sans Expanded", "Outfit", system-ui, -apple-system, sans-serif;
@@ -384,6 +397,91 @@
 @keyframes chip-new-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.45; transform: scale(0.8); }
+}
+
+/* ------------------------------------------------------------------
+ * Kepple Lane Pharmacy (Garstang) — "Soft Violet".
+ * Taken straight from the logo's violet cross: a deep indigo-violet for
+ * headings/links and a mid violet for actions, on a warm-white ground.
+ * Both text-bearing violets clear AA on white; the lilac tints are
+ * graphics-only. Light mode only.
+ * ------------------------------------------------------------------ */
+.theme-kepple {
+  --brand-primary: #4a3fb8;       /* deep violet — headings, links, nav (AA on white) */
+  --brand-primary-mid: #6a5de0;   /* mid violet — gradient stop */
+  --brand-secondary: #5a4dd4;     /* action violet — white-text buttons (AA) */
+  --brand-accent: #8e82ee;        /* lilac — small icons / graphics */
+  --brand-dark: #2c2578;          /* deep indigo — footer gradient stop */
+  --brand-darkest: #171243;       /* ink — footer base */
+  --brand-light: #f2f0fd;         /* soft violet section wash */
+  --brand-light-alt: #f7f5ff;     /* lighter violet wash */
+  --brand-cta: #f59e0b;           /* warm amber CTA (shared) */
+  --brand-alt: #8e82ee;           /* lilac — secondary accent */
+  --brand-light-cyan: #eae7fb;    /* extra violet gradient stop */
+  --brand-primary-hover: #392f9c; /* darker violet — link hover on light bg */
+}
+
+/* Signature gradient — decorative only (no body text sits on it). */
+.theme-kepple .kl-grad-text {
+  background: linear-gradient(105deg, #4a3fb8 0%, #6a5de0 55%, #a99bf0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.theme-kepple .kl-grad-bar {
+  background: linear-gradient(105deg, #4a3fb8 0%, #6a5de0 55%, #a99bf0 100%);
+}
+
+/* Primary action — the gradient as a fill, sliding on hover. */
+.theme-kepple .kl-btn-gradient {
+  background-image: linear-gradient(105deg, #4a3fb8 0%, #6a5de0 40%, #8e82ee 70%, #4a3fb8 100%);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  color: #fff;
+  border: 0;
+  box-shadow: 0 6px 18px -8px rgba(74, 63, 184, 0.7);
+  transition: background-position 0.5s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.theme-kepple .kl-btn-gradient:hover {
+  background-position: 100% 50%;
+  box-shadow: 0 10px 26px -8px rgba(74, 63, 184, 0.85);
+  transform: translateY(-1px);
+}
+.theme-kepple .kl-btn-gradient:active {
+  transform: translateY(0);
+}
+.theme-kepple .kl-btn-gradient:disabled {
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Shared components render `cta-primary` on the booking/questionnaire flow —
+ * re-skin it so those pages inherit the violet identity too. */
+.theme-kepple .cta-primary {
+  background-image: linear-gradient(105deg, #4a3fb8 0%, #6a5de0 50%, #8e82ee 100%);
+  background-size: 180% 100%;
+  background-position: 0% 50%;
+  color: #fff;
+  transition: background-position 0.5s ease, box-shadow 0.25s ease;
+}
+.theme-kepple .cta-primary:hover {
+  background-position: 100% 50%;
+  box-shadow: 0 10px 26px -8px rgba(74, 63, 184, 0.8);
+}
+.theme-kepple .cta-primary:disabled {
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-kepple .kl-btn-gradient,
+  .theme-kepple .cta-primary {
+    transition: none;
+  }
+  .theme-kepple .kl-btn-gradient:hover {
+    transform: none;
+  }
 }
 
 /* Strachans — pink "New" chip with the same pulsing glow (reuses the dot keyframes). */

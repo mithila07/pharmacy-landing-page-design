@@ -3,7 +3,8 @@ import carefirstLogo from "../assets/d0b862ede6c0c3c9cbee51cd53c49828213cc4c9.pn
 import icareLogo from "../assets/icare Full logo dark.svg";
 import icareLogoMark from "../assets/icare Logo mark dark.svg";
 import healthcheckLogo from "../assets/health-check logo.png";
-import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, type PharmacyLocation } from "./data/locations";
+import kepplelaneLogo from "../assets/kepple-lane-logo.png";
+import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, type PharmacyLocation } from "./data/locations";
 
 /**
  * A brand defines everything that differs between the white-label versions of
@@ -23,6 +24,8 @@ export type Brand = {
   logoMark?: string;
   /** Logo already spells out the brand name — render it alone, no separate text. */
   logoIsWordmark: boolean;
+  /** Height utility for the header wordmark. Defaults to `h-9`. */
+  headerLogoClass?: string;
   /** Class that re-scopes the `--brand-*` palette. "" = default (root) palette. */
   themeClass: string;
   /** Route prefix for this brand. "" = default brand at the site root. */
@@ -31,10 +34,23 @@ export type Brand = {
   locations: PharmacyLocation[];
   /** Route to this brand's About page, if it has one. */
   aboutPath?: string;
+  /**
+   * Grouped nav items rendered as hover dropdowns in the header. A group is a
+   * label only — it has no page of its own, so it never navigates. When a brand
+   * defines groups, the standalone About link is dropped from the nav (About
+   * lives inside a group instead); `aboutPath` still drives footer/CTA links.
+   */
+  navGroups?: { label: string; items: { label: string; path: string }[] }[];
   /** Route to this brand's blog, if it has one. */
   blogPath?: string;
   /** Route to this brand's dedicated Contact page. When set, the inline "Find Us" is hidden. */
   contactPath?: string;
+  /**
+   * Hides the header's quick-contact strip (phone + opening hours). Single-branch
+   * brands show it by default; set this when the brand wants a cleaner nav and
+   * carries those details in the hero and footer instead.
+   */
+  hideHeaderContact?: boolean;
   /** Human-readable area label woven into service/booking page SEO titles & descriptions (local SEO/GEO). When unset, it's derived from the branch short names. */
   seoArea?: string;
   /** Regulatory / company details shown in the footer (GPhC, company registration). */
@@ -119,6 +135,43 @@ export const healthcheckBrand: Brand = {
   // No blog for this brand.
   legal: {
     companyName: "Health-Check Pharmacy & Clinic",
+    companyNumber: "[REPLACE — Company No.]",
+    superintendent: "[REPLACE — Superintendent Pharmacist]",
+    gphcNumber: "[REPLACE — GPhC Reg. No.]",
+  },
+};
+
+export const kepplelaneBrand: Brand = {
+  id: "kepplelane",
+  name: "Kepple Lane Pharmacy",
+  tagline: "Healthy Living Pharmacy",
+  logo: kepplelaneLogo,
+  logoIsWordmark: true,
+  // Wide wordmark — sits small next to the others at the default h-9.
+  headerLogoClass: "h-11",
+  themeClass: "theme-kepple",
+  basePath: "/kepple-lane",
+  seoArea: "Garstang",
+  locations: kepplelaneLocations,
+  aboutPath: "/kepple-lane/about",
+  contactPath: "/kepple-lane/contact",
+  // Phone + hours live in the hero and footer — the nav stays clean.
+  hideHeaderContact: true,
+  navGroups: [
+    {
+      label: "Dispensary",
+      items: [
+        { label: "About Us", path: "/kepple-lane/about" },
+        { label: "Dispensing Process", path: "/kepple-lane/dispensing-process" },
+        { label: "Deliveries", path: "/kepple-lane/deliveries" },
+        { label: "Roles within the Dispensary", path: "/kepple-lane/roles" },
+        { label: "Updates", path: "/kepple-lane/updates" },
+      ],
+    },
+  ],
+  // No blog for this brand.
+  legal: {
+    companyName: "Kepple Lane Pharmacy",
     companyNumber: "[REPLACE — Company No.]",
     superintendent: "[REPLACE — Superintendent Pharmacist]",
     gphcNumber: "[REPLACE — GPhC Reg. No.]",

@@ -51,27 +51,30 @@ export function computeOpenStatus(
 ): OpenStatus {
   const weekday = now.getDay();
   const minutes = now.getHours() * 60 + now.getMinutes();
-  const todays = openingHours.find((h) => dayMatches(h.day, weekday));
+  const todays = openingHours.filter((h) => dayMatches(h.day, weekday) && !/closed/i.test(h.hours));
 
-  if (todays && !/closed/i.test(todays.hours)) {
-    const [openStr, closeStr] = todays.hours.split(/\s*[-–]\s*/);
-    const open = toMinutes(openStr);
-    const close = toMinutes(closeStr);
-    if (open !== null && close !== null) {
-      if (minutes >= open && minutes < close) {
-        return { open: true, label: "Open now", detail: `Closes ${closeStr.trim()}` };
-      }
-      if (minutes < open) {
-        return { open: false, label: "Closed", detail: `Opens ${openStr.trim()}` };
-      }
-    }
-  }
+  // A day can hold several ranges — either as separate entries or as one
+  // comma-separated string (e.g. a pharmacy that closes over lunch).
+  const ranges = todays
+    .flatMap((h) => h.hours.split(","))
+    .map((r) => {
+      const [openStr = "", closeStr = ""] = r.split(/\s*[-–]\s*/);
+      return { openStr: openStr.trim(), closeStr: closeStr.trim(), open: toMinutes(openStr), close: toMinutes(closeStr) };
+    })
+    .filter((r): r is typeof r & { open: number; close: number } => r.open !== null && r.close !== null)
+    .sort((a, b) => a.open - b.open);
+
+  const current = ranges.find((r) => minutes >= r.open && minutes < r.close);
+  if (current) return { open: true, label: "Open now", detail: `Closes ${current.closeStr}` };
+
+  const next = ranges.find((r) => minutes < r.open);
+  if (next) return { open: false, label: "Closed", detail: `Opens ${next.openStr}` };
 
   // Closed today (or after hours) — find the next day that opens.
   for (let i = 1; i <= 7; i++) {
     const d = (weekday + i) % 7;
-    const entry = openingHours.find((h) => dayMatches(h.day, d));
-    if (entry && !/closed/i.test(entry.hours)) {
+    const entry = openingHours.find((h) => dayMatches(h.day, d) && !/closed/i.test(h.hours));
+    if (entry) {
       const openStr = entry.hours.split(/\s*[-–]\s*/)[0];
       const when = i === 1 ? "tomorrow" : DAYS[d];
       return { open: false, label: "Closed", detail: `Opens ${when} ${openStr.trim()}` };

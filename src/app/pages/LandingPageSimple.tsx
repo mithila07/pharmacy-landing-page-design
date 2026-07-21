@@ -6,6 +6,7 @@ import { Header } from "../components/Header";
 import { HeroSection } from "../components/HeroSection";
 import { HeroSectionStrachans } from "../components/HeroSectionStrachans";
 import { HeroSectionHealthCheck } from "../components/HeroSectionHealthCheck";
+import { HeroSectionKepple } from "../components/HeroSectionKepple";
 import { ReviewsSection } from "../components/ReviewsSection";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
 import { BlogTeaserSection } from "../components/BlogTeaserSection";
@@ -104,6 +105,61 @@ const privateCards: CardItem[] = [
     accent: "private",
     highlight: { icon: ShieldCheck, label: "No prescription needed" },
   },
+];
+
+/** Kepple Lane runs a different private mix — travel, weight, ear and the
+ *  seasonal/one-off clinics they advertise in Garstang. */
+const kepplePrivateCards: CardItem[] = [
+  {
+    id: "prv-travel-consult",
+    imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "Yellow fever & antimalarials" },
+  },
+  {
+    id: "prv-weight-consult",
+    imageUrl: "https://images.unsplash.com/photo-1522844990619-4951c40f7eda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: Sparkles, label: "Weight-loss injections available" },
+  },
+  {
+    id: "prv-ear-wax",
+    imageUrl: "https://images.unsplash.com/photo-1758598738326-3bc889d1558d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: Clock, label: "Microsuction appointment" },
+  },
+  {
+    id: "prv-flu-private",
+    imageUrl: "https://images.unsplash.com/photo-1608326389386-0305acbe600f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "For patients not eligible on the NHS" },
+  },
+  {
+    id: "prv-yellowfever",
+    imageUrl: "https://images.unsplash.com/photo-1584362917165-526a968579e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "Certificate issued on the day" },
+  },
+  {
+    id: "prv-period-delay",
+    imageUrl: "https://images.unsplash.com/photo-1631815589068-dc4b0b2e0d43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: Clock, label: "Ideal before a holiday or event" },
+  },
+];
+
+/** Garstang trades split shifts Mon–Fri, so its structured data needs its own spec. */
+const KEPPLE_HOURS_SPEC = [
+  { "@type": "OpeningHoursSpecification" as const, dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:30", closes: "12:30" },
+  { "@type": "OpeningHoursSpecification" as const, dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "14:00", closes: "21:00" },
+  { "@type": "OpeningHoursSpecification" as const, dayOfWeek: "Saturday", opens: "12:00", closes: "21:00" },
+  { "@type": "OpeningHoursSpecification" as const, dayOfWeek: "Sunday", opens: "08:00", closes: "16:00" },
 ];
 
 const allServices = [...nhsServices, ...privateServices];
@@ -207,6 +263,11 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         title: "Health-Check Pharmacy & Clinic — Bradford | NHS & Private Services",
         description: "NHS Pharmacy First, repeat prescriptions and private clinics at Health-Check Pharmacy on Great Horton Road, Bradford. Book a same-day appointment online — travel jabs, blood pressure checks, ear wax removal and more.",
       }
+    : brand.id === "kepplelane"
+    ? {
+        title: "Kepple Lane Pharmacy — Garstang | NHS & Private Pharmacy Services",
+        description: "NHS Pharmacy First, dispensing and private clinics at Kepple Lane Pharmacy in Garstang, Lancashire. Open seven days a week — travel vaccinations, ear microsuction, weight management and more. Book online.",
+      }
     : {
         title: `${brand.name} | NHS & Private Community Pharmacy`,
         description: `${brand.name} offers NHS Pharmacy First, vaccinations and private clinics. Book a same-day pharmacist appointment online — no GP referral needed.`,
@@ -214,12 +275,20 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
   useSeo({ ...seo, path: brand.basePath || "/" });
 
   const isHC = brand.id === "healthcheck";
+  const isKL = brand.id === "kepplelane";
+  const privateCardsForBrand = isKL ? kepplePrivateCards : privateCards;
 
   return (
     <div className={`min-h-screen bg-white ${brand.themeClass}`}>
-      <JsonLd data={pharmacyGraph(brand, brand.id === "healthcheck" ? ["Bradford", "West Yorkshire"] : undefined)} />
-      <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCards.map((c) => c.id)]} />
-      {brand.id === "strachans" ? <HeroSectionStrachans /> : brand.id === "healthcheck" ? <HeroSectionHealthCheck /> : <HeroSection />}
+      <JsonLd
+        data={pharmacyGraph(
+          brand,
+          isHC ? ["Bradford", "West Yorkshire"] : isKL ? ["Garstang", "Preston", "Lancashire"] : undefined,
+          isKL ? { addressRegion: "Lancashire", hoursSpec: KEPPLE_HOURS_SPEC } : undefined,
+        )}
+      />
+      <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCardsForBrand.map((c) => c.id)]} />
+      {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : <HeroSection />}
 
       {/* NHS Pharmacy First */}
       <section id="nhs-services" className="relative py-20 overflow-hidden">
@@ -228,7 +297,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center mb-10 max-w-2xl mx-auto">
             <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
-              {isHC ? <><span className="hc-swoosh-text">Free NHS</span> Services</> : "NHS Pharmacy First"}
+              {isHC ? <><span className="hc-swoosh-text">Free NHS</span> Services</> : isKL ? <><span className="kl-grad-text">NHS</span> Pharmacy First</> : "NHS Pharmacy First"}
             </h2>
             <p className="text-gray-600 text-[1rem] leading-relaxed">
               {isHC
@@ -252,13 +321,13 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center mb-10 max-w-2xl mx-auto">
             <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
-              {isHC ? <><span className="hc-swoosh-text">Private clinics</span> at your pharmacy</> : "Private clinics at your pharmacy"}
+              {isHC ? <><span className="hc-swoosh-text">Private clinics</span> at your pharmacy</> : isKL ? <><span className="kl-grad-text">Private clinics</span> at your pharmacy</> : "Private clinics at your pharmacy"}
             </h2>
             <p className="text-gray-600 text-[1rem] leading-relaxed">Skip the GP queue. Book one of our most-requested private services in minutes — delivered by trained pharmacists in a private consultation room.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {privateCards.map((c) => (
+            {privateCardsForBrand.map((c) => (
               <ServiceCard key={c.id} item={c} brand={brand} />
             ))}
           </div>

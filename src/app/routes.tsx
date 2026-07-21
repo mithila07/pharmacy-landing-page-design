@@ -15,7 +15,14 @@ import QuestionnairePage from "./pages/QuestionnairePage";
 import LandingPageHealthCheck from "./pages/LandingPageHealthCheck";
 import AboutPageHealthCheck from "./pages/AboutPageHealthCheck";
 import ContactPageHealthCheck from "./pages/ContactPageHealthCheck";
-import { strachansBrand, canadaBrand, healthcheckBrand } from "./branding";
+import LandingPageKepple from "./pages/LandingPageKepple";
+import AboutPageKepple from "./pages/AboutPageKepple";
+import ContactPageKepple from "./pages/ContactPageKepple";
+import DispensingProcessPageKepple from "./pages/DispensingProcessPageKepple";
+import DeliveriesPageKepple from "./pages/DeliveriesPageKepple";
+import RolesPageKepple from "./pages/RolesPageKepple";
+import UpdatesPageKepple from "./pages/UpdatesPageKepple";
+import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand } from "./branding";
 
 // Under GitHub Pages the app is served from /<repo>/, so routing is scoped to
 // Vite's configured base (BASE_URL). Locally this is just "/".
@@ -51,4 +58,16 @@ export const router = createBrowserRouter([
   { path: "/healthcheck/contact", Component: ContactPageHealthCheck },
   { path: "/healthcheck/book/:serviceId", element: <BookingPage brand={healthcheckBrand} /> },
   { path: "/healthcheck/questionnaire/:serviceId", element: <QuestionnairePage brand={healthcheckBrand} /> },
+
+  // Kepple Lane Pharmacy (Garstang) — no blog
+  { path: "/kepple-lane", Component: LandingPageKepple },
+  { path: "/kepple-lane/about", Component: AboutPageKepple },
+  { path: "/kepple-lane/contact", Component: ContactPageKepple },
+  // "Dispensary" is a nav group only — it has no page of its own, just these children.
+  { path: "/kepple-lane/dispensing-process", Component: DispensingProcessPageKepple },
+  { path: "/kepple-lane/deliveries", Component: DeliveriesPageKepple },
+  { path: "/kepple-lane/roles", Component: RolesPageKepple },
+  { path: "/kepple-lane/updates", Component: UpdatesPageKepple },
+  { path: "/kepple-lane/book/:serviceId", element: <BookingPage brand={kepplelaneBrand} /> },
+  { path: "/kepple-lane/questionnaire/:serviceId", element: <QuestionnairePage brand={kepplelaneBrand} /> },
 ], { basename });

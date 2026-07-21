@@ -1,8 +1,8 @@
-import { Phone, Mail, Clock, MapPin, Menu, X, ChevronRight, Calendar } from "lucide-react";
+import { Phone, Mail, Clock, MapPin, Menu, X, ChevronRight, ChevronDown, Calendar } from "lucide-react";
 import { Calendar as PhCalendar } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { pharmacyInfo, nhsServices, privateServices } from "../data/services";
 import { carefirstBrand, type Brand } from "../branding";
 
@@ -17,9 +17,33 @@ type HeaderProps = {
 export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps = {}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bookOpen, setBookOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  // Small close delay so the pointer can cross the gap into the panel.
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const isHC = brand.id === "healthcheck";
+  /** Active-link styling is opt-in per brand (currently Kepple Lane only). */
+  const showsActive = brand.id === "kepplelane";
+  const isActive = (path: string) => showsActive && pathname.replace(/\/+$/, "") === path.replace(/\/+$/, "");
+  const groupIsActive = (items: { path: string }[]) => items.some((i) => isActive(i.path));
+
+  const navLinkClass = (active: boolean) =>
+    `relative transition-colors cursor-pointer ${
+      active
+        ? "text-brand-primary after:absolute after:-bottom-1.5 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-brand-primary"
+        : "hover:text-brand-primary"
+    }`;
+
+  const openNow = (label: string) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenGroup(label);
+  };
+  const closeSoon = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenGroup(null), 140);
+  };
   const allServices = [...nhsServices, ...privateServices];
   // Quick-contact strip (single-location brands) — pull from the brand's own branch.
   const primaryBranch = brand.locations[0];
@@ -28,6 +52,8 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
   const primaryHoursLabel = primaryHours
     ? `${primaryHours.day.replace("Monday - Friday", "Mon–Fri")} ${primaryHours.hours}`
     : "Mon–Fri 8AM–8PM";
+  /** Single-branch brands show phone + hours beside the logo, unless opted out. */
+  const showContactStrip = brand.locations.length <= 1 && !brand.hideHeaderContact;
   const bookableServices = bookNowServices
     ? bookNowServices.map((id) => allServices.find((s) => s.id === id)).filter((s): s is NonNullable<typeof s> => Boolean(s))
     : [];
@@ -58,7 +84,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
               className="cursor-pointer no-underline shrink-0"
             >
               {brand.logoIsWordmark ? (
-                <img src={brand.logo} alt={brand.name} className="h-9 w-auto" />
+                <img src={brand.logo} alt={brand.name} className={`${brand.headerLogoClass ?? "h-9"} w-auto`} />
               ) : (
                 <div className="flex items-center gap-2.5">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
@@ -73,7 +99,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
             </a>
 
             {/* Divider + quick contact — only for single-location brands (avoids confusion across branches) */}
-            {brand.locations.length <= 1 && (
+            {showContactStrip && (
               <div className="hidden lg:flex items-center gap-4 pl-5 border-l border-gray-200 text-[0.78rem] text-gray-500">
                 <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-accent" /> {primaryPhone}</span>
                 <span className="flex items-center gap-1.5"><Clock size={12} className="text-brand-accent" /> {primaryHoursLabel}</span>
@@ -86,13 +112,65 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
             <button onClick={() => scrollTo("nhs-services")} className="hover:text-brand-primary transition-colors cursor-pointer" style={{ fontWeight: 500 }}>NHS Services</button>
             <button onClick={() => scrollTo("private-services")} className="hover:text-brand-primary transition-colors cursor-pointer" style={{ fontWeight: 500 }}>Private Services</button>
             {brand.blogPath && (
-              <button onClick={() => goTo(brand.blogPath!)} className="hover:text-brand-primary transition-colors cursor-pointer" style={{ fontWeight: 500 }}>Blog</button>
+              <button onClick={() => goTo(brand.blogPath!)} className={navLinkClass(isActive(brand.blogPath))} style={{ fontWeight: 500 }}>Blog</button>
             )}
-            {brand.aboutPath && (
-              <button onClick={() => goTo(brand.aboutPath!)} className="hover:text-brand-primary transition-colors cursor-pointer" style={{ fontWeight: 500 }}>About</button>
+
+            {/* Grouped items — a label-only hover dropdown (the group itself has no page). */}
+            {brand.navGroups?.map((group) => {
+              const isOpen = openGroup === group.label;
+              return (
+                <div
+                  key={group.label}
+                  className="relative"
+                  onMouseEnter={() => openNow(group.label)}
+                  onMouseLeave={closeSoon}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                    onClick={() => setOpenGroup(isOpen ? null : group.label)}
+                    className={`${navLinkClass(groupIsActive(group.items))} inline-flex items-center gap-1`}
+                    style={{ fontWeight: 500 }}
+                  >
+                    {group.label}
+                    <ChevronDown size={13} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  {isOpen && (
+                    <div
+                      onMouseEnter={() => openNow(group.label)}
+                      onMouseLeave={closeSoon}
+                      className="absolute left-0 top-full pt-3 z-50"
+                    >
+                      <div className="min-w-[15rem] rounded-xl border border-gray-100 bg-white shadow-xl overflow-hidden py-1.5">
+                        {group.items.map((item) => (
+                          <button
+                            key={item.path}
+                            onClick={() => { setOpenGroup(null); goTo(item.path); }}
+                            className={`w-full text-left px-4 py-2.5 text-[0.85rem] transition-colors cursor-pointer ${
+                              isActive(item.path)
+                                ? "text-brand-primary bg-brand-light"
+                                : "text-gray-600 hover:text-brand-primary hover:bg-brand-light/50"
+                            }`}
+                            style={{ fontWeight: isActive(item.path) ? 600 : 500 }}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Standalone About — dropped when the brand groups it under a nav group. */}
+            {brand.aboutPath && !brand.navGroups && (
+              <button onClick={() => goTo(brand.aboutPath!)} className={navLinkClass(isActive(brand.aboutPath))} style={{ fontWeight: 500 }}>About</button>
             )}
             {brand.contactPath && (
-              <button onClick={() => goTo(brand.contactPath!)} className="hover:text-brand-primary transition-colors cursor-pointer" style={{ fontWeight: 500 }}>Contact</button>
+              <button onClick={() => goTo(brand.contactPath!)} className={navLinkClass(isActive(brand.contactPath))} style={{ fontWeight: 500 }}>Contact</button>
             )}
           </nav>
 
@@ -128,7 +206,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-1">
-          {brand.locations.length <= 1 && (
+          {showContactStrip && (
             <div className="flex items-center gap-4 text-[0.8rem] text-gray-500 pb-3 mb-2 border-b border-gray-100">
               <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-accent" /> {primaryPhone}</span>
               <span className="flex items-center gap-1.5"><Clock size={12} className="text-brand-accent" /> {primaryHoursLabel}</span>
@@ -158,7 +236,25 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
               <ChevronRight size={16} className="text-gray-400" />
             </button>
           )}
-          {brand.aboutPath && (
+          {/* Grouped items — flattened into a labelled block on mobile (no hover). */}
+          {brand.navGroups?.map((group) => (
+            <div key={group.label} className="pt-2">
+              <p className="px-0 pb-1 text-[0.72rem] uppercase tracking-widest text-gray-400" style={{ fontWeight: 700 }}>{group.label}</p>
+              {group.items.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => goTo(item.path)}
+                  className={`flex items-center justify-between w-full py-2.5 text-[0.9rem] cursor-pointer ${isActive(item.path) ? "text-brand-primary" : "text-gray-700"}`}
+                  style={{ fontWeight: isActive(item.path) ? 600 : 500 }}
+                >
+                  {item.label}
+                  <ChevronRight size={16} className="text-gray-400" />
+                </button>
+              ))}
+            </div>
+          ))}
+
+          {brand.aboutPath && !brand.navGroups && (
             <button
               onClick={() => goTo(brand.aboutPath!)}
               className="flex items-center justify-between w-full py-2.5 text-gray-700 text-[0.9rem] cursor-pointer"
@@ -171,8 +267,8 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
           {brand.contactPath && (
             <button
               onClick={() => goTo(brand.contactPath!)}
-              className="flex items-center justify-between w-full py-2.5 text-gray-700 text-[0.9rem] cursor-pointer"
-              style={{ fontWeight: 500 }}
+              className={`flex items-center justify-between w-full py-2.5 text-[0.9rem] cursor-pointer ${isActive(brand.contactPath) ? "text-brand-primary" : "text-gray-700"}`}
+              style={{ fontWeight: isActive(brand.contactPath) ? 600 : 500 }}
             >
               Contact
               <ChevronRight size={16} className="text-gray-400" />

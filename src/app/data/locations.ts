@@ -133,6 +133,32 @@ export const healthcheckLocations: PharmacyLocation[] = [
   },
 ];
 
+/**
+ * Kepple Lane Pharmacy — single branch in Garstang, Lancashire. Open 72 hours
+ * a week, with a midday break Monday–Friday (hence the two-range strings).
+ */
+const kepplelaneHours = [
+  { day: "Monday - Friday", hours: "8:30 AM - 12:30 PM, 2:00 PM - 9:00 PM" },
+  { day: "Saturday", hours: "12:00 PM - 9:00 PM" },
+  { day: "Sunday", hours: "8:00 AM - 4:00 PM" },
+];
+
+export const kepplelaneLocations: PharmacyLocation[] = [
+  {
+    id: "garstang",
+    name: "Kepple Lane Pharmacy — Garstang",
+    shortName: "Garstang",
+    address: "Kepple Lane, Garstang, Preston, Lancashire, PR3 1PB",
+    phone: "01995 607399",
+    email: "pharmacy.fjd50@nhs.net",
+    lat: 53.8965,
+    lng: -2.7742,
+    openingHours: kepplelaneHours,
+    googleMapsEmbedUrl: embed("Kepple Lane Pharmacy, Kepple Lane, Garstang, Preston PR3 1PB"),
+    isDefault: true,
+  },
+];
+
 /** Straight-line distance in miles between two coordinates (Haversine). */
 export function distanceMiles(
   a: { lat: number; lng: number },
