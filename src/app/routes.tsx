@@ -22,7 +22,10 @@ import DispensingProcessPageKepple from "./pages/DispensingProcessPageKepple";
 import DeliveriesPageKepple from "./pages/DeliveriesPageKepple";
 import RolesPageKepple from "./pages/RolesPageKepple";
 import UpdatesPageKepple from "./pages/UpdatesPageKepple";
-import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand } from "./branding";
+import LandingPageCentral from "./pages/LandingPageCentral";
+import AboutPageCentral from "./pages/AboutPageCentral";
+import ContactPageCentral from "./pages/ContactPageCentral";
+import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand } from "./branding";
 
 // Under GitHub Pages the app is served from /<repo>/, so routing is scoped to
 // Vite's configured base (BASE_URL). Locally this is just "/".
@@ -70,4 +73,11 @@ export const router = createBrowserRouter([
   { path: "/kepple-lane/updates", Component: UpdatesPageKepple },
   { path: "/kepple-lane/book/:serviceId", element: <BookingPage brand={kepplelaneBrand} /> },
   { path: "/kepple-lane/questionnaire/:serviceId", element: <QuestionnairePage brand={kepplelaneBrand} /> },
+
+  // Central Pharmacy (New Quay) — private-first landing, no blog
+  { path: "/central", Component: LandingPageCentral },
+  { path: "/central/about", Component: AboutPageCentral },
+  { path: "/central/contact", Component: ContactPageCentral },
+  { path: "/central/book/:serviceId", element: <BookingPage brand={centralBrand} /> },
+  { path: "/central/questionnaire/:serviceId", element: <QuestionnairePage brand={centralBrand} /> },
 ], { basename });

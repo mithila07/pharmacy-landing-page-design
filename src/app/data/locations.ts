@@ -159,6 +159,29 @@ export const kepplelaneLocations: PharmacyLocation[] = [
   },
 ];
 
+/** Central Pharmacy — independent, family-owned pharmacy in New Quay, west Wales. */
+const centralHours = [
+  { day: "Monday - Friday", hours: "9:00 AM - 5:30 PM" },
+  { day: "Saturday", hours: "Closed" },
+  { day: "Sunday", hours: "Closed" },
+];
+
+export const centralLocations: PharmacyLocation[] = [
+  {
+    id: "newquay",
+    name: "Central Pharmacy — New Quay",
+    shortName: "New Quay",
+    address: "Arfryn, Church Street, New Quay, Ceredigion, SA45 9NX",
+    phone: "01545 560294",
+    email: "info@centralpharmacynewquay.co.uk",
+    lat: 52.2158,
+    lng: -4.3577,
+    openingHours: centralHours,
+    googleMapsEmbedUrl: embed("Central Pharmacy, Church Street, New Quay SA45 9NX"),
+    isDefault: true,
+  },
+];
+
 /** Straight-line distance in miles between two coordinates (Haversine). */
 export function distanceMiles(
   a: { lat: number; lng: number },

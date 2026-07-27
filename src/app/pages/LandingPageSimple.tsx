@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { ArrowRight, Clock, ShieldCheck, Sparkles } from "lucide-react";
 import { ArrowRight as PhArrowRight } from "@phosphor-icons/react";
 import { Header } from "../components/Header";
@@ -7,6 +7,9 @@ import { HeroSection } from "../components/HeroSection";
 import { HeroSectionStrachans } from "../components/HeroSectionStrachans";
 import { HeroSectionHealthCheck } from "../components/HeroSectionHealthCheck";
 import { HeroSectionKepple } from "../components/HeroSectionKepple";
+import { HeroSectionCentral } from "../components/HeroSectionCentral";
+import { HeroSectionCentralAlt } from "../components/HeroSectionCentralAlt";
+import { DemoVariantSwitcher } from "../components/DemoVariantSwitcher";
 import { ReviewsSection } from "../components/ReviewsSection";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
 import { BlogTeaserSection } from "../components/BlogTeaserSection";
@@ -154,12 +157,63 @@ const kepplePrivateCards: CardItem[] = [
   },
 ];
 
+/** Central Pharmacy (New Quay) — its own private mix: travel/vaccination-led,
+ *  with the coastal clinic's headline offers (yellow fever, microsuction, ED). */
+const centralPrivateCards: CardItem[] = [
+  {
+    id: "prv-travel-consult",
+    imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "Antimalarials & full travel clinic" },
+  },
+  {
+    id: "prv-yellowfever",
+    imageUrl: "https://images.unsplash.com/photo-1584362917165-526a968579e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "Certificate issued on the day" },
+  },
+  {
+    id: "prv-meningitis",
+    imageUrl: "https://images.unsplash.com/photo-1615486511484-92e172cc4fe0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "For Hajj & Umrah travel" },
+  },
+  {
+    id: "prv-ear-wax",
+    imageUrl: "https://images.unsplash.com/photo-1758598738326-3bc889d1558d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: Clock, label: "Microsuction appointment" },
+  },
+  {
+    id: "prv-malaria",
+    imageUrl: "https://images.unsplash.com/photo-1611242320536-f12d3541249b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "Advice tailored to your trip" },
+  },
+  {
+    id: "prv-ed",
+    imageUrl: "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=900",
+    ctaLabel: "Book this service",
+    accent: "private",
+    highlight: { icon: ShieldCheck, label: "Discreet, confidential consultation" },
+  },
+];
+
 /** Garstang trades split shifts Mon–Fri, so its structured data needs its own spec. */
 const KEPPLE_HOURS_SPEC = [
   { "@type": "OpeningHoursSpecification" as const, dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:30", closes: "12:30" },
   { "@type": "OpeningHoursSpecification" as const, dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "14:00", closes: "21:00" },
   { "@type": "OpeningHoursSpecification" as const, dayOfWeek: "Saturday", opens: "12:00", closes: "21:00" },
   { "@type": "OpeningHoursSpecification" as const, dayOfWeek: "Sunday", opens: "08:00", closes: "16:00" },
+];
+
+const CENTRAL_HOURS_SPEC = [
+  { "@type": "OpeningHoursSpecification" as const, dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:00", closes: "17:30" },
 ];
 
 const allServices = [...nhsServices, ...privateServices];
@@ -268,74 +322,92 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         title: "Kepple Lane Pharmacy — Garstang | NHS & Private Pharmacy Services",
         description: "NHS Pharmacy First, dispensing and private clinics at Kepple Lane Pharmacy in Garstang, Lancashire. Open seven days a week — travel vaccinations, ear microsuction, weight management and more. Book online.",
       }
+    : brand.id === "central"
+    ? {
+        title: "Central Pharmacy — New Quay | NHS & Private Pharmacy Services",
+        description: "Independent, family-owned Central Pharmacy on Church Street, New Quay — serving Ceredigion for over 35 years. Private travel clinics, vaccinations, ear microsuction and NHS services. Book online.",
+      }
     : {
         title: `${brand.name} | NHS & Private Community Pharmacy`,
         description: `${brand.name} offers NHS Pharmacy First, vaccinations and private clinics. Book a same-day pharmacist appointment online — no GP referral needed.`,
       };
-  useSeo({ ...seo, path: brand.basePath || "/" });
+  useSeo({ ...seo, path: brand.basePath || "/", favicon: brand.favicon });
 
   const isHC = brand.id === "healthcheck";
   const isKL = brand.id === "kepplelane";
-  const privateCardsForBrand = isKL ? kepplePrivateCards : privateCards;
+  const isCentral = brand.id === "central";
+  const privateCardsForBrand = isKL ? kepplePrivateCards : isCentral ? centralPrivateCards : privateCards;
+
+  // Demo toggle: /central?hero=carousel renders the alternative full-width
+  // carousel hero. Any other value (or none) keeps the default hero.
+  const [searchParams] = useSearchParams();
+  const useCentralAltHero = isCentral && searchParams.get("hero") === "carousel";
+
+  const nhsSection = (
+    <section id="nhs-services" className="relative py-20 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-light/60 via-white to-white" />
+      <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-brand-primary/5 rounded-full blur-3xl" />
+      <div className="relative max-w-7xl mx-auto px-4">
+        <div className="text-center mb-10 max-w-2xl mx-auto">
+          <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
+            {isHC ? <><span className="hc-swoosh-text">Free NHS</span> Services</> : isKL ? <><span className="kl-grad-text">NHS</span> Pharmacy First</> : isCentral ? <><span className="cp-swoosh-text">NHS</span> services</> : "NHS Pharmacy First"}
+          </h2>
+          <p className="text-gray-600 text-[1rem] leading-relaxed">
+            {isHC
+              ? "Get fast, expert treatment for 7 common conditions without seeing your GP. Our pharmacists can assess you and supply prescription medicines where appropriate — fully funded by the NHS, at no cost to you."
+              : "Get free, fast treatment for 7 common conditions without seeing your GP. Our pharmacists can assess you and supply prescription medicines where appropriate — at no cost."}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {pharmacyFirstCards.map((c) => (
+            <ServiceCard key={c.id} item={c} brand={brand} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+
+  const privateSection = (
+    <section id="private-services" className="relative py-20 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-brand-light-alt/40 to-white" />
+      <div className="absolute bottom-20 left-0 w-[400px] h-[400px] bg-brand-secondary/8 rounded-full blur-3xl" />
+      <div className="relative max-w-7xl mx-auto px-4">
+        <div className="text-center mb-10 max-w-2xl mx-auto">
+          <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
+            {isHC ? <><span className="hc-swoosh-text">Private clinics</span> at your pharmacy</> : isKL ? <><span className="kl-grad-text">Private clinics</span> at your pharmacy</> : isCentral ? <><span className="cp-swoosh-text">Private clinics</span> at your pharmacy</> : "Private clinics at your pharmacy"}
+          </h2>
+          <p className="text-gray-600 text-[1rem] leading-relaxed">Skip the GP queue. Book one of our most-requested private services in minutes — delivered by trained pharmacists in a private consultation room.</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {privateCardsForBrand.map((c) => (
+            <ServiceCard key={c.id} item={c} brand={brand} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 
   return (
     <div className={`min-h-screen bg-white ${brand.themeClass}`}>
       <JsonLd
         data={pharmacyGraph(
           brand,
-          isHC ? ["Bradford", "West Yorkshire"] : isKL ? ["Garstang", "Preston", "Lancashire"] : undefined,
-          isKL ? { addressRegion: "Lancashire", hoursSpec: KEPPLE_HOURS_SPEC } : undefined,
+          isHC ? ["Bradford", "West Yorkshire"] : isKL ? ["Garstang", "Preston", "Lancashire"] : isCentral ? ["New Quay", "Ceredigion", "Cardigan Bay", "Wales"] : undefined,
+          isKL ? { addressRegion: "Lancashire", hoursSpec: KEPPLE_HOURS_SPEC } : isCentral ? { addressRegion: "Ceredigion", hoursSpec: CENTRAL_HOURS_SPEC } : undefined,
         )}
       />
       <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCardsForBrand.map((c) => c.id)]} />
-      {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : <HeroSection />}
+      {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : <HeroSection />}
 
-      {/* NHS Pharmacy First */}
-      <section id="nhs-services" className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-light/60 via-white to-white" />
-        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-brand-primary/5 rounded-full blur-3xl" />
-        <div className="relative max-w-7xl mx-auto px-4">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
-              {isHC ? <><span className="hc-swoosh-text">Free NHS</span> Services</> : isKL ? <><span className="kl-grad-text">NHS</span> Pharmacy First</> : "NHS Pharmacy First"}
-            </h2>
-            <p className="text-gray-600 text-[1rem] leading-relaxed">
-              {isHC
-                ? "Get fast, expert treatment for 7 common conditions without seeing your GP. Our pharmacists can assess you and supply prescription medicines where appropriate — fully funded by the NHS, at no cost to you."
-                : "Get free, fast treatment for 7 common conditions without seeing your GP. Our pharmacists can assess you and supply prescription medicines where appropriate — at no cost."}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {pharmacyFirstCards.map((c) => (
-              <ServiceCard key={c.id} item={c} brand={brand} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Private Services */}
-      <section id="private-services" className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-brand-light-alt/40 to-white" />
-        <div className="absolute bottom-20 left-0 w-[400px] h-[400px] bg-brand-secondary/8 rounded-full blur-3xl" />
-        <div className="relative max-w-7xl mx-auto px-4">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mb-3" style={{ fontWeight: 700 }}>
-              {isHC ? <><span className="hc-swoosh-text">Private clinics</span> at your pharmacy</> : isKL ? <><span className="kl-grad-text">Private clinics</span> at your pharmacy</> : "Private clinics at your pharmacy"}
-            </h2>
-            <p className="text-gray-600 text-[1rem] leading-relaxed">Skip the GP queue. Book one of our most-requested private services in minutes — delivered by trained pharmacists in a private consultation room.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {privateCardsForBrand.map((c) => (
-              <ServiceCard key={c.id} item={c} brand={brand} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* NHS + Private service sections. Central leads with private clinics
+          (its main draw); every other brand leads with NHS. */}
+      {isCentral ? <>{privateSection}{nhsSection}</> : <>{nhsSection}{privateSection}</>}
 
       {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : <ReviewsSection />}
       {brand.blogPath && <BlogTeaserSection brand={brand} />}
+      {isCentral && <DemoVariantSwitcher />}
       <FaqSection brand={brand} />
       {/* Inline "Find Us" only for single-location brands; multi-location brands use a dedicated Contact page. */}
       {!brand.contactPath && <ContactSection brand={brand} />}

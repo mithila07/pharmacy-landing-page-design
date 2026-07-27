@@ -49,13 +49,16 @@ type SeoInput = {
   type?: "website" | "article";
   /** false → noindex (use for transactional/utility pages). */
   index?: boolean;
+  /** Per-brand favicon href (e.g. the square logo mark). Sets <link rel="icon"> at runtime. */
+  favicon?: string;
 };
 
-export function useSeo({ title, description, path, image = SITE.ogImage, type = "website", index = true }: SeoInput) {
+export function useSeo({ title, description, path, image = SITE.ogImage, type = "website", index = true, favicon }: SeoInput) {
   useEffect(() => {
     const url = abs(path ?? window.location.pathname);
     const img = abs(image);
     document.title = title;
+    if (favicon) upsertLink("icon", favicon);
     upsertMeta("name", "description", description);
     upsertMeta("name", "robots", index ? "index, follow" : "noindex, nofollow");
     upsertLink("canonical", url);
@@ -69,7 +72,7 @@ export function useSeo({ title, description, path, image = SITE.ogImage, type = 
     upsertMeta("name", "twitter:title", title);
     upsertMeta("name", "twitter:description", description);
     upsertMeta("name", "twitter:image", img);
-  }, [title, description, path, image, type, index]);
+  }, [title, description, path, image, type, index, favicon]);
 }
 
 export function JsonLd({ data }: { data: unknown }) {

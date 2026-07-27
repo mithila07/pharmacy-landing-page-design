@@ -7,12 +7,21 @@ import { pharmacyInfo, nhsServices, privateServices } from "../data/services";
 import { carefirstBrand, type Brand } from "../branding";
 
 type HeaderProps = {
-  /** When provided, replaces "Order Prescription" with a "Book Appointment Now" button
-   *  that opens a modal listing these service IDs for direct booking. */
+  /** Service IDs offered in the "Book Appointment Now" picker modal. The landing
+   *  passes its own featured list; other pages fall back to DEFAULT_BOOK_SERVICES
+   *  so every page shows the same booking CTA. */
   bookNowServices?: string[];
   /** Brand identity + theme scope. Defaults to CareFirst. */
   brand?: Brand;
 };
+
+/** Fallback booking menu for pages that don't pass their own list (About, Contact, etc.):
+ *  the 7 NHS Pharmacy First conditions plus the most-requested private clinics. */
+const DEFAULT_BOOK_SERVICES = [
+  "nhs-pf-sinusitis", "nhs-pf-sore-throat", "nhs-pf-earache", "nhs-pf-insect-bite",
+  "nhs-pf-impetigo", "nhs-pf-shingles", "nhs-pf-uti",
+  "prv-travel-consult", "prv-ear-wax", "prv-weight-consult", "prv-flu-private",
+];
 
 export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps = {}) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -54,9 +63,11 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
     : "Mon–Fri 8AM–8PM";
   /** Single-branch brands show phone + hours beside the logo, unless opted out. */
   const showContactStrip = brand.locations.length <= 1 && !brand.hideHeaderContact;
-  const bookableServices = bookNowServices
-    ? bookNowServices.map((id) => allServices.find((s) => s.id === id)).filter((s): s is NonNullable<typeof s> => Boolean(s))
-    : [];
+  // Every page shows the booking picker: use the page's own list, else the default.
+  const bookServiceIds = bookNowServices ?? DEFAULT_BOOK_SERVICES;
+  const bookableServices = bookServiceIds
+    .map((id) => allServices.find((s) => s.id === id))
+    .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -176,26 +187,13 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
 
           {/* Right: CTA */}
           <div className="flex items-center gap-3">
-            {bookNowServices ? (
-              <button
-                onClick={() => setBookOpen(true)}
-                className="hc-btn-grad-green hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] transition-all cursor-pointer"
-                style={{ fontWeight: 600 }}
-              >
-                {isHC ? <PhCalendar size={15} weight="duotone" /> : <Calendar size={14} />} Book Appointment Now
-              </button>
-            ) : (
-              <a
-                href="https://sandbox3.gallezone.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hc-btn-grad-green hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] transition-all cursor-pointer no-underline"
-                style={{ fontWeight: 600 }}
-              >
-                Order Prescription
-                <ChevronRight size={14} />
-              </a>
-            )}
+            <button
+              onClick={() => setBookOpen(true)}
+              className="hc-btn-grad-green hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] transition-all cursor-pointer"
+              style={{ fontWeight: 600 }}
+            >
+              {isHC ? <PhCalendar size={15} weight="duotone" /> : <Calendar size={14} />} Book Appointment Now
+            </button>
             <button className="md:hidden text-gray-600 cursor-pointer" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -274,25 +272,13 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
               <ChevronRight size={16} className="text-gray-400" />
             </button>
           )}
-          {bookNowServices ? (
-            <button
-              onClick={() => { setMobileOpen(false); setBookOpen(true); }}
-              className="hc-btn-grad-green w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer flex items-center justify-center gap-1.5 transition-all"
-              style={{ fontWeight: 600 }}
-            >
-              {isHC ? <PhCalendar size={15} weight="duotone" /> : <Calendar size={14} />} Book Appointment Now
-            </button>
-          ) : (
-            <a
-              href="https://sandbox3.gallezone.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hc-btn-grad-green block w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer no-underline transition-all"
-              style={{ fontWeight: 600 }}
-            >
-              Order Prescription
-            </a>
-          )}
+          <button
+            onClick={() => { setMobileOpen(false); setBookOpen(true); }}
+            className="hc-btn-grad-green w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer flex items-center justify-center gap-1.5 transition-all"
+            style={{ fontWeight: 600 }}
+          >
+            {isHC ? <PhCalendar size={15} weight="duotone" /> : <Calendar size={14} />} Book Appointment Now
+          </button>
         </div>
       )}
 

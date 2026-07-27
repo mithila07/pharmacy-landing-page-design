@@ -4,7 +4,9 @@ import icareLogo from "../assets/icare Full logo dark.svg";
 import icareLogoMark from "../assets/icare Logo mark dark.svg";
 import healthcheckLogo from "../assets/health-check logo.png";
 import kepplelaneLogo from "../assets/kepple-lane-logo.png";
-import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, type PharmacyLocation } from "./data/locations";
+import centralLogo from "../assets/central-pharamcy-logo.svg";
+import centralLogoMark from "../assets/central-pharamcy-logo-mark.svg";
+import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, centralLocations, type PharmacyLocation } from "./data/locations";
 
 /**
  * A brand defines everything that differs between the white-label versions of
@@ -26,6 +28,8 @@ export type Brand = {
   logoIsWordmark: boolean;
   /** Height utility for the header wordmark. Defaults to `h-9`. */
   headerLogoClass?: string;
+  /** Per-brand favicon (usually the square logo mark). Applied at runtime by `useSeo`. */
+  favicon?: string;
   /** Class that re-scopes the `--brand-*` palette. "" = default (root) palette. */
   themeClass: string;
   /** Route prefix for this brand. "" = default brand at the site root. */
@@ -175,6 +179,29 @@ export const kepplelaneBrand: Brand = {
     companyNumber: "[REPLACE — Company No.]",
     superintendent: "[REPLACE — Superintendent Pharmacist]",
     gphcNumber: "[REPLACE — GPhC Reg. No.]",
+  },
+};
+
+export const centralBrand: Brand = {
+  id: "central",
+  name: "Central Pharmacy",
+  tagline: "Your family pharmacy in New Quay",
+  logo: centralLogo,
+  logoMark: centralLogoMark,
+  favicon: centralLogoMark,
+  logoIsWordmark: true,
+  themeClass: "theme-central",
+  basePath: "/central",
+  seoArea: "New Quay",
+  locations: centralLocations,
+  aboutPath: "/central/about",
+  contactPath: "/central/contact",
+  // No blog for this brand.
+  legal: {
+    companyName: "Central Pharmacy",
+    companyNumber: "8120039",
+    superintendent: "Babatunde Cyril Olawoye",
+    gphcNumber: "1043313",
   },
 };
 

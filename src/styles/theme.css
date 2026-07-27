@@ -484,6 +484,118 @@
   }
 }
 
+/* ------------------------------------------------------------------
+ * Central Pharmacy (New Quay) — "Coastal Teal".
+ * Straight from the logo: teal #16A6B7 + bright cyan #18B6CF over a deep
+ * petrol ink #0A3238. Same crisp-clinical language as HealthCheck, but a
+ * single-hue teal identity. Petrol is the readable ink (AA on white);
+ * the vivid teal/cyan are graphics + the signature swoosh. Light mode only.
+ * ------------------------------------------------------------------ */
+.theme-central {
+  --brand-primary: #0a3238;       /* deep petrol — headings, links, nav (AA on white) */
+  --brand-primary-mid: #0e6d78;   /* mid teal — gradient stop */
+  --brand-secondary: #0c8b99;     /* teal — white-text buttons + accent text */
+  --brand-accent: #16a6b7;        /* logo teal — small icons / graphics */
+  --brand-dark: #0a2b30;          /* deep petrol — footer gradient stop */
+  --brand-darkest: #05191c;       /* ink — footer base */
+  --brand-light: #eafafb;         /* crisp teal section wash */
+  --brand-light-alt: #f0fbfc;     /* lighter teal wash */
+  --brand-cta: #f59e0b;           /* warm amber CTA (shared) */
+  --brand-alt: #16a6b7;           /* teal — secondary accent */
+  --brand-light-cyan: #e2f6f9;    /* light teal gradient stop */
+  --brand-primary-hover: #08262b; /* petrol hover on light bg */
+}
+
+/* Titles: solid ink, no gradient — the client prefers fewer colours. The
+ * emphasised phrase simply inherits the heading colour (monochrome titles). */
+.theme-central .cp-swoosh-text {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: inherit;
+}
+/* Section dividers: a single solid hue rather than a multi-stop gradient. */
+.theme-central .cp-swoosh-bar {
+  background: var(--brand-primary);
+}
+
+/* Primary button — matches the landing FAQ button (solid petrol, no gradient),
+ * with a lift + shadow on hover. Applied across the Central site, including the
+ * shared booking/questionnaire `cta-primary`. The navbar keeps its teal button
+ * (hc-btn-grad-green / bg-brand-secondary), which is deliberately not touched. */
+.theme-central .cp-btn-gradient,
+.theme-central .cta-primary {
+  background: var(--brand-primary);
+  color: #fff;
+  border: 0;
+  box-shadow: 0 4px 14px -8px rgba(10, 50, 56, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background-color 0.2s ease;
+}
+.theme-central .cp-btn-gradient:hover,
+.theme-central .cta-primary:hover {
+  background: var(--brand-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px -10px rgba(10, 50, 56, 0.55);
+}
+.theme-central .cp-btn-gradient:active,
+.theme-central .cta-primary:active {
+  transform: translateY(0);
+}
+.theme-central .cp-btn-gradient:disabled,
+.theme-central .cta-primary:disabled {
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+}
+
+/* The shared FAQ button carries `hc-btn-grad-blue` (inert outside HealthCheck) —
+ * give it the same solid-petrol hover lift on Central. Base fill stays the
+ * `bg-brand-primary` utility already on the element. */
+.theme-central .hc-btn-grad-blue {
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background-color 0.2s ease;
+}
+.theme-central .hc-btn-grad-blue:hover {
+  background: var(--brand-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px -10px rgba(10, 50, 56, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-central .cp-btn-gradient,
+  .theme-central .cta-primary,
+  .theme-central .hc-btn-grad-blue {
+    transition: none;
+  }
+  .theme-central .cp-btn-gradient:hover,
+  .theme-central .cta-primary:hover,
+  .theme-central .hc-btn-grad-blue:hover {
+    transform: none;
+  }
+}
+
+/* ── Alternative full-width carousel hero (demo variant) ──
+ * Text rises in on each slide change; the active background image holds a slow
+ * Ken Burns push. Both are disabled under reduced-motion. */
+@keyframes cp-hero-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+.theme-central .cp-hero-rise { animation: cp-hero-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.theme-central .cp-hero-rise-delay { animation-delay: 0.08s; }
+
+@keyframes cp-hero-kenburns {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1.18); }
+}
+.theme-central .cp-hero-kb { animation: cp-hero-kenburns 7000ms ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-central .cp-hero-rise,
+  .theme-central .cp-hero-rise-delay,
+  .theme-central .cp-hero-kb {
+    animation: none;
+  }
+}
+
 /* Strachans — pink "New" chip with the same pulsing glow (reuses the dot keyframes). */
 .theme-strachans .chip-new-pink {
   background: linear-gradient(135deg, #ec4899, #db2777);
