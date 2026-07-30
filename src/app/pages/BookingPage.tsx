@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Calendar, CalendarPlus, Clock, Phone, Mail, CheckCircle, MapPin, Video, PhoneCall, Pencil, ChevronLeft, ChevronRight, ShieldCheck, AlertTriangle, ThumbsUp, Info, ClipboardList, RotateCcw, Home, Zap } from "lucide-react";
+import { ArrowLeft, Calendar, CalendarPlus, Clock, Phone, Mail, CheckCircle, MapPin, Video, PhoneCall, Pencil, ChevronLeft, ChevronRight, ShieldCheck, AlertTriangle, ThumbsUp, Info, ClipboardList, RotateCcw, Home, Zap, CreditCard, Store, Lock } from "lucide-react";
 import { nhsServices, privateServices } from "../data/services";
 import { getServiceContent } from "../data/serviceContent";
 import { ServiceInfoSection } from "../components/ServiceInfoSection";
@@ -10,7 +10,7 @@ import { carefirstBrand, homePath, type Brand } from "../branding";
 import { useResolvedLocation } from "../useLocation";
 import { useSeo, serviceSeo } from "../seo";
 import { getEligibilityFlow, type EligOutcome } from "../data/eligibility";
-import { getBookingConfig, STAGE_LABELS, type StageKind } from "../data/bookingConfig";
+import { getBookingConfig, STAGE_LABELS, NO_PAYMENT, type StageKind, type PaymentConfig } from "../data/bookingConfig";
 import { EligibilityChat, EligibilityGate } from "../components/EligibilityChat";
 
 const allServices = [...nhsServices, ...privateServices];
@@ -207,6 +207,14 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   const [triageOutcome, setTriageOutcome] = useState<EligOutcome | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
 
+  // Payment — admin-configured (see below). `paymentSetting` stands in for the
+  // pharmacy's backend config; there is deliberately NO patient-facing choice of
+  // whether/how to pay. The demo box lets you preview each admin configuration.
+  const initialIsNHS = !!service && service.id.startsWith("nhs-");
+  const [paymentSetting, setPaymentSetting] = useState<"off" | "token" | "online" | "counter">(initialIsNHS ? "off" : "online");
+  const [card, setCard] = useState({ name: "", number: "", expiry: "", cvc: "" });
+  const [payAcknowledged, setPayAcknowledged] = useState(false);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [serviceId]);
@@ -217,14 +225,38 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     setEligibility("pending");
     setTriageOutcome(null);
     setChatOpen(false);
+    setPaymentSetting(service && service.id.startsWith("nhs-") ? "off" : "online");
+    setCard({ name: "", number: "", expiry: "", cvc: "" });
+    setPayAcknowledged(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceId]);
 
   // Backend-configurable journey: the ordered stages, incl. where the questionnaire sits.
   const isNHS = !!service && service.id.startsWith("nhs-");
-  const config = getBookingConfig({ isNHS, hasTriage: !!triageFlow });
+
+  // Admin-configured payment. TOKEN_AMOUNT is the advance booking fee ("token"
+  // amount) used to reduce DNA; the service fee is derived from the price.
+  const TOKEN_AMOUNT = 5;
+  const servicePriceNum = (() => {
+    const m = service?.price?.match(/\d+/);
+    return m ? parseInt(m[0], 10) : 0;
+  })();
+  const payment: PaymentConfig =
+    paymentSetting === "off" ? NO_PAYMENT
+    : paymentSetting === "token" ? { enabled: true, kind: "deposit", method: "online", amount: TOKEN_AMOUNT }
+    : paymentSetting === "online" ? { enabled: true, kind: "service", method: "online", amount: servicePriceNum }
+    : { enabled: true, kind: "service", method: "counter", amount: servicePriceNum };
+
+  const config = getBookingConfig({ isNHS, hasTriage: !!triageFlow, payment });
   const stages = config.steps;
   const stage = stages[stageIdx];
+  const hasPayment = stages.includes("payment");
+
+  // Keep the pointer in range if turning payment off shrinks the journey.
+  useEffect(() => {
+    if (stageIdx > stages.length - 1) setStageIdx(stages.length - 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stages.length]);
 
   // Open the chat automatically as soon as the patient reaches the eligibility stage.
   useEffect(() => {
@@ -303,6 +335,16 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
             <p><span className="text-gray-500">Type:</span> <span style={{ fontWeight: 500 }}>{appointmentType === "face-to-face" ? "Face to Face" : appointmentType === "video" ? "Video Call" : "Telephone"}</span></p>
             <p><span className="text-gray-500">Location:</span> <span style={{ fontWeight: 500 }}>{branch.name} · {branch.address}</span></p>
             <p><span className="text-gray-500">Phone:</span> <span style={{ fontWeight: 500 }}>{contactPhone}</span></p>
+            {payment.enabled && (
+              <p>
+                <span className="text-gray-500">{payment.kind === "deposit" ? "Booking fee:" : "Payment:"}</span>{" "}
+                <span style={{ fontWeight: 500 }}>
+                  {payment.method === "counter"
+                    ? `£${payment.amount.toFixed(2)} due at the pharmacy`
+                    : `£${payment.amount.toFixed(2)} paid${payment.kind === "deposit" ? " (advance booking fee)" : " online"}`}
+                </span>
+              </p>
+            )}
           </div>
 
           <button
@@ -392,6 +434,32 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
               {i < stages.length - 1 && <div className={`flex-1 h-0.5 ${i < stageIdx ? "bg-brand-primary" : "bg-gray-200"}`} />}
             </div>
           ))}
+        </div>
+
+        {/* Admin-config simulation (demo only) — the pharmacy sets payment from
+            the backend; the patient never chooses. Drop this box when the real
+            admin config is wired in. */}
+        <div className="rounded-lg border border-dashed border-brand-primary/40 bg-brand-light/40 p-3 mb-6 flex flex-col lg:flex-row lg:items-center gap-3">
+          <div className="flex items-center gap-2 text-[0.78rem] text-brand-primary shrink-0" style={{ fontWeight: 600 }}>
+            <Info size={14} /> Demo · admin payment config
+          </div>
+          <p className="text-[0.78rem] text-gray-600 flex-1">Set by the pharmacy — not shown as a patient choice:</p>
+          <div className="flex flex-wrap gap-2">
+            {(isNHS
+              ? ([{ v: "off", l: "No payment" }, { v: "token", l: `Advance fee £${TOKEN_AMOUNT}` }] as const)
+              : ([{ v: "off", l: "No payment" }, { v: "token", l: `Advance fee £${TOKEN_AMOUNT}` }, { v: "online", l: `Pay online £${servicePriceNum}` }, { v: "counter", l: `Pay at counter £${servicePriceNum}` }] as const)
+            ).map((opt) => (
+              <button
+                key={opt.v}
+                type="button"
+                onClick={() => setPaymentSetting(opt.v)}
+                className={`px-3 py-1.5 rounded-md text-[0.78rem] border transition-colors cursor-pointer ${paymentSetting === opt.v ? "border-brand-primary bg-brand-primary text-white" : "border-brand-primary/30 text-gray-700 bg-white hover:border-brand-primary/60"}`}
+                style={{ fontWeight: 500 }}
+              >
+                {opt.l}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Eligibility stage */}
@@ -595,7 +663,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           </>
         )}
 
-        {(stage === "details" || stage === "contact") && selectedDate && selectedTime && (
+        {(stage === "details" || stage === "contact" || stage === "payment") && selectedDate && selectedTime && (
           <>
             {/* Pharmacy & Booking Summary */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
@@ -881,17 +949,141 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                     !contactEmail ||
                     (!pdsResult.matched && isNHS && !continuePrivate)
                   }
-                  onClick={() => setSubmitted(true)}
+                  onClick={() => (hasPayment ? goNext() : setSubmitted(true))}
                   className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                   style={{ fontWeight: 600 }}
                 >
-                  Confirm Booking <ChevronRight size={16} />
+                  {hasPayment ? "Continue to payment" : "Confirm Booking"} <ChevronRight size={16} />
                 </button>
                 <p className="text-[0.75rem] text-gray-500 sm:text-right max-w-xs">
-                  By clicking Confirm Booking you agree to our <a href="#" className="text-brand-primary underline">terms and conditions</a> and <a href="#" className="text-brand-primary underline">privacy policy</a>.
+                  By continuing you agree to our <a href="#" className="text-brand-primary underline">terms and conditions</a> and <a href="#" className="text-brand-primary underline">privacy policy</a>.
                 </p>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Payment stage — admin-configured; the patient just follows it. */}
+        {stage === "payment" && payment.enabled && (
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-start gap-3 mb-5">
+              <div className="w-11 h-11 rounded-xl bg-brand-primary/10 flex items-center justify-center shrink-0">
+                {payment.method === "counter" ? <Store size={22} className="text-brand-primary" /> : <CreditCard size={22} className="text-brand-primary" />}
+              </div>
+              <div>
+                <h3 className="text-gray-900 text-[1rem]" style={{ fontWeight: 600 }}>
+                  {payment.kind === "deposit" ? "Secure your appointment" : payment.method === "counter" ? "Payment at the pharmacy" : "Payment"}
+                </h3>
+                <p className="text-[0.85rem] text-gray-600 mt-0.5">
+                  {payment.kind === "deposit"
+                    ? `A £${payment.amount} advance booking fee helps us reduce missed appointments and secures your slot.`
+                    : payment.method === "counter"
+                    ? "Payment for this service is taken over the counter at the pharmacy when you attend."
+                    : "Pay securely online to confirm your booking."}
+                </p>
+              </div>
+            </div>
+
+            {/* Amount */}
+            <div className="rounded-xl border border-brand-primary/20 bg-gradient-to-br from-brand-light to-brand-light-alt p-4 mb-6">
+              <p className="text-[0.75rem] text-gray-500" style={{ fontWeight: 500 }}>
+                {payment.kind === "deposit" ? "Advance booking fee" : "Amount"}{payment.method === "counter" ? " · payable on arrival" : ""}
+              </p>
+              <p className="text-[1.7rem] text-gray-900 leading-tight" style={{ fontWeight: 700 }}>£{payment.amount.toFixed(2)}</p>
+              {payment.kind === "deposit" && isNHS && (
+                <p className="text-[0.78rem] text-gray-500 mt-1">This NHS consultation is free — the fee only secures your appointment.</p>
+              )}
+            </div>
+
+            {payment.method === "online" ? (
+              (() => {
+                const digits = card.number.replace(/\s/g, "");
+                const cardValid = card.name.trim().length > 1 && digits.length >= 12 && card.expiry.trim().length >= 4 && card.cvc.trim().length >= 3;
+                return (
+                  <>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Name on card *</label>
+                        <input value={card.name} onChange={(e) => setCard({ ...card, name: e.target.value })} className="w-full px-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30" placeholder="Name as shown on card" />
+                      </div>
+                      <div>
+                        <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Card number *</label>
+                        <div className="relative">
+                          <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                          <input
+                            inputMode="numeric"
+                            value={card.number}
+                            onChange={(e) => {
+                              const d = e.target.value.replace(/\D/g, "").slice(0, 16);
+                              setCard({ ...card, number: d.replace(/(.{4})/g, "$1 ").trim() });
+                            }}
+                            className="w-full pl-10 pr-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                            placeholder="1234 5678 9012 3456"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="min-w-0">
+                          <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Expiry (MM/YY) *</label>
+                          <input
+                            inputMode="numeric"
+                            value={card.expiry}
+                            onChange={(e) => {
+                              const d = e.target.value.replace(/\D/g, "").slice(0, 4);
+                              setCard({ ...card, expiry: d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d });
+                            }}
+                            className="w-full px-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                            placeholder="MM/YY"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>CVC *</label>
+                          <input
+                            inputMode="numeric"
+                            value={card.cvc}
+                            onChange={(e) => setCard({ ...card, cvc: e.target.value.replace(/\D/g, "").slice(0, 4) })}
+                            className="w-full px-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                            placeholder="123"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-[0.75rem] text-gray-500 mt-3 flex items-center gap-1.5"><Lock size={13} className="text-brand-accent" /> Secure payment — demo only, no real card is charged.</p>
+
+                    <div className="mt-8 flex items-center justify-between gap-3">
+                      <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>
+                      <button
+                        disabled={!cardValid}
+                        onClick={() => setSubmitted(true)}
+                        className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                        style={{ fontWeight: 600 }}
+                      >
+                        <Lock size={15} /> Pay £{payment.amount.toFixed(2)} &amp; confirm
+                      </button>
+                    </div>
+                  </>
+                );
+              })()
+            ) : (
+              <>
+                <label className="flex items-start gap-3 rounded-lg border border-brand-primary/20 bg-brand-light/40 p-4 cursor-pointer">
+                  <input type="checkbox" checked={payAcknowledged} onChange={(e) => setPayAcknowledged(e.target.checked)} className="mt-0.5 w-4 h-4 accent-[var(--brand-primary)] cursor-pointer" />
+                  <span className="text-[0.88rem] text-gray-700">I understand £{payment.amount.toFixed(2)} is payable at the pharmacy when I attend my appointment.</span>
+                </label>
+
+                <div className="mt-8 flex items-center justify-between gap-3">
+                  <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>
+                  <button
+                    disabled={!payAcknowledged}
+                    onClick={() => setSubmitted(true)}
+                    className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    style={{ fontWeight: 600 }}
+                  >
+                    Confirm Booking <ChevronRight size={16} />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
