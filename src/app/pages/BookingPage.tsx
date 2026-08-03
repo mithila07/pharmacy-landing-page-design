@@ -12,6 +12,8 @@ import { useSeo, serviceSeo } from "../seo";
 import { getEligibilityFlow, type EligOutcome } from "../data/eligibility";
 import { getBookingConfig, STAGE_LABELS, NO_PAYMENT, type StageKind, type PaymentConfig } from "../data/bookingConfig";
 import { EligibilityChat, EligibilityGate } from "../components/EligibilityChat";
+import { WeightAssessment, WeightAssessmentGate } from "../components/WeightAssessment";
+import { WEIGHT_SERVICE_ID } from "../data/weightAssessment";
 
 const allServices = [...nhsServices, ...privateServices];
 
@@ -206,6 +208,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   const [eligibility, setEligibility] = useState<"pending" | "passed">("pending");
   const [triageOutcome, setTriageOutcome] = useState<EligOutcome | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
+  const [weightBlocked, setWeightBlocked] = useState(false); // weight health check returned "refer to GP"
 
   // Payment — admin-configured (see below). `paymentSetting` stands in for the
   // pharmacy's backend config; there is deliberately NO patient-facing choice of
@@ -225,6 +228,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     setEligibility("pending");
     setTriageOutcome(null);
     setChatOpen(false);
+    setWeightBlocked(false);
     setPaymentSetting(service && service.id.startsWith("nhs-") ? "off" : "online");
     setCard({ name: "", number: "", expiry: "", cvc: "" });
     setPayAcknowledged(false);
@@ -233,6 +237,10 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
 
   // Backend-configurable journey: the ordered stages, incl. where the questionnaire sits.
   const isNHS = !!service && service.id.startsWith("nhs-");
+  // Weight management uses a dedicated stepped health-check wizard (BMI + PGD
+  // screening) as its triage gate, in place of the chat-style eligibility flow.
+  const isWeightMgmt = service?.id === WEIGHT_SERVICE_ID;
+  const hasTriage = !!triageFlow || isWeightMgmt;
 
   // Admin-configured payment. TOKEN_AMOUNT is the advance booking fee ("token"
   // amount) used to reduce DNA; the service fee is derived from the price.
@@ -247,7 +255,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     : paymentSetting === "online" ? { enabled: true, kind: "service", method: "online", amount: servicePriceNum }
     : { enabled: true, kind: "service", method: "counter", amount: servicePriceNum };
 
-  const config = getBookingConfig({ isNHS, hasTriage: !!triageFlow, payment });
+  const config = getBookingConfig({ isNHS, hasTriage, payment });
   const stages = config.steps;
   const stage = stages[stageIdx];
   const hasPayment = stages.includes("payment");
@@ -397,7 +405,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     <div className={`min-h-screen bg-gradient-to-b from-brand-secondary/5 via-gray-50 to-white ${brand.themeClass}`}>
       {/* Header */}
       <div className="bg-white shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => navigate(homePath(brand))} className="text-gray-500 hover:text-gray-700 cursor-pointer"><ArrowLeft size={20} /></button>
           <div>
             <h1 className="text-[1.1rem] text-gray-900" style={{ fontWeight: 700 }}>Book: {service.name}</h1>
@@ -413,7 +421,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
 
       {/* Branch / ConX location — clearly visible, persists across steps */}
       {multiBranch && (
-        <div className="max-w-3xl mx-auto px-4 pt-5">
+        <div className="max-w-4xl mx-auto px-4 pt-5">
           <BranchSelector
             selected={branch}
             reason={branchReason}
@@ -425,7 +433,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
       )}
 
       {/* Steps indicator — driven by the configured stage order */}
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="flex items-center gap-2 mb-8">
           {stages.map((kind, i) => (
             <div key={kind} className="flex items-center gap-2 flex-1">
@@ -462,20 +470,22 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           </div>
         </div>
 
-        {/* Eligibility stage */}
-        {stage === "triage" && triageFlow && (
+        {/* Eligibility / health-check stage */}
+        {stage === "triage" && hasTriage && (
           eligibility === "passed" ? (
             <div className="max-w-xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 text-center">
               <span className="w-14 h-14 rounded-2xl bg-brand-secondary/12 text-brand-green-ink flex items-center justify-center mx-auto mb-4"><ShieldCheck size={26} /></span>
-              <h3 className="text-gray-900 text-[1.25rem] mb-2" style={{ fontWeight: 700 }}>Eligibility confirmed</h3>
+              <h3 className="text-gray-900 text-[1.25rem] mb-2" style={{ fontWeight: 700 }}>{isWeightMgmt ? "Health check complete" : "Eligibility confirmed"}</h3>
               <p className="text-gray-500 text-[0.92rem] max-w-md mx-auto mb-6">You're good to go — let's get the rest of your booking sorted.</p>
               <div className="flex items-center justify-center gap-3">
                 {stageIdx > 0 && <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>}
                 <button onClick={goNext} className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg cursor-pointer inline-flex items-center gap-2" style={{ fontWeight: 600 }}>Continue <ChevronRight size={16} /></button>
               </div>
             </div>
-          ) : (
+          ) : triageFlow ? (
             <EligibilityGate flow={triageFlow} brand={brand} outcome={triageOutcome} onStart={() => setChatOpen(true)} />
+          ) : (
+            <WeightAssessmentGate brand={brand} blocked={weightBlocked} onStart={() => setChatOpen(true)} />
           )
         )}
 
@@ -1113,6 +1123,24 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
             window.scrollTo({ top: 0, behavior: "instant" });
           }}
           onOutcome={(o) => setTriageOutcome(o)}
+        />
+      )}
+
+      {/* Weight-management health check — stepped wizard, gates booking. Clinical
+          alerts run silently; the patient only sees BMI + a friendly result. */}
+      {isWeightMgmt && (
+        <WeightAssessment
+          brand={brand}
+          open={chatOpen}
+          onClose={() => setChatOpen(false)}
+          onEligible={() => {
+            setEligibility("passed");
+            setWeightBlocked(false);
+            setChatOpen(false);
+            if (stage === "triage") setStageIdx((i) => i + 1);
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }}
+          onResult={(eligible) => setWeightBlocked(!eligible)}
         />
       )}
     </div>

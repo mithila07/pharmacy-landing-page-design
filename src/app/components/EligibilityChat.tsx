@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router";
 import { X, ShieldCheck, AlertTriangle, Stethoscope, Leaf, Ban, ArrowRight, Phone, RotateCcw, MessageCircle, Check, Sparkles } from "lucide-react";
 import type { Brand } from "../branding";
-import { evalAuto, type EligibilityFlow, type EligOutcome, type OutcomeKind, type EligQuestion, type YesNoQuestion, type MultiQuestion } from "../data/eligibility";
+import { evalAuto, type EligibilityFlow, type EligOutcome, type OutcomeKind, type EligQuestion, type YesNoQuestion, type SingleQuestion, type MultiQuestion, type FlagOption } from "../data/eligibility";
 import { privateServices } from "../data/services";
 
 const priceFor = (id?: string) => {
@@ -66,7 +66,7 @@ function OutcomeActions({ outcome, brand, onEligible, onRetake, onClose }: { out
   );
 }
 
-function OutcomeCard({ outcome, brand, onEligible, onRetake, onClose }: { outcome: EligOutcome; brand: Brand; onEligible: () => void; onRetake: () => void; onClose: () => void }) {
+function OutcomeCard({ outcome, brand, cautions, onEligible, onRetake, onClose }: { outcome: EligOutcome; brand: Brand; cautions: string[]; onEligible: () => void; onRetake: () => void; onClose: () => void }) {
   const s = KIND_STYLE[outcome.kind];
   const Icon = s.icon;
   return (
@@ -79,6 +79,19 @@ function OutcomeCard({ outcome, brand, onEligible, onRetake, onClose }: { outcom
         </div>
       </div>
       <p className="text-[0.9rem] text-brand-primary/70 leading-relaxed mb-4">{outcome.message}</p>
+
+      {/* Cautions the pharmacist should review — only on the eligible path. */}
+      {outcome.kind === "eligible" && cautions.length > 0 && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3.5">
+          <p className="flex items-center gap-1.5 text-[0.82rem] text-amber-800 mb-1.5" style={{ fontWeight: 700 }}>
+            <AlertTriangle size={14} /> The pharmacist will review these with you
+          </p>
+          <ul className="list-disc pl-5 space-y-1 text-[0.82rem] text-amber-800/90 leading-snug">
+            {cautions.map((c, i) => <li key={i}>{c}</li>)}
+          </ul>
+        </div>
+      )}
+
       <OutcomeActions outcome={outcome} brand={brand} onEligible={onEligible} onRetake={onRetake} onClose={onClose} />
     </div>
   );
@@ -101,6 +114,9 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
   const [messages, setMessages] = useState<Msg[]>([]);
   const [currentQ, setCurrentQ] = useState<string | null>(null);
   const [multiSel, setMultiSel] = useState<Set<number>>(new Set());
+  const [pendingSingle, setPendingSingle] = useState<number | null>(null); // single option awaiting "specify" text
+  const [specifyText, setSpecifyText] = useState("");
+  const [cautions, setCautions] = useState<string[]>([]);
   const [outcome, setOutcome] = useState<EligOutcome | null>(null);
   const [typing, setTyping] = useState(false);
 
@@ -108,6 +124,7 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
   const pushBot = (text: string, help?: string) => setMessages((m) => [...m, { id: nextId(), role: "bot", text, help }]);
   const pushUser = (text: string) => setMessages((m) => [...m, { id: nextId(), role: "user", text }]);
   const pushNote = (text: string) => setMessages((m) => [...m, { id: nextId(), role: "note", text }]);
+  const addCaution = (note: string) => setCautions((c) => (c.includes(note) ? c : [...c, note]));
   const clearTimers = () => { timers.current.forEach((t) => clearTimeout(t)); timers.current = []; };
   const after = (ms: number, fn: () => void) => { const t = window.setTimeout(fn, ms); timers.current.push(t); };
 
@@ -128,6 +145,8 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
       setTyping(false);
       pushBot(q.text, q.help);
       setMultiSel(new Set());
+      setPendingSingle(null);
+      setSpecifyText("");
       setCurrentQ(qid);
     });
   };
@@ -151,23 +170,55 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
     const q = flow.questions[currentQ] as YesNoQuestion;
     pushUser(val === "yes" ? "Yes" : "No");
     setCurrentQ(null);
+    // A flagged answer either hard-stops or records a caution before continuing.
+    if (q.flag && q.flag.on === val) {
+      if (q.flag.level === "stop") return resolve(flow.stop!);
+      if (q.flag.level === "caution" && q.flag.note) addCaution(q.flag.note);
+    }
     resolve(val === "yes" ? q.yes : q.no);
   };
 
-  const chooseSingle = (label: string, goto: string) => {
-    pushUser(label);
+  const chooseSingle = (opt: FlagOption, text?: string) => {
+    const extra = text?.trim();
+    pushUser(opt.label + (extra ? ` — ${extra}` : ""));
     setCurrentQ(null);
-    resolve(goto);
+    setPendingSingle(null);
+    if (opt.flag === "stop") return resolve(flow.stop!);
+    if (opt.flag === "caution" && opt.note) addCaution(opt.note);
+    resolve(opt.goto!);
+  };
+
+  const onSingleClick = (i: number) => {
+    const q = flow.questions[currentQ!] as SingleQuestion;
+    const opt = q.options[i];
+    if (opt.specify) { setPendingSingle(i); setSpecifyText(""); }
+    else chooseSingle(opt);
+  };
+
+  const toggleMulti = (i: number) => {
+    const q = flow.questions[currentQ!] as MultiQuestion;
+    const opt = q.options[i];
+    setMultiSel((s) => {
+      const n = new Set(s);
+      if (n.has(i)) { n.delete(i); return n; }
+      if (opt.exclusive) return new Set([i]); // "None of the above" clears the rest
+      q.options.forEach((o, idx) => { if (o.exclusive) n.delete(idx); }); // any real answer clears "None"
+      n.add(i);
+      return n;
+    });
   };
 
   const submitMulti = () => {
     if (!currentQ) return;
     const q = flow.questions[currentQ] as MultiQuestion;
     const selected = q.options.filter((_, i) => multiSel.has(i));
-    pushUser(selected.length ? selected.map((o) => o.label).join(", ") : "None of these");
+    const extra = specifyText.trim();
+    pushUser((selected.length ? selected.map((o) => o.label).join(", ") : "None of these") + (extra ? ` — ${extra}` : ""));
     setCurrentQ(null);
-    const flagged = selected.find((o) => o.goto);
-    resolve(flagged?.goto ?? q.next);
+    if (selected.some((o) => o.flag === "stop")) return resolve(flow.stop!);
+    selected.forEach((o) => { if (o.flag === "caution" && o.note) addCaution(o.note); });
+    const legacy = selected.find((o) => o.goto); // back-compat with goto-branching flows
+    resolve(legacy?.goto ?? q.next);
   };
 
   const start = () => {
@@ -176,6 +227,9 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
     setOutcome(null);
     setCurrentQ(null);
     setMultiSel(new Set());
+    setPendingSingle(null);
+    setSpecifyText("");
+    setCautions([]);
     setTyping(false);
     setMessages([{ id: nextId(), role: "bot", text: flow.intro }]);
     ask(flow.start);
@@ -191,13 +245,40 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing, outcome]);
 
+  // Lock background scroll while the modal is open, so the page behind can't
+  // scroll instead of the modal's own scroll areas.
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
   if (!open) return null;
 
   const q = currentQ ? flow.questions[currentQ] : null;
+  const tag = flow.tag ?? "NHS Pharmacy First";
+  const multiNeedsSpecify = q && q.type === "multi" && q.options.some((o, i) => multiSel.has(i) && o.specify);
 
   return createPortal(
-    <div className={`fixed inset-0 z-[70] flex items-end sm:items-center justify-center sm:p-4 bg-brand-primary/45 backdrop-blur-sm ${brand.themeClass}`} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="bg-[#f6faf8] w-full sm:max-w-lg sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col h-[90vh] sm:h-[82vh] overflow-hidden">
+    <div
+      className={`elig-overlay fixed inset-0 z-[70] flex items-end justify-center bg-brand-primary/45 backdrop-blur-sm ${brand.themeClass}`}
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${flow.condition} eligibility check`}
+    >
+      {/* Tall bottom-up drawer — a big container so the question and long option
+          lists both have plenty of room, on mobile and desktop alike. */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="elig-panel bg-[#f6f8f8] flex flex-col overflow-hidden shadow-2xl w-full max-w-3xl h-[94dvh] rounded-t-3xl"
+      >
+        {/* Grab handle — signals the drawer */}
+        <div className="flex justify-center pt-2.5 pb-1 shrink-0">
+          <span className="h-1.5 w-10 rounded-full bg-brand-primary/15" />
+        </div>
+
         {/* Header */}
         <div className="flex items-center gap-3 p-4 border-b bg-white shrink-0" style={{ borderColor: "var(--icare-line, #d3e3d8)" }}>
           <span className="relative w-10 h-10 rounded-full bg-brand-light flex items-center justify-center shrink-0">
@@ -205,14 +286,14 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
             <span className="absolute -bottom-0 -right-0 w-3 h-3 rounded-full bg-brand-secondary border-2 border-white" />
           </span>
           <div className="flex-1 min-w-0">
-            <p className="text-brand-primary text-[0.95rem] leading-tight" style={{ fontWeight: 700 }}>iCare eligibility check</p>
-            <p className="text-brand-primary/50 text-[0.78rem] truncate">{flow.condition} · NHS Pharmacy First</p>
+            <p className="text-brand-primary text-[0.95rem] leading-tight" style={{ fontWeight: 700 }}>{brand.name} eligibility check</p>
+            <p className="text-brand-primary/50 text-[0.78rem] truncate">{flow.condition} · {tag}</p>
           </div>
           <button onClick={onClose} className="text-brand-primary/40 hover:text-brand-primary cursor-pointer p-1 shrink-0" aria-label="Close"><X size={22} /></button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-5 space-y-3">
+        <div className="flex-1 min-h-0 overflow-y-auto px-4 py-5 space-y-3">
           {messages.map((m) => (
             m.role === "note" ? (
               <div key={m.id} className="flex justify-center">
@@ -252,14 +333,14 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
 
           {outcome && (
             <div className="pt-1">
-              <OutcomeCard outcome={outcome} brand={brand} onEligible={onEligible} onRetake={start} onClose={onClose} />
+              <OutcomeCard outcome={outcome} brand={brand} cautions={cautions} onEligible={onEligible} onRetake={start} onClose={onClose} />
             </div>
           )}
           <div ref={endRef} />
         </div>
 
-        {/* Answer bar — options are styled identically so we never suggest an answer */}
-        <div className="shrink-0 border-t bg-white px-4 py-3" style={{ borderColor: "var(--icare-line, #d3e3d8)" }}>
+        {/* Answer dock — options are styled identically so we never suggest an answer */}
+        <div className="shrink-0 border-t bg-white px-4 py-3 shadow-[0_-10px_24px_-16px_rgba(16,24,40,0.18)]" style={{ borderColor: "var(--icare-line, #d3e3d8)" }}>
           {q && !typing ? (
             isYesNo(q) ? (
               <div className="flex gap-3">
@@ -271,28 +352,66 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
               </div>
             ) : q.type === "single" ? (
               <div className="space-y-2">
-                {q.options.map((o) => (
-                  <button key={o.label} onClick={() => chooseSingle(o.label, o.goto)} className="w-full text-left px-4 py-3 rounded-2xl border-2 cursor-pointer transition-colors hover:bg-brand-secondary/5 text-brand-primary" style={{ borderColor: "var(--icare-line, #d3e3d8)", fontWeight: 600 }}>
-                    {o.label}
-                  </button>
-                ))}
+                {/* Options scroll within the bar so long lists never crowd out the question. */}
+                <div className="max-h-[50vh] overflow-y-auto space-y-2 -mr-1 pr-1 overscroll-contain">
+                  {q.options.map((o, i) => {
+                    const isPending = pendingSingle === i;
+                    return (
+                      <button
+                        key={o.label}
+                        onClick={() => onSingleClick(i)}
+                        className={`w-full text-left px-4 py-3 rounded-2xl border-2 cursor-pointer transition-colors text-brand-primary ${isPending ? "border-brand-secondary bg-brand-secondary/8" : "hover:bg-brand-secondary/5"}`}
+                        style={!isPending ? { borderColor: "var(--icare-line, #d3e3d8)", fontWeight: 600 } : { fontWeight: 600 }}
+                      >
+                        {o.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {pendingSingle != null && q.options[pendingSingle].specify && (
+                  <div className="pt-1 space-y-2">
+                    <input
+                      value={specifyText}
+                      onChange={(e) => setSpecifyText(e.target.value)}
+                      autoFocus
+                      placeholder="Please specify"
+                      className="w-full px-4 py-2.5 rounded-2xl border-2 text-[0.9rem] text-brand-primary focus:outline-none focus:border-brand-secondary"
+                      style={{ borderColor: "var(--icare-line, #d3e3d8)" }}
+                    />
+                    <button onClick={() => chooseSingle(q.options[pendingSingle], specifyText)} className="cta cta-primary w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full cursor-pointer" style={{ fontWeight: 700 }}>
+                      Continue <ArrowRight size={15} />
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-2">
-                {q.options.map((o, i) => {
-                  const on = multiSel.has(i);
-                  return (
-                    <button
-                      key={o.label}
-                      onClick={() => setMultiSel((s) => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n; })}
-                      className={`w-full flex items-center gap-3 text-left px-4 py-3 rounded-2xl border-2 cursor-pointer transition-colors ${on ? "border-brand-secondary bg-brand-secondary/8" : "hover:bg-black/[0.02]"}`}
-                      style={!on ? { borderColor: "var(--icare-line, #d3e3d8)" } : undefined}
-                    >
-                      <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${on ? "bg-brand-secondary border-brand-secondary text-white" : "border-brand-primary/30"}`}>{on && <Check size={13} />}</span>
-                      <span className="text-[0.9rem] text-brand-primary" style={{ fontWeight: 600 }}>{o.label}</span>
-                    </button>
-                  );
-                })}
+                {/* Options scroll within the bar; the specify field + Continue stay pinned below. */}
+                <div className="max-h-[50vh] overflow-y-auto space-y-2 -mr-1 pr-1 overscroll-contain">
+                  {q.options.map((o, i) => {
+                    const on = multiSel.has(i);
+                    return (
+                      <button
+                        key={o.label}
+                        onClick={() => toggleMulti(i)}
+                        className={`w-full flex items-center gap-3 text-left px-4 py-3 rounded-2xl border-2 cursor-pointer transition-colors ${on ? "border-brand-secondary bg-brand-secondary/8" : "hover:bg-black/[0.02]"}`}
+                        style={!on ? { borderColor: "var(--icare-line, #d3e3d8)" } : undefined}
+                      >
+                        <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${on ? "bg-brand-secondary border-brand-secondary text-white" : "border-brand-primary/30"}`}>{on && <Check size={13} />}</span>
+                        <span className="text-[0.9rem] text-brand-primary" style={{ fontWeight: 600 }}>{o.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {multiNeedsSpecify && (
+                  <input
+                    value={specifyText}
+                    onChange={(e) => setSpecifyText(e.target.value)}
+                    placeholder="Please give details"
+                    className="w-full px-4 py-2.5 rounded-2xl border-2 text-[0.9rem] text-brand-primary focus:outline-none focus:border-brand-secondary"
+                    style={{ borderColor: "var(--icare-line, #d3e3d8)" }}
+                  />
+                )}
                 <button onClick={submitMulti} className="cta cta-primary w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full cursor-pointer mt-1" style={{ fontWeight: 700 }}>
                   Continue <ArrowRight size={15} />
                 </button>
@@ -312,11 +431,12 @@ export function EligibilityChat({ flow, brand, open, onClose, onEligible, onOutc
 export function EligibilityGate({ flow, brand, outcome, onStart }: { flow: EligibilityFlow; brand: Brand; outcome: EligOutcome | null; onStart: () => void }) {
   const navigate = useNavigate();
   const blocked = outcome && outcome.kind !== "eligible";
+  const free = flow.free !== false;
 
   if (blocked) {
     return (
       <div className="max-w-xl mx-auto">
-        <OutcomeCard outcome={outcome!} brand={brand} onEligible={onStart} onRetake={onStart} onClose={() => navigate(brand.basePath || "/")} />
+        <OutcomeCard outcome={outcome!} brand={brand} cautions={[]} onEligible={onStart} onRetake={onStart} onClose={() => navigate(brand.basePath || "/")} />
       </div>
     );
   }
@@ -326,12 +446,14 @@ export function EligibilityGate({ flow, brand, outcome, onStart }: { flow: Eligi
       <span className="w-14 h-14 rounded-2xl bg-brand-secondary/12 text-brand-green-ink flex items-center justify-center mx-auto mb-4"><MessageCircle size={26} /></span>
       <h3 className="font-display text-brand-primary text-[1.4rem] leading-tight mb-2" style={{ fontWeight: 700 }}>Quick eligibility check</h3>
       <p className="text-brand-primary/60 text-[0.95rem] leading-relaxed max-w-md mx-auto mb-6">
-        NHS Pharmacy First asks a few quick questions about {flow.condition.toLowerCase()} before booking. It takes under a minute, runs as a private chat, and makes sure the pharmacist can actually help.
+        We ask a few quick questions about {flow.condition.toLowerCase()} before booking. It takes about a minute, runs as a private chat, and makes sure the pharmacist can actually help.
       </p>
       <button onClick={onStart} className="cta cta-primary inline-flex items-center gap-2 px-7 py-3.5 rounded-full cursor-pointer" style={{ fontWeight: 700 }}>
         Start eligibility check <ArrowRight size={16} />
       </button>
-      <p className="text-[0.78rem] text-brand-primary/40 mt-4 flex items-center justify-center gap-1.5"><ShieldCheck size={13} /> Free · no GP referral needed</p>
+      <p className="text-[0.78rem] text-brand-primary/40 mt-4 flex items-center justify-center gap-1.5">
+        <ShieldCheck size={13} /> {free ? "Free · no GP referral needed" : "Private · pharmacist-assessed"}
+      </p>
     </div>
   );
 }

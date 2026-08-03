@@ -30,12 +30,36 @@ export type EligOutcome = {
 /** Auto-resolved from the patient's date of birth, when known. */
 export type AutoRule = { field: "age"; op: ">=" | "<=" | "between"; value: number | [number, number] };
 
+/**
+ * Clinical-alert severity on an answer/option (PGD-style risk assessment):
+ *  - "stop"    ⛔ hard exclusion → jump to the flow's `stop` outcome (refer to GP).
+ *  - "caution" ⚠ soft flag → record it and continue; surfaced for the pharmacist
+ *              to review at the eligible outcome.
+ */
+export type FlagLevel = "stop" | "caution";
+
+/** A picklist option that can carry a clinical flag and/or reveal a free-text field. */
+export type FlagOption = {
+  label: string;
+  /** Next question when this option is chosen (single-select). Omit on "stop" options. */
+  goto?: string;
+  flag?: FlagLevel;
+  /** Guidance shown to the pharmacist when a "caution" flag is raised. */
+  note?: string;
+  /** Reveal a "please specify" free-text field when this option is selected. */
+  specify?: boolean;
+  /** Mutually-exclusive option (e.g. "None of the above") — selecting it clears the rest. */
+  exclusive?: boolean;
+};
+
 export type YesNoQuestion = {
   id: string;
   type?: "yesno";
   text: string;
   help?: string;
   auto?: AutoRule;
+  /** Clinical flag raised by a particular answer. */
+  flag?: { on: "yes" | "no"; level: FlagLevel; note?: string };
   yes: string;
   no: string;
 };
@@ -45,7 +69,7 @@ export type SingleQuestion = {
   type: "single";
   text: string;
   help?: string;
-  options: { label: string; goto: string }[];
+  options: FlagOption[];
 };
 
 export type MultiQuestion = {
@@ -53,10 +77,9 @@ export type MultiQuestion = {
   type: "multi";
   text: string;
   help?: string;
-  /** Where to go if nothing flagged is selected. */
+  /** Where to go once selections are recorded (when nothing hard-stops). */
   next: string;
-  /** Each option may carry a `goto`; if any selected option has one, the first wins. */
-  options: { label: string; goto?: string }[];
+  options: FlagOption[];
 };
 
 export type EligQuestion = YesNoQuestion | SingleQuestion | MultiQuestion;
@@ -65,7 +88,13 @@ export type EligibilityFlow = {
   serviceId: string;
   condition: string;
   intro: string;
+  /** Small subtitle under the chat header. Defaults to "NHS Pharmacy First". */
+  tag?: string;
+  /** Is this a free NHS service? Affects the gate copy. Defaults to true. */
+  free?: boolean;
   start: string;
+  /** Outcome id reached when any answer/option raises a "stop" flag. */
+  stop?: string;
   questions: Record<string, EligQuestion>;
   outcomes: Record<string, EligOutcome>;
 };
@@ -266,6 +295,131 @@ export const eligibilityFlows: EligibilityFlow[] = [
       },
       o_refer: referGp("Because of pregnancy, a catheter or recurrent infections, this UTI should be assessed by a GP.", "prv-cystitis"),
       o_eligible: ELIGIBLE,
+    },
+  },
+
+  // 8. Period delay (norethisterone) — a PRIVATE service supplied under a Patient
+  //    Group Direction (PGD). Adapted from a clinician risk assessment, this flow
+  //    shows the richer question types: single-select + "specify", multi-select
+  //    checklists with a "None" exclusive option + "specify", and per-answer
+  //    clinical alerts at two severities — ⛔ stop (refer to GP) and ⚠ caution
+  //    (recorded and reviewed by the pharmacist). DEMO CONTENT — a plausible
+  //    adaptation; must be reviewed and signed off before real use.
+  {
+    serviceId: "prv-period-delay",
+    condition: "Period delay",
+    tag: "Private service · under PGD",
+    free: false,
+    intro: "A few confidential questions to check period-delay tablets (norethisterone) are safe and suitable for you. A pharmacist makes the final decision.",
+    start: "reason",
+    stop: "o_stop",
+    questions: {
+      reason: {
+        id: "reason", type: "single",
+        text: "What's the reason for delaying your period?",
+        help: "These tablets are for a single short-term course before a specific event.",
+        options: [
+          { label: "Travel or holiday", goto: "regular" },
+          { label: "An exam", goto: "regular" },
+          { label: "A wedding", goto: "regular" },
+          { label: "A sporting or religious event", goto: "regular" },
+          { label: "Another specific event", goto: "regular", specify: true },
+          { label: "Repeat/frequent use, or recently used it to delay a period", flag: "stop" },
+        ],
+      },
+      regular: {
+        id: "regular",
+        text: "Are your periods regular — roughly every 21 to 35 days?",
+        flag: { on: "no", level: "stop" },
+        yes: "bleeding", no: "bleeding",
+      },
+      bleeding: {
+        id: "bleeding",
+        text: "Have you ever had unexplained vaginal bleeding?",
+        help: "For example between periods, after sex, or after the menopause.",
+        flag: { on: "yes", level: "stop" },
+        yes: "pregnant", no: "pregnant",
+      },
+      pregnant: {
+        id: "pregnant",
+        text: "Are you pregnant, breastfeeding, planning a pregnancy, or could you be pregnant?",
+        flag: { on: "yes", level: "stop" },
+        yes: "unprotected", no: "unprotected",
+      },
+      unprotected: {
+        id: "unprotected",
+        text: "Have you had unprotected sex this cycle, or missed any contraception?",
+        flag: { on: "yes", level: "caution", note: "Possible pregnancy risk — confirm pregnancy can be reliably excluded before supply." },
+        yes: "meds", no: "meds",
+      },
+      meds: {
+        id: "meds", type: "multi",
+        text: "Are you taking any regular medicines? Tick all that apply.",
+        next: "allergies",
+        options: [
+          { label: "Hormonal contraception (pill, patch, implant, injection or IUS)", flag: "stop" },
+          { label: "Another regular medicine", flag: "caution", note: "Regular medicine(s) — check for interactions (e.g. enzyme-inducing drugs, ciclosporin).", specify: true },
+          { label: "No regular medicines", exclusive: true },
+        ],
+      },
+      allergies: {
+        id: "allergies", type: "multi",
+        text: "Do you have any allergies? Tick all that apply.",
+        next: "vte",
+        options: [
+          { label: "Allergy to norethisterone or progestogens", flag: "stop" },
+          { label: "Another allergy (medicine, food or other)", flag: "caution", note: "Other allergy noted — review before supply.", specify: true },
+          { label: "No known allergies", exclusive: true },
+        ],
+      },
+      vte: {
+        id: "vte", type: "multi",
+        text: "Do any of these apply to you? Tick all that apply.",
+        help: "These affect the risk of blood clots.",
+        next: "conditions",
+        options: [
+          { label: "Currently immobile", flag: "stop" },
+          { label: "Recovering from major surgery or major trauma", flag: "stop" },
+          { label: "Planning surgery with reduced mobility", flag: "stop" },
+          { label: "Smoker", flag: "caution", note: "Smoking raises clot risk — assess overall risk." },
+          { label: "BMI over 30", flag: "caution", note: "Raised BMI adds clot risk — assess overall risk." },
+          { label: "None of the above", exclusive: true },
+        ],
+      },
+      conditions: {
+        id: "conditions", type: "multi",
+        text: "Have you ever had any of these conditions? Tick all that apply.",
+        next: "other",
+        options: [
+          { label: "Heart disease, stroke, TIA or circulation problems", flag: "stop" },
+          { label: "Migraine with aura", flag: "stop" },
+          { label: "Liver problems or liver tumours", flag: "stop" },
+          { label: "Breast or endometrial cancer", flag: "stop" },
+          { label: "Severe high blood pressure, complicated diabetes, or very high cholesterol", flag: "stop" },
+          { label: "A blood clot (DVT/PE), clotting disorder, or family history of clots", flag: "stop" },
+          { label: "Porphyria", flag: "stop" },
+          { label: "Lactose or a rare hereditary sugar intolerance", flag: "stop" },
+          { label: "None of the above", exclusive: true },
+        ],
+      },
+      other: {
+        id: "other",
+        text: "Do you have any other significant medical conditions?",
+        flag: { on: "yes", level: "caution", note: "Other condition disclosed — review for anything that may increase risk before supply." },
+        yes: "o_eligible", no: "o_eligible",
+      },
+    },
+    outcomes: {
+      o_stop: {
+        kind: "refer-gp",
+        title: "Not suitable to supply here",
+        message: "From your answers, period-delay tablets can't be supplied at the pharmacy under its patient group direction. Please speak to your GP or another clinician — they can consider other ways to manage your period.",
+      },
+      o_eligible: {
+        kind: "eligible",
+        title: "You can book a consultation",
+        message: "Good news — from your answers you can book a period-delay consultation. The pharmacist will confirm everything with you and, if suitable, supply your tablets with advice on how and when to take them.",
+      },
     },
   },
 ];

@@ -596,6 +596,17 @@
   }
 }
 
+/* ── Eligibility assessment panel — bottom-up drawer ──
+ * A tall bottom sheet on every viewport; slides up from the bottom edge. Both
+ * disabled under reduced-motion. Brand-agnostic. */
+.elig-overlay { animation: elig-overlay-in 0.2s ease both; }
+.elig-panel { animation: elig-panel-up 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes elig-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes elig-panel-up { from { transform: translateY(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .elig-overlay, .elig-panel { animation: none; }
+}
+
 /* Strachans — pink "New" chip with the same pulsing glow (reuses the dot keyframes). */
 .theme-strachans .chip-new-pink {
   background: linear-gradient(135deg, #ec4899, #db2777);
