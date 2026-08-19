@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { ArrowUpRight, LayoutGrid } from "lucide-react";
+import { ArrowUpRight, LayoutGrid, Sparkles, ArrowRight } from "lucide-react";
 import { carefirstBrand, strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand } from "../branding";
 import { useSeo } from "../seo";
 
@@ -9,11 +9,9 @@ const withBase = (p: string) => `${import.meta.env.BASE_URL}${p.replace(/^\//, "
 
 /** `external` entries live on another domain: `path` holds the full URL, the
  *  card opens in a new tab and the iframe loads the URL directly. */
-type Entry = { name: string; tagline: string; location: string; path: string; external?: boolean };
+export type Entry = { name: string; tagline: string; location: string; path: string; external?: boolean };
 
 const SITES: Entry[] = [
-  { name: "Stone Pharmacy", tagline: "Reference site", location: "stonepharmacy.com", path: "https://www.stonepharmacy.com/", external: true },
-  { name: "Paydens Pharmacy", tagline: "Reference site", location: "paydens-pharmacy.vercel.app", path: "https://paydens-pharmacy.vercel.app/", external: true },
   { name: carefirstBrand.name, tagline: carefirstBrand.tagline, location: "London", path: "/carefirst" },
   { name: strachansBrand.name, tagline: strachansBrand.tagline, location: "Bury & Uppermill", path: "/strachans" },
   { name: canadaBrand.name, tagline: "NHS & private pharmacy", location: "Ealing, London", path: "/icare" },
@@ -30,7 +28,7 @@ const chromeLabel = (s: Entry) => {
 
 /** A live, scaled-down preview of a page rendered in an iframe (a self-updating "screenshot").
  *  Note: some external sites set X-Frame-Options/CSP that prevent framing; those render blank. */
-function SitePreview({ src, title }: { src: string; title: string }) {
+export function SitePreview({ src, title }: { src: string; title: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.3);
 
@@ -62,6 +60,49 @@ function SitePreview({ src, title }: { src: string; title: string }) {
   );
 }
 
+/** A single showcase card. Internal entries route in-app; external ones open in a new tab. */
+export function ShowcaseCard({ s, badge }: { s: Entry; badge?: string }) {
+  const cardClass = "group block rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden no-underline";
+  const body = (
+    <>
+      {/* Browser chrome */}
+      <div className="flex items-center gap-2 px-4 h-10 border-b border-slate-100 bg-slate-50">
+        <span className="flex gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+        </span>
+        <span className="ml-2 flex-1 truncate text-[0.74rem] text-slate-400 bg-white border border-slate-200 rounded-md px-2.5 py-1" style={{ fontVariantNumeric: "tabular-nums" }}>
+          {chromeLabel(s)}
+        </span>
+        {badge && (
+          <span className="shrink-0 text-[0.62rem] uppercase tracking-wide text-slate-400 border border-slate-200 rounded px-1.5 py-0.5" style={{ fontWeight: 600 }}>{badge}</span>
+        )}
+      </div>
+
+      {/* Live preview */}
+      <SitePreview src={s.external ? s.path : withBase(s.path)} title={s.name} />
+
+      {/* Footer */}
+      <div className="flex items-center justify-between gap-3 p-5">
+        <div className="min-w-0">
+          <h2 className="text-[1.1rem] text-slate-900 truncate" style={{ fontWeight: 700 }}>{s.name}</h2>
+          <p className="text-[0.85rem] text-slate-500 truncate">{s.tagline} · {s.location}</p>
+        </div>
+        <span className="shrink-0 inline-flex items-center gap-1.5 text-[0.85rem] text-slate-900 bg-slate-100 group-hover:bg-slate-900 group-hover:text-white rounded-full px-3.5 py-2 transition-colors" style={{ fontWeight: 600 }}>
+          Open <ArrowUpRight size={15} />
+        </span>
+      </div>
+    </>
+  );
+
+  return s.external ? (
+    <a href={s.path} target="_blank" rel="noopener noreferrer" className={cardClass}>{body}</a>
+  ) : (
+    <Link to={s.path} className={cardClass}>{body}</Link>
+  );
+}
+
 export default function PharmacyIndex() {
   useSeo({
     title: "Pharmacy Landing Pages — Showcase",
@@ -81,54 +122,29 @@ export default function PharmacyIndex() {
             Pharmacy landing pages
           </h1>
           <p className="text-slate-500 text-[1.05rem] leading-relaxed">
-            Six white-label pharmacy sites built from a single codebase, plus a couple of live reference sites. Open any one to explore.
+            Six white-label pharmacy sites built from a single codebase. Open any one to explore its design, services and booking flow.
           </p>
         </header>
 
         {/* Cards */}
         <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
-          {SITES.map((s) => {
-            const cardClass = "group block rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden no-underline";
-            const body = (
-              <>
-                {/* Browser chrome */}
-                <div className="flex items-center gap-2 px-4 h-10 border-b border-slate-100 bg-slate-50">
-                  <span className="flex gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                  </span>
-                  <span className="ml-2 flex-1 truncate text-[0.74rem] text-slate-400 bg-white border border-slate-200 rounded-md px-2.5 py-1" style={{ fontVariantNumeric: "tabular-nums" }}>
-                    {chromeLabel(s)}
-                  </span>
-                  {s.external && (
-                    <span className="shrink-0 text-[0.62rem] uppercase tracking-wide text-slate-400 border border-slate-200 rounded px-1.5 py-0.5" style={{ fontWeight: 600 }}>External</span>
-                  )}
-                </div>
-
-                {/* Live preview */}
-                <SitePreview src={s.external ? s.path : withBase(s.path)} title={s.name} />
-
-                {/* Footer */}
-                <div className="flex items-center justify-between gap-3 p-5">
-                  <div className="min-w-0">
-                    <h2 className="text-[1.1rem] text-slate-900 truncate" style={{ fontWeight: 700 }}>{s.name}</h2>
-                    <p className="text-[0.85rem] text-slate-500 truncate">{s.tagline} · {s.location}</p>
-                  </div>
-                  <span className="shrink-0 inline-flex items-center gap-1.5 text-[0.85rem] text-slate-900 bg-slate-100 group-hover:bg-slate-900 group-hover:text-white rounded-full px-3.5 py-2 transition-colors" style={{ fontWeight: 600 }}>
-                    Open <ArrowUpRight size={15} />
-                  </span>
-                </div>
-              </>
-            );
-
-            return s.external ? (
-              <a key={s.path} href={s.path} target="_blank" rel="noopener noreferrer" className={cardClass}>{body}</a>
-            ) : (
-              <Link key={s.path} to={s.path} className={cardClass}>{body}</Link>
-            );
-          })}
+          {SITES.map((s) => <ShowcaseCard key={s.path} s={s} />)}
         </div>
+
+        {/* Link to the fully-customised builds */}
+        <Link
+          to="/fully-customised"
+          className="group mt-8 flex items-center gap-4 rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 px-6 py-5 no-underline"
+        >
+          <span className="w-11 h-11 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0"><Sparkles size={20} /></span>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-[1.05rem] text-slate-900" style={{ fontWeight: 700 }}>Fully customised websites</h2>
+            <p className="text-[0.85rem] text-slate-500">Bespoke pharmacy sites tailored to each client's own brand and requirements.</p>
+          </div>
+          <span className="shrink-0 inline-flex items-center gap-1.5 text-[0.85rem] text-slate-900 bg-slate-100 group-hover:bg-slate-900 group-hover:text-white rounded-full px-3.5 py-2 transition-colors" style={{ fontWeight: 600 }}>
+            View <ArrowRight size={15} />
+          </span>
+        </Link>
 
         <p className="text-center text-[0.8rem] text-slate-400 mt-14">
           Each preview is the live site rendered in miniature — click through to interact.
