@@ -47,7 +47,9 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
             {/* Brand + trust */}
             <div className="flex items-center gap-2.5 flex-wrap">
               {brand.logoIsWordmark ? (
-                <img src={brand.logo} alt={brand.name} className="h-7 w-auto brightness-0 invert" />
+                brand.footerLogo
+                  ? <img src={brand.footerLogo} alt={brand.name} className="h-11 w-auto" style={{ filter: "brightness(0) invert(0.92)" }} />
+                  : <img src={brand.logo} alt={brand.name} className="h-7 w-auto brightness-0 invert" />
               ) : (
                 <span className="text-white text-[0.98rem]" style={{ fontWeight: 700 }}>{brand.name}</span>
               )}
@@ -104,7 +106,9 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
           {/* Brand + trust */}
           <div className="lg:col-span-4">
             {brand.logoIsWordmark ? (
-              <img src={brand.logo} alt={brand.name} className="h-8 w-auto brightness-0 invert mb-4" />
+              brand.footerLogo
+                ? <img src={brand.footerLogo} alt={brand.name} className="h-16 w-auto mb-4" style={{ filter: "brightness(0) invert(0.92)" }} />
+                : <img src={brand.logo} alt={brand.name} className="h-8 w-auto brightness-0 invert mb-4" />
             ) : (
               <div className="flex items-center gap-2.5 mb-4">
                 <div className="w-9 h-9 rounded-lg overflow-hidden">

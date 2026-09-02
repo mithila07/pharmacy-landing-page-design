@@ -596,6 +596,80 @@
   }
 }
 
+/* ------------------------------------------------------------------
+ * Template brands — new Kepple-Lane-template builds, each themed to its
+ * own logo. Palettes derive from the logo colours; a bespoke Google font
+ * per brand. Light mode only.
+ * ------------------------------------------------------------------ */
+
+/* J Morris Pharmacy (Ashton-in-Makerfield) — vivid teal + fresh green. */
+.theme-jmorris {
+  --brand-primary: #0a4f5b;       /* deep teal — headings, links, nav (AAA) */
+  --brand-primary-mid: #0891b2;   /* vivid cyan */
+  --brand-secondary: #0e7490;     /* vivid teal — white-text buttons (AA) */
+  --brand-accent: #06b6d4;        /* bright cyan — icons */
+  --brand-dark: #134e4a;          /* deep teal — footer gradient stop */
+  --brand-darkest: #083344;       /* footer base */
+  --brand-light: #ecfeff;         /* crisp cyan wash */
+  --brand-light-alt: #f0fdfa;
+  --brand-cta: #f59e0b;
+  --brand-alt: #22c55e;           /* vivid green pop */
+  --brand-light-cyan: #cffafe;
+  --brand-primary-hover: #083f49;
+  --brand-green-ink: #15803d;
+  font-family: "Mulish", "Inter", system-ui, -apple-system, sans-serif;
+}
+.theme-jmorris .font-display,
+.theme-jmorris h1, .theme-jmorris h2, .theme-jmorris h3, .theme-jmorris h4 {
+  font-family: "Mulish", "Inter", system-ui, sans-serif;
+}
+
+/* Acre Pharmacy (Huddersfield) — full multi-colour logo palette:
+ * blue is the readable ink, orange the action colour, gold + green + sky the
+ * accents. Playful and warm, not maroon. */
+.theme-acre {
+  --brand-primary: #1d5a96;       /* logo blue — headings, links, nav (AA) */
+  --brand-primary-mid: #3b79bd;   /* logo mid blue */
+  --brand-secondary: #e8590c;     /* logo orange — white-text buttons (AA-large) */
+  --brand-accent: #e49b35;        /* logo gold — icons */
+  --brand-dark: #164e7a;          /* deep blue — footer gradient stop */
+  --brand-darkest: #0d2f4d;       /* deep navy-blue — footer base */
+  --brand-light: #fff7ed;         /* warm cream wash */
+  --brand-light-alt: #eff6ff;     /* cool blue wash (balances the warmth) */
+  --brand-cta: #e49b35;           /* logo gold */
+  --brand-alt: #14a06e;           /* logo green pop */
+  --brand-light-cyan: #e0f2fe;
+  --brand-primary-hover: #164e7a;
+  --brand-green-ink: #15803d;
+  font-family: "Nunito", "Inter", system-ui, -apple-system, sans-serif;
+}
+.theme-acre .font-display,
+.theme-acre h1, .theme-acre h2, .theme-acre h3, .theme-acre h4 {
+  font-family: "Nunito", "Inter", system-ui, sans-serif;
+}
+
+/* Meadows Pharmacy (Maghull) — deep navy + vivid meadow green. */
+.theme-meadows {
+  --brand-primary: #0a2a66;       /* deep navy — headings, links, nav (AAA) */
+  --brand-primary-mid: #1d4ed8;   /* vivid blue */
+  --brand-secondary: #15803d;     /* vivid green — white-text buttons (AA) */
+  --brand-accent: #16a34a;        /* vivid green — icons */
+  --brand-dark: #04205a;          /* deep navy — footer gradient stop */
+  --brand-darkest: #041233;       /* footer base */
+  --brand-light: #f0fdf4;         /* crisp green wash */
+  --brand-light-alt: #eff6ff;     /* crisp blue wash */
+  --brand-cta: #f59e0b;
+  --brand-alt: #0ea5e9;           /* electric sky blue pop */
+  --brand-light-cyan: #e0f2fe;
+  --brand-primary-hover: #071f4d;
+  --brand-green-ink: #15803d;
+  font-family: "Poppins", "Inter", system-ui, -apple-system, sans-serif;
+}
+.theme-meadows .font-display,
+.theme-meadows h1, .theme-meadows h2, .theme-meadows h3, .theme-meadows h4 {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+}
+
 /* ── Eligibility assessment panel — bottom-up drawer ──
  * A tall bottom sheet on every viewport; slides up from the bottom edge. Both
  * disabled under reduced-motion. Brand-agnostic. */

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ArrowUpRight, LayoutGrid, Sparkles, ArrowRight } from "lucide-react";
-import { carefirstBrand, strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand } from "../branding";
+import { carefirstBrand, strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand } from "../branding";
 import { useSeo } from "../seo";
 
 /** Prefix a route with Vite's base so previews work locally and on GitHub Pages. */
@@ -18,6 +18,9 @@ const SITES: Entry[] = [
   { name: healthcheckBrand.name, tagline: healthcheckBrand.tagline, location: "Bradford", path: "/healthcheck" },
   { name: kepplelaneBrand.name, tagline: kepplelaneBrand.tagline, location: "Garstang, Lancashire", path: "/kepple-lane" },
   { name: centralBrand.name, tagline: "NHS & private pharmacy", location: "New Quay, Ceredigion", path: "/central" },
+  { name: jmorrisBrand.name, tagline: jmorrisBrand.tagline, location: "Ashton-in-Makerfield", path: "/j-morris" },
+  { name: acreBrand.name, tagline: acreBrand.tagline, location: "Huddersfield", path: "/acre" },
+  { name: meadowsBrand.name, tagline: meadowsBrand.tagline, location: "Maghull", path: "/meadows" },
 ];
 
 /** The chrome address-bar label — the domain for external sites, the route otherwise. */
@@ -122,7 +125,7 @@ export default function PharmacyIndex() {
             Pharmacy landing pages
           </h1>
           <p className="text-slate-500 text-[1.05rem] leading-relaxed">
-            Six white-label pharmacy sites built from a single codebase. Open any one to explore its design, services and booking flow.
+            Nine white-label pharmacy sites built from a single codebase. Open any one to explore its design, services and booking flow.
           </p>
         </header>
 

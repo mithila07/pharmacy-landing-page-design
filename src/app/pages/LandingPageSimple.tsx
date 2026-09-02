@@ -9,7 +9,16 @@ import { HeroSectionHealthCheck } from "../components/HeroSectionHealthCheck";
 import { HeroSectionKepple } from "../components/HeroSectionKepple";
 import { HeroSectionCentral } from "../components/HeroSectionCentral";
 import { HeroSectionCentralAlt } from "../components/HeroSectionCentralAlt";
+import { HeroSectionTemplate } from "../components/HeroSectionTemplate";
+import { templateSites } from "../data/templateSites";
 import { DemoVariantSwitcher } from "../components/DemoVariantSwitcher";
+
+/** Areas served + address region for the template-brand structured data. */
+const TEMPLATE_AREA: Record<string, { area: string[]; region: string }> = {
+  jmorris: { area: ["Ashton-in-Makerfield", "Wigan", "Greater Manchester"], region: "Greater Manchester" },
+  acre: { area: ["Huddersfield", "West Yorkshire"], region: "West Yorkshire" },
+  meadows: { area: ["Maghull", "Merseyside"], region: "Merseyside" },
+};
 import { ReviewsSection } from "../components/ReviewsSection";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
 import { BlogTeaserSection } from "../components/BlogTeaserSection";
@@ -327,6 +336,11 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         title: "Central Pharmacy — New Quay | NHS & Private Pharmacy Services",
         description: "Independent, family-owned Central Pharmacy on Church Street, New Quay — serving Ceredigion for over 35 years. Private travel clinics, vaccinations, ear microsuction and NHS services. Book online.",
       }
+    : brand.template
+    ? {
+        title: `${brand.name} | NHS & Private Pharmacy in ${brand.seoArea}`,
+        description: `${brand.name} in ${brand.seoArea} — NHS Pharmacy First, dispensing, vaccinations and private clinics. Book a same-day pharmacist appointment online.`,
+      }
     : {
         title: `${brand.name} | NHS & Private Community Pharmacy`,
         description: `${brand.name} offers NHS Pharmacy First, vaccinations and private clinics. Book a same-day pharmacist appointment online — no GP referral needed.`,
@@ -336,7 +350,8 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
   const isHC = brand.id === "healthcheck";
   const isKL = brand.id === "kepplelane";
   const isCentral = brand.id === "central";
-  const privateCardsForBrand = isKL ? kepplePrivateCards : isCentral ? centralPrivateCards : privateCards;
+  const isTemplate = !!brand.template;
+  const privateCardsForBrand = isKL ? kepplePrivateCards : isCentral ? centralPrivateCards : isTemplate ? templateSites[brand.id].privateCards : privateCards;
 
   // Demo toggle: /central?hero=carousel renders the alternative full-width
   // carousel hero. Any other value (or none) keeps the default hero.
@@ -394,12 +409,12 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
       <JsonLd
         data={pharmacyGraph(
           brand,
-          isHC ? ["Bradford", "West Yorkshire"] : isKL ? ["Garstang", "Preston", "Lancashire"] : isCentral ? ["New Quay", "Ceredigion", "Cardigan Bay", "Wales"] : undefined,
-          isKL ? { addressRegion: "Lancashire", hoursSpec: KEPPLE_HOURS_SPEC } : isCentral ? { addressRegion: "Ceredigion", hoursSpec: CENTRAL_HOURS_SPEC } : undefined,
+          isHC ? ["Bradford", "West Yorkshire"] : isKL ? ["Garstang", "Preston", "Lancashire"] : isCentral ? ["New Quay", "Ceredigion", "Cardigan Bay", "Wales"] : isTemplate ? TEMPLATE_AREA[brand.id].area : undefined,
+          isKL ? { addressRegion: "Lancashire", hoursSpec: KEPPLE_HOURS_SPEC } : isCentral ? { addressRegion: "Ceredigion", hoursSpec: CENTRAL_HOURS_SPEC } : isTemplate ? { addressRegion: TEMPLATE_AREA[brand.id].region } : undefined,
         )}
       />
       <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCardsForBrand.map((c) => c.id)]} />
-      {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : <HeroSection />}
+      {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : isTemplate ? <HeroSectionTemplate brand={brand} /> : <HeroSection />}
 
       {/* NHS + Private service sections. Central leads with private clinics
           (its main draw); every other brand leads with NHS. */}

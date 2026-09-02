@@ -182,6 +182,65 @@ export const centralLocations: PharmacyLocation[] = [
   },
 ];
 
+/**
+ * Template-brand branches (J Morris, Acre, Meadows) — new Kepple-Lane-template
+ * builds. Standard community-pharmacy hours; emails are placeholders pending the
+ * client's real addresses.
+ */
+const templateHours = [
+  { day: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
+  { day: "Saturday", hours: "9:00 AM - 1:00 PM" },
+  { day: "Sunday", hours: "Closed" },
+];
+
+export const jmorrisLocations: PharmacyLocation[] = [
+  {
+    id: "ashton",
+    name: "J Morris Pharmacy — Ashton-in-Makerfield",
+    shortName: "Ashton-in-Makerfield",
+    address: "109 Wigan Road, Ashton-in-Makerfield, WN4 9BH",
+    phone: "01942 727498",
+    email: "info@jmorrispharmacy.co.uk",
+    lat: 53.4869,
+    lng: -2.6389,
+    openingHours: templateHours,
+    googleMapsEmbedUrl: embed("109 Wigan Road, Ashton-in-Makerfield WN4 9BH"),
+    isDefault: true,
+  },
+];
+
+export const acreLocations: PharmacyLocation[] = [
+  {
+    id: "huddersfield",
+    name: "Acre Pharmacy — Huddersfield",
+    shortName: "Huddersfield",
+    address: "80 New Hey Road, Huddersfield, HD3 4AJ",
+    phone: "01484 421987",
+    email: "info@acrepharmacy.co.uk",
+    lat: 53.6472,
+    lng: -1.8258,
+    openingHours: templateHours,
+    googleMapsEmbedUrl: embed("80 New Hey Road, Huddersfield HD3 4AJ"),
+    isDefault: true,
+  },
+];
+
+export const meadowsLocations: PharmacyLocation[] = [
+  {
+    id: "maghull",
+    name: "Meadows Pharmacy — Maghull",
+    shortName: "Maghull",
+    address: "87-89 Liverpool Road South, Maghull, L31 7AD",
+    phone: "0151 520 3042",
+    email: "info@meadowspharmacy.co.uk",
+    lat: 53.5165,
+    lng: -2.9426,
+    openingHours: templateHours,
+    googleMapsEmbedUrl: embed("87-89 Liverpool Road South, Maghull L31 7AD"),
+    isDefault: true,
+  },
+];
+
 /** Straight-line distance in miles between two coordinates (Haversine). */
 export function distanceMiles(
   a: { lat: number; lng: number },

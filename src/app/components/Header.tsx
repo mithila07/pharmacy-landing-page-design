@@ -37,6 +37,8 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
   const showsActive = brand.id === "kepplelane";
   const isActive = (path: string) => showsActive && pathname.replace(/\/+$/, "") === path.replace(/\/+$/, "");
   const groupIsActive = (items: { path: string }[]) => items.some((i) => isActive(i.path));
+  // Show the standalone About link unless About already lives inside a nav group.
+  const aboutInGroup = brand.navGroups?.some((g) => g.items.some((i) => i.path === brand.aboutPath));
 
   const navLinkClass = (active: boolean) =>
     `relative transition-colors cursor-pointer ${
@@ -176,8 +178,8 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
               );
             })}
 
-            {/* Standalone About — dropped when the brand groups it under a nav group. */}
-            {brand.aboutPath && !brand.navGroups && (
+            {/* Standalone About — dropped only when About lives inside a nav group. */}
+            {brand.aboutPath && !aboutInGroup && (
               <button onClick={() => goTo(brand.aboutPath!)} className={navLinkClass(isActive(brand.aboutPath))} style={{ fontWeight: 500 }}>About</button>
             )}
             {brand.contactPath && (
@@ -252,7 +254,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
             </div>
           ))}
 
-          {brand.aboutPath && !brand.navGroups && (
+          {brand.aboutPath && !aboutInGroup && (
             <button
               onClick={() => goTo(brand.aboutPath!)}
               className="flex items-center justify-between w-full py-2.5 text-gray-700 text-[0.9rem] cursor-pointer"

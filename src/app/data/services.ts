@@ -112,6 +112,10 @@ export const privateServices: Service[] = [
   { id: "prv-microneedling", name: "Microneedling", description: "Collagen induction therapy for skin renewal", price: "From 120", icon: "Sparkles", category: "Aesthetic & Cosmetic" },
   { id: "prv-vitamin-injection", name: "Vitamin B12 Injection", description: "Energy-boosting vitamin B12 intramuscular injection", price: "From 30", icon: "Syringe", category: "Aesthetic & Cosmetic" },
   { id: "prv-iv-drip", name: "IV Vitamin Drip Therapy", description: "Intravenous vitamin infusions for wellness", price: "From 150", icon: "Droplets", category: "Aesthetic & Cosmetic" },
+  // Additional services offered by some brands (e.g. Meadows Pharmacy)
+  { id: "prv-premature-ejaculation", name: "Premature Ejaculation Treatment", description: "Discreet consultation and prescription treatment", price: "From 20", icon: "Pill", category: "Sexual Health" },
+  { id: "prv-period-pain", name: "Period Pain Treatment", description: "Advice and treatment to manage painful periods", price: "From 15", icon: "Calendar", category: "Sexual Health" },
+  { id: "prv-rsv", name: "RSV Vaccination", description: "Private vaccination against respiratory syncytial virus", price: "From 200", icon: "Syringe", category: "Private Vaccinations" },
 ];
 
 // Online Doctor services (lifestyle treatments available via online consultation)

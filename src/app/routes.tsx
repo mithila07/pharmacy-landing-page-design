@@ -2,7 +2,9 @@ import { createBrowserRouter } from "react-router";
 import PharmacyIndex from "./pages/PharmacyIndex";
 import CustomWebsites from "./pages/CustomWebsites";
 import LandingPage from "./pages/LandingPage";
-import LandingPageSimple from "./pages/LandingPageSimple";
+import LandingPageSimple, { SimpleLanding } from "./pages/LandingPageSimple";
+import { AboutPageTemplate } from "./pages/AboutPageTemplate";
+import { ContactPageTemplate } from "./pages/ContactPageTemplate";
 import LandingPageStrachans from "./pages/LandingPageStrachans";
 import LandingPageCanada from "./pages/LandingPageCanada";
 import AboutPageICare from "./pages/AboutPageICare";
@@ -26,7 +28,7 @@ import UpdatesPageKepple from "./pages/UpdatesPageKepple";
 import LandingPageCentral from "./pages/LandingPageCentral";
 import AboutPageCentral from "./pages/AboutPageCentral";
 import ContactPageCentral from "./pages/ContactPageCentral";
-import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand } from "./branding";
+import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand } from "./branding";
 
 // Under GitHub Pages the app is served from /<repo>/, so routing is scoped to
 // Vite's configured base (BASE_URL). Locally this is just "/".
@@ -82,4 +84,26 @@ export const router = createBrowserRouter([
   { path: "/central/contact", Component: ContactPageCentral },
   { path: "/central/book/:serviceId", element: <BookingPage brand={centralBrand} /> },
   { path: "/central/questionnaire/:serviceId", element: <QuestionnairePage brand={centralBrand} /> },
+
+  // ── Kepple-Lane-template builds ──
+  // J Morris Pharmacy (Ashton-in-Makerfield)
+  { path: "/j-morris", element: <SimpleLanding brand={jmorrisBrand} /> },
+  { path: "/j-morris/about", element: <AboutPageTemplate brand={jmorrisBrand} /> },
+  { path: "/j-morris/contact", element: <ContactPageTemplate brand={jmorrisBrand} /> },
+  { path: "/j-morris/book/:serviceId", element: <BookingPage brand={jmorrisBrand} /> },
+  { path: "/j-morris/questionnaire/:serviceId", element: <QuestionnairePage brand={jmorrisBrand} /> },
+
+  // Acre Pharmacy (Huddersfield)
+  { path: "/acre", element: <SimpleLanding brand={acreBrand} /> },
+  { path: "/acre/about", element: <AboutPageTemplate brand={acreBrand} /> },
+  { path: "/acre/contact", element: <ContactPageTemplate brand={acreBrand} /> },
+  { path: "/acre/book/:serviceId", element: <BookingPage brand={acreBrand} /> },
+  { path: "/acre/questionnaire/:serviceId", element: <QuestionnairePage brand={acreBrand} /> },
+
+  // Meadows Pharmacy (Maghull)
+  { path: "/meadows", element: <SimpleLanding brand={meadowsBrand} /> },
+  { path: "/meadows/about", element: <AboutPageTemplate brand={meadowsBrand} /> },
+  { path: "/meadows/contact", element: <ContactPageTemplate brand={meadowsBrand} /> },
+  { path: "/meadows/book/:serviceId", element: <BookingPage brand={meadowsBrand} /> },
+  { path: "/meadows/questionnaire/:serviceId", element: <QuestionnairePage brand={meadowsBrand} /> },
 ], { basename });

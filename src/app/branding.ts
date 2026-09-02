@@ -6,7 +6,16 @@ import healthcheckLogo from "../assets/health-check logo.png";
 import kepplelaneLogo from "../assets/kepple-lane-logo.png";
 import centralLogo from "../assets/central-pharamcy-logo.svg";
 import centralLogoMark from "../assets/central-pharamcy-logo-mark.svg";
-import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, centralLocations, type PharmacyLocation } from "./data/locations";
+import jmorrisLogo from "../assets/J Morris Pharmacy Logo horizontal.svg";
+import jmorrisFooter from "../assets/J Morris Pharmacy Logo.svg";
+import jmorrisMark from "../assets/j-morris logomark.svg";
+import acreLogo from "../assets/Acre Logo 2 horizontal.svg";
+import acreFooter from "../assets/Acre Logo.svg";
+import acreMark from "../assets/Acre logomark.svg";
+import meadowsLogo from "../assets/Meadows FB Logo horizontal.svg";
+import meadowsFooter from "../assets/Meadows.svg";
+import meadowsMark from "../assets/Meadows logomark.svg";
+import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, centralLocations, jmorrisLocations, acreLocations, meadowsLocations, type PharmacyLocation } from "./data/locations";
 
 /**
  * A brand defines everything that differs between the white-label versions of
@@ -30,6 +39,10 @@ export type Brand = {
   headerLogoClass?: string;
   /** Per-brand favicon (usually the square logo mark). Applied at runtime by `useSeo`. */
   favicon?: string;
+  /** Full-colour logo variant for the dark footer (rendered as-is, not inverted). */
+  footerLogo?: string;
+  /** Marks a brand that uses the shared Kepple-Lane template (hero, about, contact). */
+  template?: boolean;
   /** Class that re-scopes the `--brand-*` palette. "" = default (root) palette. */
   themeClass: string;
   /** Route prefix for this brand. "" = default brand at the site root. */
@@ -202,6 +215,84 @@ export const centralBrand: Brand = {
     companyNumber: "8120039",
     superintendent: "Babatunde Cyril Olawoye",
     gphcNumber: "1043313",
+  },
+};
+
+export const jmorrisBrand: Brand = {
+  id: "jmorris",
+  name: "J Morris Pharmacy",
+  tagline: "Your local NHS & private pharmacy",
+  logo: jmorrisLogo,
+  logoMark: jmorrisMark,
+  footerLogo: jmorrisFooter,
+  favicon: jmorrisMark,
+  logoIsWordmark: true,
+  headerLogoClass: "h-11",
+  themeClass: "theme-jmorris",
+  basePath: "/j-morris",
+  seoArea: "Ashton-in-Makerfield",
+  locations: jmorrisLocations,
+  aboutPath: "/j-morris/about",
+  contactPath: "/j-morris/contact",
+  hideHeaderContact: true,
+  template: true,
+  legal: {
+    companyName: "J Morris Pharmacy",
+    companyNumber: "[REPLACE — Company No.]",
+    superintendent: "[REPLACE — Superintendent Pharmacist]",
+    gphcNumber: "1033995",
+  },
+};
+
+export const acreBrand: Brand = {
+  id: "acre",
+  name: "Acre Pharmacy",
+  tagline: "Trusted NHS & private healthcare",
+  logo: acreLogo,
+  logoMark: acreMark,
+  footerLogo: acreFooter,
+  favicon: acreMark,
+  logoIsWordmark: true,
+  headerLogoClass: "h-11",
+  themeClass: "theme-acre",
+  basePath: "/acre",
+  seoArea: "Huddersfield",
+  locations: acreLocations,
+  aboutPath: "/acre/about",
+  contactPath: "/acre/contact",
+  hideHeaderContact: true,
+  template: true,
+  legal: {
+    companyName: "Dickinsons Chemist Ltd (T/A Acre Pharmacy)",
+    companyNumber: "[REPLACE — Company No.]",
+    superintendent: "[REPLACE — Superintendent Pharmacist]",
+    gphcNumber: "[REPLACE — GPhC Reg. No.]",
+  },
+};
+
+export const meadowsBrand: Brand = {
+  id: "meadows",
+  name: "Meadows Pharmacy",
+  tagline: "Your community pharmacy in Maghull",
+  logo: meadowsLogo,
+  logoMark: meadowsMark,
+  footerLogo: meadowsFooter,
+  favicon: meadowsMark,
+  logoIsWordmark: true,
+  headerLogoClass: "h-11",
+  themeClass: "theme-meadows",
+  basePath: "/meadows",
+  seoArea: "Maghull",
+  locations: meadowsLocations,
+  aboutPath: "/meadows/about",
+  contactPath: "/meadows/contact",
+  hideHeaderContact: true,
+  template: true,
+  legal: {
+    companyName: "Meadows Pharmacy",
+    companyNumber: "[REPLACE — Company No.]",
+    superintendent: "[REPLACE — Superintendent Pharmacist]",
+    gphcNumber: "1034529",
   },
 };
 
