@@ -19,6 +19,13 @@ export type PharmacyLocation = {
   googleMapsEmbedUrl: string;
   /** Admin-set preferred branch — used as the fallback when geolocation is unavailable/denied. */
   isDefault?: boolean;
+  /**
+   * GPhC "Registered Pharmacy" badge — dedicated per location (each carries its
+   * own registration number). Falls back to a shared placeholder image and the
+   * GPhC register link until the real per-branch assets are supplied.
+   */
+  gphcBadge?: string;
+  gphcUrl?: string;
 };
 
 const standardHours = [

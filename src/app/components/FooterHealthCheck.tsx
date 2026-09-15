@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
-import { MapPin, Phone, Envelope, Clock, FacebookLogo, InstagramLogo, XLogo, ShieldCheck, IconContext } from "@phosphor-icons/react";
+import { MapPin, Phone, Envelope, Clock, FacebookLogo, InstagramLogo, XLogo, IconContext } from "@phosphor-icons/react";
 import { homePath, type Brand } from "../branding";
+import { GphcBadge } from "./GphcBadge";
 import nhsBadge from "../../assets/Providing NHS Services RGB BLUE 2.svg";
 import logoMark from "../../assets/health-check logo mark.svg";
 
@@ -70,9 +71,8 @@ export function FooterHealthCheck({ brand }: { brand: Brand }) {
               <span className="inline-flex items-center bg-white rounded-md px-2 py-1.5">
                 <img src={nhsBadge} alt="Providing NHS Services" className="h-5 w-auto" />
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/10 border border-white/15 px-2.5 py-1.5 text-white/80 text-[0.72rem]" style={{ fontWeight: 600 }}>
-                <ShieldCheck size={13} /> GPhC Registered Pharmacy
-              </span>
+              {/* Height matches the NHS pill (h-5 img + py-1.5 ≈ h-8). */}
+              <GphcBadge location={branch} className="h-8" />
             </div>
 
             {/* Social */}

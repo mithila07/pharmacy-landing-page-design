@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { MapPin, Phone, Envelope, Clock } from "@phosphor-icons/react";
 import type { Brand } from "../branding";
 import { GRAD_INK } from "./icareUi";
+import { GphcBadge } from "./GphcBadge";
 
 /** Shared footer for every iCare page. */
 export function FooterICare({ brand }: { brand: Brand }) {
@@ -24,6 +25,7 @@ export function FooterICare({ brand }: { brand: Brand }) {
           <p className="mt-5 text-[0.92rem] leading-relaxed max-w-xs text-white/55">
             {brand.tagline}. NHS &amp; private pharmacy services in the heart of Ealing, West London.
           </p>
+          <div className="mt-5"><GphcBadge location={branch} className="h-12" /></div>
         </div>
 
         {/* Links */}

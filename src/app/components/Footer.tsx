@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router";
-import { ShieldCheck, Facebook, Instagram, Twitter, MapPin, Phone } from "lucide-react";
+import { Facebook, Instagram, Twitter, MapPin, Phone } from "lucide-react";
 import { carefirstBrand, homePath, type Brand } from "../branding";
 import { FooterHealthCheck } from "./FooterHealthCheck";
+import { GphcBadge } from "./GphcBadge";
 import nhsBadge from "../../assets/Providing NHS Services RGB BLUE 2.svg";
 
 const LEGAL_LINKS = [
@@ -54,9 +55,9 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
                 <span className="text-white text-[0.98rem]" style={{ fontWeight: 700 }}>{brand.name}</span>
               )}
               <span className="inline-flex items-center bg-white rounded-md px-2 py-1"><img src={nhsBadge} alt="Providing NHS Services" className="h-4 w-auto" /></span>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/10 border border-white/15 px-2 py-1 text-white/80 text-[0.7rem]" style={{ fontWeight: 600 }}>
-                <ShieldCheck size={12} /> GPhC Registered
-              </span>
+              {/* GPhC badge is location-specific — shown here only for single-branch brands.
+                  Height matches the NHS pill (h-4 img + py-1 ≈ h-6). */}
+              {!multiBranch && <GphcBadge location={brand.locations[0]} className="h-6" />}
             </div>
 
             {/* Legal + exit links */}
@@ -126,9 +127,9 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
               <span className="inline-flex items-center bg-white rounded-md px-2 py-1">
                 <img src={nhsBadge} alt="Providing NHS Services" className="h-5 w-auto" />
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/10 border border-white/15 px-2.5 py-1.5 text-white/80 text-[0.72rem]" style={{ fontWeight: 600 }}>
-                <ShieldCheck size={13} /> GPhC Registered Pharmacy
-              </span>
+              {/* GPhC badge is location-specific — for multi-branch groups it's shown under
+                  each branch below, not here. Height matches the NHS pill (h-5 img + py-1 ≈ h-7). */}
+              {!multiBranch && <GphcBadge location={brand.locations[0]} className="h-7" />}
             </div>
 
             {/* Social */}
@@ -180,6 +181,8 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
                   <a href={`tel:${loc.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 mt-0.5 hover:text-white transition-colors">
                     <Phone size={12} className="text-brand-accent" /> {loc.phone}
                   </a>
+                  {/* Per-branch GPhC badge (multi-branch groups only). */}
+                  {multiBranch && <div className="mt-2"><GphcBadge location={loc} className="h-7" /></div>}
                 </li>
               ))}
             </ul>
