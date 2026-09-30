@@ -45,9 +45,12 @@ export function useResolvedLocation(brand: Brand) {
         const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setUserCoords(coords);
         if (manualRef.current) return; // user picked a branch while we were locating
-        const nearest = [...locations].sort(
-          (a, b) => distanceMiles(coords, a) - distanceMiles(coords, b)
-        )[0];
+        // Branches with unknown coordinates sort last instead of poisoning the comparison.
+        const dist = (l: PharmacyLocation) => {
+          const d = distanceMiles(coords, l);
+          return Number.isFinite(d) ? d : Number.POSITIVE_INFINITY;
+        };
+        const nearest = [...locations].sort((a, b) => dist(a) - dist(b))[0];
         setSelectedId(nearest.id);
         setReason("geo");
       },

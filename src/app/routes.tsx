@@ -5,6 +5,10 @@ import LandingPage from "./pages/LandingPage";
 import LandingPageSimple, { SimpleLanding } from "./pages/LandingPageSimple";
 import { AboutPageTemplate } from "./pages/AboutPageTemplate";
 import { ContactPageTemplate } from "./pages/ContactPageTemplate";
+import LandingPageOneCare from "./pages/LandingPageOneCare";
+import AccessibilityPageOneCare from "./pages/AccessibilityPageOneCare";
+import AboutPageOneCare from "./pages/AboutPageOneCare";
+import ContactPageOneCare from "./pages/ContactPageOneCare";
 import LandingPageStrachans from "./pages/LandingPageStrachans";
 import LandingPageCanada from "./pages/LandingPageCanada";
 import AboutPageICare from "./pages/AboutPageICare";
@@ -28,7 +32,7 @@ import UpdatesPageKepple from "./pages/UpdatesPageKepple";
 import LandingPageCentral from "./pages/LandingPageCentral";
 import AboutPageCentral from "./pages/AboutPageCentral";
 import ContactPageCentral from "./pages/ContactPageCentral";
-import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand } from "./branding";
+import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand, onecareBrand } from "./branding";
 
 // Under GitHub Pages the app is served from /<repo>/, so routing is scoped to
 // Vite's configured base (BASE_URL). Locally this is just "/".
@@ -106,4 +110,12 @@ export const router = createBrowserRouter([
   { path: "/meadows/contact", element: <ContactPageTemplate brand={meadowsBrand} /> },
   { path: "/meadows/book/:serviceId", element: <BookingPage brand={meadowsBrand} /> },
   { path: "/meadows/questionnaire/:serviceId", element: <QuestionnairePage brand={meadowsBrand} /> },
+
+  // OneCare Pharmacy (Gateshead + [REPLACE: Branch 2]) — two branches, bespoke modern landing
+  { path: "/onecare", Component: LandingPageOneCare },
+  { path: "/onecare/about", Component: AboutPageOneCare },
+  { path: "/onecare/contact", Component: ContactPageOneCare },
+  { path: "/onecare/accessibility", Component: AccessibilityPageOneCare },
+  { path: "/onecare/book/:serviceId", element: <BookingPage brand={onecareBrand} /> },
+  { path: "/onecare/questionnaire/:serviceId", element: <QuestionnairePage brand={onecareBrand} /> },
 ], { basename });

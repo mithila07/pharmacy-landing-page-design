@@ -15,6 +15,10 @@ import acreMark from "../assets/Acre logomark.svg";
 import meadowsLogo from "../assets/Meadows FB Logo horizontal.svg";
 import meadowsFooter from "../assets/Meadows.svg";
 import meadowsMark from "../assets/Meadows logomark.svg";
+import onecareLogo from "../assets/onecare/OCP_Logo_Transparent.png";
+import onecareMark from "../assets/onecare/onecare-icon.svg";
+import onecareFavicon from "../assets/onecare/favicon.ico";
+import { onecareLocations, OC_LEGAL } from "./data/onecare";
 import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, centralLocations, jmorrisLocations, acreLocations, meadowsLocations, type PharmacyLocation } from "./data/locations";
 
 /**
@@ -293,6 +297,26 @@ export const meadowsBrand: Brand = {
     companyNumber: "[REPLACE — Company No.]",
     superintendent: "[REPLACE — Superintendent Pharmacist]",
     gphcNumber: "1034529",
+  },
+};
+
+export const onecareBrand: Brand = {
+  id: "onecare",
+  name: "OneCare Pharmacy",
+  tagline: "NHS & private pharmacy",
+  logo: onecareLogo,
+  logoMark: onecareMark,
+  favicon: onecareFavicon,
+  logoIsWordmark: true,
+  themeClass: "theme-onecare",
+  basePath: "/onecare",
+  seoArea: "Gateshead & [REPLACE: Branch 2 town]",
+  locations: onecareLocations, // both branches, from data/onecare.ts
+  legal: {
+    companyName: OC_LEGAL.owner,
+    companyNumber: OC_LEGAL.companyNumber,
+    superintendent: OC_LEGAL.superintendent,
+    gphcNumber: OC_LEGAL.superintendentGphc,
   },
 };
 

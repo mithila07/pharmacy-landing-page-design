@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="150" height="150">
+
+  <!-- Top square (darker) -->
+  <rect x="45" y="5" width="60" height="60" rx="8" ry="8" fill="#2E7A75"/>
+
+  <!-- Left square (darker) -->
+  <rect x="5" y="45" width="60" height="60" rx="8" ry="8" fill="#2E7A75"/>
+
+  <!-- Right square (mid teal) -->
+  <rect x="85" y="45" width="60" height="60" rx="8" ry="8" fill="#3D9690"/>
+
+  <!-- Bottom square (mid teal) -->
+  <rect x="45" y="85" width="60" height="60" rx="8" ry="8" fill="#3D9690"/>
+
+  <!-- Centre square (lightest teal) -->
+  <rect x="45" y="45" width="60" height="60" rx="8" ry="8" fill="#5BBDB8"/>
+
+  <!-- Modern "1" - wider vertical stroke, smaller flag -->
+  <g fill="white" opacity="0.95">
+    <!-- Vertical stroke -->
+    <rect x="90" y="50" width="15" height="48" rx="2"/>
+    <!-- Small angled top-left flag -->
+    <polygon points="90,50 105,50 105,58 80,63 80,57"/>
+  </g>
+
+</svg>

@@ -27,8 +27,12 @@ export function BranchSelector({ selected, reason, locations, userCoords, onSele
   const [open, setOpen] = useState(false);
   const chip = reasonChip[reason];
 
-  const fmtDistance = (loc: PharmacyLocation) =>
-    userCoords ? `${distanceMiles(userCoords, loc).toFixed(1)} mi away` : null;
+  // Branches with unknown coordinates (NaN) show no distance rather than "NaN mi".
+  const fmtDistance = (loc: PharmacyLocation) => {
+    if (!userCoords) return null;
+    const d = distanceMiles(userCoords, loc);
+    return Number.isFinite(d) ? `${d.toFixed(1)} mi away` : null;
+  };
 
   return (
     <div className="rounded-xl border border-brand-primary/20 bg-white shadow-sm overflow-hidden">
