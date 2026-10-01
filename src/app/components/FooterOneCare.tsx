@@ -23,9 +23,9 @@ export function FooterOneCare() {
         {/* 1 — Brand */}
         <div>
           {/* The logo mark lives here only; the header carries the full wordmark. */}
-          <img src={onecareBrand.logoMark} alt="OneCare Pharmacy" width={56} height={56} className="w-14 h-14" />
+          <img src={onecareBrand.logoMark} alt="One Care Pharmacy" width={56} height={56} className="w-14 h-14" />
           <p className="oc-small text-oc-text mt-5 max-w-[32ch]">
-            NHS Pharmacy First and private clinics from two community pharmacies in Gateshead and <Tbc>[REPLACE: area]</Tbc>.
+            NHS Pharmacy First, a travel clinic and private services from two community pharmacies in Bensham and Low Fell, Gateshead.
           </p>
           <nav aria-label="Footer" className="mt-6">
             <ul className="grid gap-1 oc-small">
@@ -71,7 +71,7 @@ export function FooterOneCare() {
         <div>
           <h2 className="font-semibold text-oc-ink text-[1.0625rem]">Regulated &amp; legal</h2>
           <p className="oc-small text-oc-text mt-3">
-            OneCare Pharmacy is a trading name of {OC_LEGAL.owner}, company no. <Tbc>{OC_LEGAL.companyNumber}</Tbc>, registered office <Tbc>{OC_LEGAL.registeredOffice}</Tbc>.
+            {OC_LEGAL.tradingName} is a trading name of {OC_LEGAL.owner}, company no. {OC_LEGAL.companyNumber}, registered office {OC_LEGAL.registeredOffice}.
           </p>
           <ul className="oc-small mt-3 grid gap-1.5">
             {OC_BRANCHES.map((b) => (
@@ -84,7 +84,7 @@ export function FooterOneCare() {
                 )}
               </li>
             ))}
-            <li>Superintendent pharmacist: <Tbc>{OC_LEGAL.superintendent}</Tbc>, GPhC <Tbc>{OC_LEGAL.superintendentGphc}</Tbc></li>
+            <li>Superintendent pharmacist: {OC_LEGAL.superintendent}, GPhC {OC_LEGAL.superintendentGphc}</li>
           </ul>
           <nav aria-label="Legal" className="mt-4">
             <ul className="grid gap-1 oc-small">
@@ -97,7 +97,7 @@ export function FooterOneCare() {
         </div>
       </div>
       <div className="border-t border-oc-line">
-        <p className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-5 oc-small text-oc-quiet">© {year} OneCare Pharmacy. All rights reserved.</p>
+        <p className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-5 oc-small text-oc-quiet">© {year} One Care Pharmacy. All rights reserved.</p>
       </div>
     </footer>
   );

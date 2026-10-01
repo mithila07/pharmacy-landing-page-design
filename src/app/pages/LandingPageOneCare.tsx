@@ -74,18 +74,20 @@ export function onecareGraph() {
   const org = {
     "@type": "Organization",
     "@id": "#onecare",
-    name: "OneCare Pharmacy",
+    name: "One Care Pharmacy",
     legalName: OC_LEGAL.owner,
     ...(isTbc(OC_LEGAL.companyNumber) ? {} : { identifier: { "@type": "PropertyValue", propertyID: "Companies House number", value: OC_LEGAL.companyNumber } }),
   };
-  const branches = OC_BRANCHES.map((b) => ({
+  // Stand-in (demo) branches are left out so search engines never index dummy details.
+  const branches = OC_BRANCHES.filter((b) => !b.demo).map((b) => ({
     "@type": "Pharmacy",
     "@id": `#${b.id}`,
-    name: isTbc(b.name) ? "OneCare Pharmacy" : b.name,
+    name: isTbc(b.name) ? "One Care Pharmacy" : b.name,
     ...(isTbc(formatAddress(b)) ? {} : {
       address: { "@type": "PostalAddress", streetAddress: b.address.line1, addressLocality: b.address.town, addressRegion: b.address.county, postalCode: b.address.postcode, addressCountry: "GB" },
     }),
     ...(isTbc(b.phone) ? {} : { telephone: b.phone }),
+    ...(isTbc(b.email) ? {} : { email: b.email }),
     ...(b.geo ? { geo: { "@type": "GeoCoordinates", latitude: b.geo.lat, longitude: b.geo.lng } } : {}),
     ...(isTbc(b.gphc) ? {} : { identifier: { "@type": "PropertyValue", propertyID: "GPhC premises registration", value: b.gphc } }),
     parentOrganization: { "@id": "#onecare" },
@@ -95,8 +97,8 @@ export function onecareGraph() {
 
 export default function LandingPageOneCare() {
   useSeo({
-    title: "OneCare Pharmacy | NHS Pharmacy First & Private Clinics, Gateshead",
-    description: "NHS Pharmacy First, a travel vaccination clinic, weight loss and ear wax removal at OneCare Pharmacy, Bewick Road, Gateshead. Book online and choose your branch.",
+    title: "One Care Pharmacy | NHS Pharmacy First & Private Clinics, Gateshead",
+    description: "NHS Pharmacy First, a travel vaccination clinic, weight loss and ear wax removal at One Care Pharmacy, Bewick Road, Gateshead. Book online and choose your branch.",
     path: onecareBrand.basePath,
     favicon: onecareBrand.favicon,
   });

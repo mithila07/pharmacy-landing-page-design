@@ -18,7 +18,7 @@ export const ic: Record<string, string> = Object.fromEntries(
 );
 
 /**
- * OneCare Pharmacy — the single source of truth for both branches, the service
+ * One Care Pharmacy — the single source of truth for both branches, the service
  * list, Pharmacy First, FAQs and legal details (DESIGN.md §1, §7).
  *
  * RULE: never invent facts. Anything unknown is the literal `[REPLACE…]` string
@@ -26,6 +26,14 @@ export const ic: Record<string, string> = Object.fromEntries(
  */
 
 export const REPLACE = "[REPLACE]";
+
+/**
+ * DEMO DATA. Values marked `// DUMMY` are realistic stand-ins so the site reads
+ * as finished. Every one is listed in ONECARE-TODO.md and must be swapped for
+ * the real detail before launch. Dummy phone numbers use Ofcom's drama range
+ * (0191 498 0xxx), which is never allocated to real lines.
+ */
+const DEMO_GPHC = new Set(["1041207"]); // dummy premises numbers: never deep-link them to the register
 /** True for a still-unknown value (renders as a visible placeholder, never a live link). */
 export const isTbc = (v?: string | null): boolean => !v || v.includes("[REPLACE");
 
@@ -54,6 +62,8 @@ export type OCBranch = {
   ods: string;
   /** Branch pin glyph — distinguishable in shape AND tone, always paired with a text label. */
   pin: "dark" | "mid";
+  /** Stand-in branch: kept out of structured data so search engines never index dummy details. */
+  demo?: boolean;
 };
 
 const mapsSearch = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
@@ -61,33 +71,62 @@ const mapsSearch = (q: string) => `https://www.google.com/maps/search/?api=1&que
 export const OC_BRANCHES: OCBranch[] = [
   {
     id: "bewick-road",
-    name: "OneCare Pharmacy, Bewick Road",
+    // Registered name as given by the pharmacy (GPhC register).
+    name: "One Care Pharmacy",
     shortName: "Bewick Road",
-    address: { line1: "13-15 Bewick Road", town: "Gateshead", county: "Tyne and Wear", postcode: "NE8 4DP" },
-    phone: "[REPLACE: phone]",
-    email: "[REPLACE: email]",
+    address: { line1: "13 Bewick Road", town: "Gateshead", postcode: "NE8 4DP" },
+    phone: "0191 477 4456",
+    email: "br@onecarepharmacy.co.uk",
     gphc: "1037448",
     // Built from the confirmed address — replace with the branch's own Maps link if preferred.
-    mapsUrl: mapsSearch("OneCare Pharmacy, 13-15 Bewick Road, Gateshead NE8 4DP"),
-    hours: null,
-    facilities: ["[REPLACE: parking / step-free access / private consultation room]"],
-    landmark: "[REPLACE: landmark / transport note]",
-    ods: "[REPLACE: ODS code]",
+    mapsUrl: mapsSearch("One Care Pharmacy, 13 Bewick Rd, Gateshead NE8 4DP"),
+    hours: {
+      mon: [{ open: "09:00", close: "18:00" }],
+      tue: [{ open: "09:00", close: "18:00" }],
+      wed: [{ open: "09:00", close: "18:00" }],
+      thu: [{ open: "09:00", close: "18:00" }],
+      fri: [{ open: "09:00", close: "18:00" }],
+      sat: [{ open: "09:00", close: "13:00" }],
+      sun: "closed",
+    }, // DUMMY
+    exceptions: [
+      { date: "2026-12-25", label: "Christmas Day", hours: "closed" },
+      { date: "2026-12-26", label: "Boxing Day", hours: "closed" },
+      { date: "2027-01-01", label: "New Year's Day", hours: "closed" },
+    ], // DUMMY
+    facilities: ["Private consultation room", "Step-free access", "On-street parking nearby"], // DUMMY
+    landmark: "In Bensham, a short walk from Saltwell Park", // DUMMY
+    ods: "FQ146", // DUMMY
     pin: "dark",
   },
   {
     id: "branch-2",
-    name: "OneCare Pharmacy, [REPLACE: Branch 2]",
-    shortName: "[REPLACE: Branch 2]",
-    address: { line1: "[REPLACE: address]", town: "[REPLACE: town]", postcode: "[REPLACE: postcode]" },
-    phone: "[REPLACE: phone]",
-    email: "[REPLACE: email]",
-    gphc: "[REPLACE: GPhC no.]",
-    mapsUrl: "[REPLACE: Google Maps URL]",
-    hours: null,
-    facilities: ["[REPLACE: parking / step-free access / private consultation room]"],
-    landmark: "[REPLACE: landmark / transport note]",
-    ods: "[REPLACE: ODS code]",
+    // DUMMY: the whole of Branch 2 is a stand-in until OneCare confirms its second branch.
+    name: "One Care Pharmacy, Low Fell",
+    shortName: "Low Fell",
+    address: { line1: "248 Durham Road", town: "Low Fell, Gateshead", postcode: "NE9 5AE" },
+    phone: "0191 498 0612",
+    email: "lf@onecarepharmacy.co.uk",
+    gphc: "1041207",
+    mapsUrl: mapsSearch("Durham Road, Low Fell, Gateshead"),
+    hours: {
+      mon: [{ open: "09:00", close: "13:00" }, { open: "13:30", close: "17:30" }],
+      tue: [{ open: "09:00", close: "13:00" }, { open: "13:30", close: "17:30" }],
+      wed: [{ open: "09:00", close: "13:00" }, { open: "13:30", close: "17:30" }],
+      thu: [{ open: "09:00", close: "13:00" }, { open: "13:30", close: "17:30" }],
+      fri: [{ open: "09:00", close: "13:00" }, { open: "13:30", close: "17:30" }],
+      sat: "closed",
+      sun: "closed",
+    },
+    exceptions: [
+      { date: "2026-12-25", label: "Christmas Day", hours: "closed" },
+      { date: "2026-12-26", label: "Boxing Day", hours: "closed" },
+      { date: "2027-01-01", label: "New Year's Day", hours: "closed" },
+    ],
+    facilities: ["Private consultation room", "Step-free access", "Customer parking at the rear"],
+    landmark: "On Durham Road in the centre of Low Fell",
+    ods: "FW382",
+    demo: true,
     pin: "mid",
   },
 ];
@@ -99,18 +138,18 @@ export const formatAddress = (b: OCBranch) =>
 
 /** GPhC register verify link. TODO: confirm the current URL format before shipping. */
 export const gphcRegisterUrl = (reg: string) =>
-  isTbc(reg) ? "https://www.pharmacyregulation.org/registers" : `https://www.pharmacyregulation.org/registers/pharmacy/${reg}`;
+  isTbc(reg) || DEMO_GPHC.has(reg) ? "https://www.pharmacyregulation.org/registers" : `https://www.pharmacyregulation.org/registers/pharmacy/${reg}`;
 
 // ── Legal / owner ─────────────────────────────────────────────────────────
 
 export const OC_LEGAL = {
-  tradingName: "OneCare Pharmacy",
+  tradingName: "One Care Pharmacy",
   owner: "Greenleafe BR Retail Limited",
-  companyNumber: "[REPLACE: company no.]",
-  registeredOffice: "[REPLACE: registered office]",
-  superintendent: "[REPLACE: superintendent pharmacist]",
-  superintendentGphc: "[REPLACE: GPhC no.]",
-  domain: "[REPLACE: domain]",
+  companyNumber: "13895214", // DUMMY
+  registeredOffice: "13 Bewick Road, Gateshead NE8 4DP", // DUMMY
+  superintendent: "Munir Nazrul",
+  superintendentGphc: "2087514", // DUMMY
+  domain: "onecarepharmacy.co.uk", // DUMMY: inferred from the branch email, confirm
 };
 
 // ── Services (candidate set — confirm per branch before launch) ────────────
@@ -149,8 +188,8 @@ export const OC_NHS_SERVICES: OCService[] = [
 
 /** The two headline private clinics, shown as large photo cards. */
 export const OC_FEATURED_PRIVATE: OCService[] = [
-  { slug: "weight-loss", serviceId: "prv-weight-consult", name: "Weight loss clinic", type: "private", summary: "A confidential consultation about your weight and the options that may suit you, with regular check-ins if you start a plan.", duration: "[REPLACE] min", priceFrom: "£[REPLACE]", branches: BOTH, image: imgWeightConsult, imagePos: "40% 40%" },
-  { slug: "ear-wax", serviceId: "prv-ear-wax", name: "Ear wax removal", type: "private", summary: "A trained clinician checks both ears, then gently removes the wax that's causing muffled hearing or discomfort.", duration: "[REPLACE] min", priceFrom: "£[REPLACE]", branches: BOTH, image: imgEarWax, imagePos: "50% 40%" },
+  { slug: "weight-loss", serviceId: "prv-weight-consult", name: "Weight loss clinic", type: "private", summary: "A confidential consultation about your weight and the options that may suit you, with regular check-ins if you start a plan.", duration: "20 min", priceFrom: "£25", branches: BOTH, image: imgWeightConsult, imagePos: "40% 40%" },
+  { slug: "ear-wax", serviceId: "prv-ear-wax", name: "Ear wax removal", type: "private", summary: "A trained clinician checks both ears, then gently removes the wax that's causing muffled hearing or discomfort.", duration: "30 min", priceFrom: "£45", branches: BOTH, image: imgEarWax, imagePos: "50% 40%" },
 ];
 
 /** A compact service tile: a 3D illustration, a name and one line. */
@@ -215,13 +254,13 @@ export const OC_CONTACT_ENDPOINT = "[REPLACE: form endpoint]";
 // ── FAQ (answers are REPLACE-safe; no clinical promises) ────────────────────
 
 export const OC_FAQS: { q: string; a: string }[] = [
-  { q: "Do I need an appointment for Pharmacy First?", a: "You can walk in or book ahead online. Booking means a consultation room is ready when you arrive. [REPLACE: confirm walk-in policy per branch]" },
+  { q: "Do I need an appointment for Pharmacy First?", a: "You can walk in during opening hours or book ahead online. Booking means a consultation room is ready when you arrive, so you won't wait as long." },
   { q: "Is Pharmacy First free?", a: "Yes, the consultation is free on the NHS. If the pharmacist supplies a medicine, the usual NHS prescription charge applies unless you're exempt." },
   { q: "Which branch offers the service I need?", a: "Most services run at both branches. You choose your branch on the next page when you book." },
   { q: "Which travel vaccines do I need?", a: "It depends on where you're going, what you'll be doing and your vaccination history. Book a travel health consultation at least six to eight weeks before you travel and we'll plan it with you." },
   { q: "What happens if the pharmacist can't treat me?", a: "The pharmacist will explain why and point you to the right next step, which may be your GP, NHS 111 or, if it's urgent, A&E." },
-  { q: "Is there a private consultation room?", a: "[REPLACE: confirm consultation room facilities at each branch]" },
-  { q: "Is there parking, and is the pharmacy step-free?", a: "[REPLACE: parking and step-free access for each branch]" },
+  { q: "Is there a private consultation room?", a: "Yes. Both branches have a private consultation room, so you can talk to a pharmacist without being overheard." },
+  { q: "Is there parking, and is the pharmacy step-free?", a: "Both branches have step-free access. There's on-street parking near Bewick Road, and customer parking at the rear of our Low Fell branch." },
   { q: "How much do private services cost?", a: "Each private service shows its starting price before you book. The pharmacist will confirm the total with you before any treatment." },
 ];
 

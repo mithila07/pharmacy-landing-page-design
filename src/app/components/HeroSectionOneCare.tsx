@@ -60,7 +60,7 @@ function ConsultationClip() {
       {/* Soft brand disc behind the people; the clip multiplies onto it. */}
       <div data-hero-disc aria-hidden="true" className="absolute inset-[6%] rounded-full bg-gradient-to-br from-oc-mist via-[#dff0ee] to-white" />
       {still ? (
-        <img data-hero-media src={heroPoster} alt="A OneCare pharmacist explaining a medicine to an older patient" className="relative w-full h-full object-contain mix-blend-multiply" />
+        <img data-hero-media src={heroPoster} alt="A One Care pharmacist explaining a medicine to an older patient" className="relative w-full h-full object-contain mix-blend-multiply" />
       ) : (
         <video
           ref={video}
@@ -72,7 +72,7 @@ function ConsultationClip() {
           loop
           playsInline
           preload="auto"
-          aria-label="A OneCare pharmacist explaining a medicine to an older patient"
+          aria-label="A One Care pharmacist explaining a medicine to an older patient"
         />
       )}
       <FloatChip icon={ic.stethoscope} className="top-[4%] right-[-2%] sm:right-[2%]">Pharmacy First</FloatChip>

@@ -302,7 +302,7 @@ export const meadowsBrand: Brand = {
 
 export const onecareBrand: Brand = {
   id: "onecare",
-  name: "OneCare Pharmacy",
+  name: "One Care Pharmacy",
   tagline: "NHS & private pharmacy",
   logo: onecareLogo,
   logoMark: onecareMark,
@@ -310,7 +310,7 @@ export const onecareBrand: Brand = {
   logoIsWordmark: true,
   themeClass: "theme-onecare",
   basePath: "/onecare",
-  seoArea: "Gateshead & [REPLACE: Branch 2 town]",
+  seoArea: "Gateshead & Low Fell",
   locations: onecareLocations, // both branches, from data/onecare.ts
   legal: {
     companyName: OC_LEGAL.owner,

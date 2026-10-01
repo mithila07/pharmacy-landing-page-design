@@ -61,7 +61,7 @@ export function HeaderOneCare() {
       <header className="sticky top-0 z-[60] px-3 sm:px-5 pt-3">
         <div className="oc-glass mx-auto max-w-[1320px] rounded-full h-16 pl-5 sm:pl-7 pr-2 flex items-center justify-between gap-4">
           <Link to={BASE} className="shrink-0 inline-flex items-center min-h-[44px]">
-            <img src={onecareBrand.logo} alt="OneCare Pharmacy home" width={180} height={34} className="h-[26px] sm:h-[30px] w-auto" />
+            <img src={onecareBrand.logo} alt="One Care Pharmacy home" width={180} height={34} className="h-[31px] sm:h-[36px] w-auto" />
           </Link>
 
           <nav aria-label="Main" className="hidden xl:block">

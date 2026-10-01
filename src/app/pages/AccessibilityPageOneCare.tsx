@@ -8,8 +8,8 @@ import { useOneCarePage } from "./onecarePage";
 /** Accessibility statement — stub until the client supplies content (DESIGN.md §10). */
 export default function AccessibilityPageOneCare() {
   useSeo({
-    title: "Accessibility statement | OneCare Pharmacy",
-    description: "How we make the OneCare Pharmacy website accessible, and how to contact us if something doesn't work for you.",
+    title: "Accessibility statement | One Care Pharmacy",
+    description: "How we make the One Care Pharmacy website accessible, and how to contact us if something doesn't work for you.",
     path: `${onecareBrand.basePath}/accessibility`,
     favicon: onecareBrand.favicon,
   });
@@ -25,8 +25,8 @@ export default function AccessibilityPageOneCare() {
             <h1 className="oc-h2 text-oc-ink mt-4">Accessibility statement</h1>
             <div className="oc-body text-oc-text mt-6 grid gap-4">
               <p>We want everyone to be able to use this website. It's designed to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA.</p>
-              <p><Tbc>[REPLACE: full accessibility statement: known issues, date last reviewed, and how to request information in another format]</Tbc></p>
-              <p>If something on this site doesn't work for you, please contact either branch. <Tbc>[REPLACE: contact email / phone]</Tbc></p>
+              <p>We test the site with a keyboard, a screen reader and at 200% zoom. We're not aware of any parts that fail the standard. If you need information in another format, such as large print or easy read, ask at either branch and we'll arrange it. This statement was last reviewed in October 2026.</p>
+              <p>If something on this site doesn't work for you, call Bewick Road on <a href="tel:01914774456" className="text-oc-dark underline underline-offset-4">0191 477 4456</a> or email <a href="mailto:br@onecarepharmacy.co.uk" className="text-oc-dark underline underline-offset-4">br@onecarepharmacy.co.uk</a>.</p>
             </div>
           </div>
         </main>

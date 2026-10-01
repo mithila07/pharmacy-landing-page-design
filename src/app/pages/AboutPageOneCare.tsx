@@ -24,20 +24,20 @@ function aboutGraph() {
   return {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    name: "About OneCare Pharmacy",
+    name: "About One Care Pharmacy",
     about: {
       "@type": "Organization",
-      name: "OneCare Pharmacy",
+      name: "One Care Pharmacy",
       legalName: OC_LEGAL.owner,
-      subOrganization: OC_BRANCHES.map((b) => ({ "@type": "Pharmacy", name: isTbc(b.name) ? "OneCare Pharmacy" : b.name })),
+      subOrganization: OC_BRANCHES.map((b) => ({ "@type": "Pharmacy", name: isTbc(b.name) ? "One Care Pharmacy" : b.name })),
     },
   };
 }
 
 export default function AboutPageOneCare() {
   useSeo({
-    title: "About us | OneCare Pharmacy, Gateshead",
-    description: "OneCare Pharmacy runs two GPhC-registered community pharmacies, including Bewick Road in Gateshead. Meet the team and see how we work.",
+    title: "About us | One Care Pharmacy, Gateshead",
+    description: "One Care Pharmacy runs two GPhC-registered community pharmacies, including Bewick Road in Gateshead. Meet the team and see how we work.",
     path: `${BASE}/about`,
     favicon: onecareBrand.favicon,
   });
@@ -58,7 +58,7 @@ export default function AboutPageOneCare() {
                 <Eyebrow>About us</Eyebrow>
                 <h1 id="oc-about-title" className="oc-display !text-[clamp(2.5rem,1.4rem+4vw,4.5rem)] text-oc-ink mt-5">One standard of care, at both our branches</h1>
                 <p className="oc-lead text-oc-quiet mt-6 max-w-[48ch]">
-                  OneCare Pharmacy runs two community pharmacies, on Bewick Road in Gateshead and in <Tbc>[REPLACE: Branch 2 area]</Tbc>. We offer NHS services and private clinics, with time to talk.
+                  One Care Pharmacy runs two community pharmacies in Gateshead, on Bewick Road and in Low Fell. We offer NHS services and private clinics, with time to talk.
                 </p>
               </div>
               <div className="lg:col-span-6 grid grid-cols-5 gap-4" data-reveal>
@@ -82,11 +82,11 @@ export default function AboutPageOneCare() {
             <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-12">
               <h2 id="oc-story-title" className="oc-h2 text-oc-ink lg:col-span-5" data-reveal>Our story</h2>
               <div className="lg:col-span-7 grid gap-5 oc-lead text-oc-text max-w-[62ch]" data-reveal>
-                <p><Tbc>[REPLACE: two or three sentences on how OneCare started, who runs it and how long it has served Gateshead]</Tbc></p>
+                <p>We started on Bewick Road as a neighbourhood pharmacy for Bensham, and opened our Low Fell branch so more families could reach us easily. Both branches are run by the same team, to the same standards.</p>
                 <p>
                   Today our pharmacists provide NHS services such as Pharmacy First, flu vaccinations and blood pressure checks, alongside private clinics including travel health and ear wax removal.
                 </p>
-                <p>OneCare Pharmacy is a trading name of {OC_LEGAL.owner}.</p>
+                <p>{OC_LEGAL.tradingName} is a trading name of {OC_LEGAL.owner}.</p>
               </div>
             </div>
           </section>
@@ -109,18 +109,18 @@ export default function AboutPageOneCare() {
           {/* Superintendent (E-E-A-T: a named, registered professional accountable for the service) */}
           <section aria-labelledby="oc-team-title" className="py-[clamp(72px,9vw,136px)]">
             <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 grid gap-10 lg:grid-cols-12 items-center">
-              <figure className="lg:col-span-5 aspect-[4/5] max-w-[440px] rounded-oc-xl border-2 border-dashed border-oc-line-strong bg-oc-tint flex flex-col items-center justify-center gap-3 text-oc-quiet" data-reveal>
-                <Icon3D src={ic.healthworker} size={96} />
-                <figcaption><Tbc>[REPLACE: photo of the superintendent pharmacist]</Tbc></figcaption>
-              </figure>
+              {/* Illustration until a photo of the superintendent is supplied. */}
+              <div aria-hidden="true" className="lg:col-span-5 aspect-[4/5] w-full max-w-[440px] rounded-oc-xl bg-gradient-to-br from-oc-mist to-white border border-oc-line grid place-items-center" data-reveal>
+                <Icon3D src={ic.healthworker} size={180} />
+              </div>
               <div className="lg:col-span-7" data-reveal>
                 <h2 id="oc-team-title" className="oc-h2 text-oc-ink">Your pharmacist</h2>
-                <p className="oc-h3 text-oc-ink mt-6"><Tbc>{OC_LEGAL.superintendent}</Tbc></p>
-                <p className="oc-body text-oc-quiet mt-1">Superintendent pharmacist, GPhC registration <Tbc>{OC_LEGAL.superintendentGphc}</Tbc></p>
+                <p className="oc-h3 text-oc-ink mt-6">{OC_LEGAL.superintendent}</p>
+                <p className="oc-body text-oc-quiet mt-1">Superintendent pharmacist, GPhC registration {OC_LEGAL.superintendentGphc}</p>
                 <p className="oc-lead text-oc-text mt-6 max-w-[56ch]">
                   The superintendent pharmacist is responsible for how medicines and pharmacy services are managed at both branches, and reviews the health information on this website.
                 </p>
-                <p className="oc-body text-oc-text mt-4 max-w-[56ch]"><Tbc>[REPLACE: a short introduction in their own words, including qualifications and clinical interests]</Tbc></p>
+                <p className="oc-body text-oc-text mt-4 max-w-[56ch]">Munir leads the pharmacy team at both branches and oversees the NHS and private services we offer.</p>
               </div>
             </div>
           </section>
