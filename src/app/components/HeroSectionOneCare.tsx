@@ -4,7 +4,8 @@ import heroVideo from "../../assets/onecare/hero-consult.mp4";
 import heroPoster from "../../assets/onecare/hero-poster.webp";
 import { OC_IMAGES, ic } from "../data/onecare";
 import { prefersReducedMotion } from "../onecareMotion";
-import { Arrow, BTN_PRIMARY, BTN_SECONDARY, Icon3D } from "./onecareUi";
+import { CalendarCheck } from "@phosphor-icons/react";
+import { Arrow, BTN_PRIMARY, BTN_SECONDARY, Icon3D, Ph } from "./onecareUi";
 
 /** A photo set inline between headline words, at type height. Decorative. */
 function Pill({ src, pos = "50% 50%" }: { src: string; pos?: string }) {
@@ -30,7 +31,7 @@ function Words({ text }: { text: string }) {
 function FloatChip({ icon, children, className }: { icon: string; children: string; className: string }) {
   return (
     <div data-hero-chip aria-hidden="true" className={`oc-glass absolute rounded-full pl-2 pr-4 py-1.5 flex items-center gap-2 text-[0.875rem] font-semibold text-oc-ink ${className}`}>
-      <Icon3D src={icon} size={30} />
+      <Icon3D src={icon} size={42} className="-my-1.5" />
       {children}
     </div>
   );
@@ -115,7 +116,7 @@ export function HeroSectionOneCare() {
           </p>
           <div data-hero-rise className="mt-9 flex flex-wrap gap-3">
             <a href="#nhs-services" className={BTN_PRIMARY}>
-              <Icon3D src={ic.calendar} size={24} className="-my-1" /> Book an appointment
+              <Ph icon={CalendarCheck} size={20} /> Book an appointment
             </a>
             <a href="#travel-clinic" className={`${BTN_SECONDARY} group`}>
               Travel clinic <Arrow />

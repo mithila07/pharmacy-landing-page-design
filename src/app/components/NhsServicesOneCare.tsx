@@ -46,7 +46,7 @@ export function NhsServicesOneCare() {
             <div className="grid sm:grid-cols-[1fr_180px]">
               <div className="p-7 sm:p-9">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/10 pl-1.5 pr-3 py-1 text-[0.8125rem] font-semibold">
-                  <Icon3D src={ic.stethoscope} size={26} /> NHS Pharmacy First
+                  <span className="w-8 h-8 rounded-full bg-oc-mist grid place-items-center"><Icon3D src={ic.stethoscope} size={30} /></span> NHS Pharmacy First
                 </span>
                 <h3 id="oc-pf-title" className="oc-h2 mt-5 !text-[clamp(1.75rem,1.3rem+1.4vw,2.4rem)]">Help for seven common conditions</h3>
                 <p className="oc-body text-white/80 mt-3 max-w-[44ch]">
@@ -65,7 +65,7 @@ export function NhsServicesOneCare() {
                     ariaLabel={`Book Pharmacy First for ${c.name}`}
                     className="group w-full min-h-[76px] px-6 sm:px-8 py-4 flex items-center gap-4 text-left hover:bg-white/[0.06] transition-colors"
                   >
-                    <Icon3D src={c.icon} size={36} />
+                    <span className="w-12 h-12 shrink-0 rounded-oc-md bg-oc-mist grid place-items-center"><Icon3D src={c.icon} size={46} /></span>
                     <span className="flex-1 min-w-0">
                       <span className="block font-semibold">{c.name}</span>
                       <span className="block oc-small text-white/70">{c.eligibility}</span>

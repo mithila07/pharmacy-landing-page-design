@@ -11,10 +11,15 @@ import imgSoreThroat from "../../assets/sorethroat.jpg";
 import imgWeightConsult from "../../assets/onecare/weight-consult.webp";
 import imgTravelClinic from "../../assets/onecare/travel-clinic.webp";
 
-/** Fluent 3D illustrations (MIT, Microsoft), keyed by file name: `ic.syringe`, `ic.mosquito`, ... */
-const ICONS = import.meta.glob<string>("../../assets/onecare/icons3d/*.png", { eager: true, import: "default" });
+/**
+ * One Care 3D illustrations, generated for this site in one consistent style
+ * (soft, tactile objects with teal accents; see ONECARE-TODO.md for the prompt).
+ * Keyed by file name: `ic["sore-throat"]`, `ic.vaccines`, ...
+ * Content only. Buttons, the footer and other UI use Phosphor duotone icons.
+ */
+const ICONS = import.meta.glob<string>("../../assets/onecare/icons3d/*.webp", { eager: true, import: "default" });
 export const ic: Record<string, string> = Object.fromEntries(
-  Object.entries(ICONS).map(([path, url]) => [path.split("/").pop()!.replace(".png", ""), url]),
+  Object.entries(ICONS).map(([path, url]) => [path.split("/").pop()!.replace(".webp", ""), url]),
 );
 
 /**
@@ -198,36 +203,36 @@ export type OCMiniService = { serviceId: string; name: string; line: string; ico
 /** Travel clinic. Confirm stock per branch; yellow fever is omitted until OneCare confirms it is a registered centre. */
 export const OC_TRAVEL_CONSULT = { serviceId: "prv-travel-consult", name: "Travel health consultation" };
 export const OC_TRAVEL: OCMiniService[] = [
-  { serviceId: "prv-hep-a", name: "Hepatitis A", line: "Spread through contaminated food and water.", icon: ic.microbe },
-  { serviceId: "prv-hep-b", name: "Hepatitis B", line: "Spread through blood and body fluids. Given as a course.", icon: ic.blood },
-  { serviceId: "prv-typhoid", name: "Typhoid", line: "Spread through contaminated food and water.", icon: ic.wave },
-  { serviceId: "prv-cholera", name: "Cholera", line: "A drink-based vaccine for some higher-risk trips.", icon: ic.droplet },
-  { serviceId: "prv-rabies", name: "Rabies", line: "Spread by bites and scratches from infected animals.", icon: ic.dog },
-  { serviceId: "prv-meningitis", name: "Meningitis ACWY", line: "Required for Hajj and Umrah, and advised for some regions.", icon: ic.brain },
-  { serviceId: "prv-japanese-enc", name: "Japanese encephalitis", line: "Spread by mosquitoes in parts of Asia.", icon: ic.globe },
-  { serviceId: "prv-tickborne", name: "Tick-borne encephalitis", line: "Spread by ticks in forested parts of Europe and Asia.", icon: ic.beetle },
-  { serviceId: "prv-malaria", name: "Malaria prevention", line: "Advice and, if suitable, antimalarial tablets for your trip.", icon: ic.mosquito },
-  { serviceId: "prv-altitude", name: "Altitude sickness", line: "Advice and, if suitable, treatment before high-altitude trips.", icon: ic.mountain },
+  { serviceId: "prv-hep-a", name: "Hepatitis A", line: "Spread through contaminated food and water.", icon: ic["hep-a"] },
+  { serviceId: "prv-hep-b", name: "Hepatitis B", line: "Spread through blood and body fluids. Given as a course.", icon: ic["hep-b"] },
+  { serviceId: "prv-typhoid", name: "Typhoid", line: "Spread through contaminated food and water.", icon: ic["typhoid"] },
+  { serviceId: "prv-cholera", name: "Cholera", line: "A drink-based vaccine for some higher-risk trips.", icon: ic["cholera"] },
+  { serviceId: "prv-rabies", name: "Rabies", line: "Spread by bites and scratches from infected animals.", icon: ic["rabies"] },
+  { serviceId: "prv-meningitis", name: "Meningitis ACWY", line: "Required for Hajj and Umrah, and advised for some regions.", icon: ic["men-acwy"] },
+  { serviceId: "prv-japanese-enc", name: "Japanese encephalitis", line: "Spread by mosquitoes in parts of Asia.", icon: ic["japanese-enc"] },
+  { serviceId: "prv-tickborne", name: "Tick-borne encephalitis", line: "Spread by ticks in forested parts of Europe and Asia.", icon: ic["tick-borne"] },
+  { serviceId: "prv-malaria", name: "Malaria prevention", line: "Advice and, if suitable, antimalarial tablets for your trip.", icon: ic["malaria"] },
+  { serviceId: "prv-altitude", name: "Altitude sickness", line: "Advice and, if suitable, treatment before high-altitude trips.", icon: ic["altitude"] },
 ];
 
 export const OC_VACCINES: OCMiniService[] = [
-  { serviceId: "prv-flu-private", name: "Flu vaccination", line: "If you don't qualify for a free NHS flu vaccine.", icon: ic.syringe },
-  { serviceId: "prv-chicken-pox", name: "Chickenpox", line: "For children and adults who haven't had chickenpox.", icon: ic.baby },
-  { serviceId: "prv-shingles-prv", name: "Shingles", line: "For adults not yet eligible for the NHS programme.", icon: ic.older },
-  { serviceId: "prv-hpv", name: "HPV", line: "Protection against the human papillomavirus.", icon: ic.shield },
-  { serviceId: "prv-men-b", name: "Meningitis B", line: "For people not covered by the NHS schedule.", icon: ic.brain },
+  { serviceId: "prv-flu-private", name: "Flu vaccination", line: "If you don't qualify for a free NHS flu vaccine.", icon: ic["flu"] },
+  { serviceId: "prv-chicken-pox", name: "Chickenpox", line: "For children and adults who haven't had chickenpox.", icon: ic["chickenpox"] },
+  { serviceId: "prv-shingles-prv", name: "Shingles", line: "For adults not yet eligible for the NHS programme.", icon: ic["shingles-vax"] },
+  { serviceId: "prv-hpv", name: "HPV", line: "Protection against the human papillomavirus.", icon: ic["hpv"] },
+  { serviceId: "prv-men-b", name: "Meningitis B", line: "For people not covered by the NHS schedule.", icon: ic["men-b"] },
 ];
 
 export const OC_TREATMENTS: OCMiniService[] = [
-  { serviceId: "prv-hayfever", name: "Hay fever", line: "When over-the-counter remedies aren't enough.", icon: ic.tulip },
-  { serviceId: "prv-cystitis", name: "Cystitis", line: "Assessment and treatment if it's suitable.", icon: ic.droplet },
-  { serviceId: "prv-acid-reflux", name: "Acid reflux", line: "Help with heartburn that keeps coming back.", icon: ic.fire },
-  { serviceId: "prv-cold-sore", name: "Cold sores", line: "Treatment to shorten an outbreak.", icon: ic.mouth },
-  { serviceId: "prv-migraine", name: "Migraine", line: "A review of your symptoms and treatment options.", icon: ic.headache },
-  { serviceId: "prv-fungal", name: "Fungal nail", line: "Treatment for discoloured or thickened nails.", icon: ic.foot },
-  { serviceId: "prv-threadworm", name: "Threadworm", line: "Treatment for the whole household.", icon: ic.worm },
-  { serviceId: "prv-period-delay", name: "Period delay", line: "For holidays and special occasions.", icon: ic.calendar },
-  { serviceId: "prv-vitamin-injection", name: "Vitamin B12 service", line: "A consultation to check if the service suits you.", icon: ic.pill },
+  { serviceId: "prv-hayfever", name: "Hay fever", line: "When over-the-counter remedies aren't enough.", icon: ic["hay-fever"] },
+  { serviceId: "prv-cystitis", name: "Cystitis", line: "Assessment and treatment if it's suitable.", icon: ic["cystitis"] },
+  { serviceId: "prv-acid-reflux", name: "Acid reflux", line: "Help with heartburn that keeps coming back.", icon: ic["acid-reflux"] },
+  { serviceId: "prv-cold-sore", name: "Cold sores", line: "Treatment to shorten an outbreak.", icon: ic["cold-sore"] },
+  { serviceId: "prv-migraine", name: "Migraine", line: "A review of your symptoms and treatment options.", icon: ic["migraine"] },
+  { serviceId: "prv-fungal", name: "Fungal nail", line: "Treatment for discoloured or thickened nails.", icon: ic["fungal-nail"] },
+  { serviceId: "prv-threadworm", name: "Threadworm", line: "Treatment for the whole household.", icon: ic["threadworm"] },
+  { serviceId: "prv-period-delay", name: "Period delay", line: "For holidays and special occasions.", icon: ic["period-delay"] },
+  { serviceId: "prv-vitamin-injection", name: "Vitamin B12 service", line: "A consultation to check if the service suits you.", icon: ic["vitamin-b12"] },
 ];
 
 export const OC_SERVICES: OCService[] = [...OC_NHS_SERVICES, ...OC_FEATURED_PRIVATE];
@@ -238,13 +243,13 @@ export const PRIVATE_DISCLAIMER = "Subject to consultation. The pharmacist will 
 // ── NHS Pharmacy First (verify criteria against NHS England before launch) ──
 
 export const OC_PHARMACY_FIRST = [
-  { serviceId: "nhs-pf-sore-throat", name: "Sore throat", eligibility: "Age 5 and over", icon: ic.fever },
-  { serviceId: "nhs-pf-sinusitis", name: "Sinusitis", eligibility: "Age 12 and over", icon: ic.sneezing },
-  { serviceId: "nhs-pf-earache", name: "Earache", eligibility: "Age 1 to 17", icon: ic.ear },
-  { serviceId: "nhs-pf-insect-bite", name: "Infected insect bite", eligibility: "Age 1 and over", icon: ic.mosquito },
-  { serviceId: "nhs-pf-impetigo", name: "Impetigo", eligibility: "Age 1 and over", icon: ic.bandage },
-  { serviceId: "nhs-pf-shingles", name: "Shingles", eligibility: "Age 18 and over", icon: ic.microbe },
-  { serviceId: "nhs-pf-uti", name: "Urinary tract infection", eligibility: "Women aged 16 to 64, uncomplicated", icon: ic.droplet },
+  { serviceId: "nhs-pf-sore-throat", name: "Sore throat", eligibility: "Age 5 and over", icon: ic["sore-throat"] },
+  { serviceId: "nhs-pf-sinusitis", name: "Sinusitis", eligibility: "Age 12 and over", icon: ic["sinusitis"] },
+  { serviceId: "nhs-pf-earache", name: "Earache", eligibility: "Age 1 to 17", icon: ic["earache"] },
+  { serviceId: "nhs-pf-insect-bite", name: "Infected insect bite", eligibility: "Age 1 and over", icon: ic["insect-bite"] },
+  { serviceId: "nhs-pf-impetigo", name: "Impetigo", eligibility: "Age 1 and over", icon: ic["impetigo"] },
+  { serviceId: "nhs-pf-shingles", name: "Shingles", eligibility: "Age 18 and over", icon: ic["shingles"] },
+  { serviceId: "nhs-pf-uti", name: "Urinary tract infection", eligibility: "Women aged 16 to 64, uncomplicated", icon: ic["uti"] },
 ];
 
 // ── Contact form (no backend yet) ───────────────────────────────────────────

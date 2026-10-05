@@ -1,8 +1,9 @@
 import { Link } from "react-router";
 import { onecareBrand } from "../branding";
-import { OC_BRANCHES, OC_LEGAL, ic, formatAddress, gphcRegisterUrl, isTbc, onecareLocations } from "../data/onecare";
+import { MapPin, Phone } from "@phosphor-icons/react";
+import { OC_BRANCHES, OC_LEGAL, formatAddress, gphcRegisterUrl, isTbc, onecareLocations } from "../data/onecare";
 import { GphcBadge } from "./GphcBadge";
-import { BranchPin, Icon3D, OpenStatus, Tbc, useBranch } from "./onecareUi";
+import { BranchPin, OpenStatus, Ph, Tbc, useBranch } from "./onecareUi";
 import { OC_NAV } from "./HeaderOneCare";
 
 const LEGAL_LINKS = [
@@ -51,11 +52,11 @@ export function FooterOneCare() {
                 <BranchPin branch={b} size={18} /> <span className="min-w-0 truncate">{b.shortName}</span>
               </h2>
               <address className="not-italic oc-small text-oc-text mt-3 flex items-start gap-2">
-                <Icon3D src={ic.pin} size={20} />
+                <Ph icon={MapPin} size={18} className="text-oc-dark mt-0.5" />
                 <span>{isTbc(formatAddress(b)) ? <Tbc>[REPLACE: address]</Tbc> : formatAddress(b)}</span>
               </address>
               <p className="oc-small mt-2 flex items-center gap-2">
-                <Icon3D src={ic.phone} size={20} />
+                <Ph icon={Phone} size={18} className="text-oc-dark" />
                 {isTbc(b.phone) ? <Tbc>[REPLACE: phone]</Tbc> : (
                   <a href={`tel:${b.phone.replace(/\s/g, "")}`} className="text-oc-dark underline underline-offset-4 oc-tnum">Call {b.shortName} on {b.phone}</a>
                 )}

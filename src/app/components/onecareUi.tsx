@@ -1,14 +1,16 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Link } from "react-router";
+import { ArrowRight, ArrowUpRight, NavigationArrow, Phone, type Icon as PhIcon } from "@phosphor-icons/react";
 import { onecareBrand } from "../branding";
-import { OC_BRANCHES, ic, isTbc, type BranchId, type OCBranch } from "../data/onecare";
+import { OC_BRANCHES, isTbc, type BranchId, type OCBranch } from "../data/onecare";
 import { useOpenNow, type OpenNow } from "../onecareOpenNow";
 
 /**
- * OneCare shared UI.
- * Illustration comes from Fluent 3D icons (full colour, decorative, always
- * beside a text label). Interface arrows are plain type glyphs, so there is
- * no line-icon library anywhere on the OneCare pages.
+ * One Care shared UI. Two icon families, never mixed:
+ *  - Icon3D: the generated 3D illustrations, for service and content tiles.
+ *  - Ph: Phosphor icons in the duotone weight, for buttons, links, the footer,
+ *    contact details and other interface chrome.
+ * Both are decorative; the adjacent text always carries the meaning.
  */
 
 // ── Buttons (tokens only — no stray hex) ─────────────────────────────────
@@ -19,7 +21,7 @@ export const BTN_PRIMARY = `${BTN_BASE} bg-oc-dark text-white hover:bg-oc-deep`;
 export const BTN_SECONDARY = `${BTN_BASE} bg-white/70 text-oc-ink border border-oc-line-strong hover:border-oc-dark hover:text-oc-deep`;
 export const BTN_ON_DARK = `${BTN_BASE} bg-oc-paper text-oc-ink hover:bg-oc-mist`;
 
-/** A Fluent 3D illustration. Decorative: the adjacent text carries the meaning. */
+/** A generated 3D illustration. Decorative: the adjacent text carries the meaning. */
 export function Icon3D({ src, size = 40, className = "" }: { src: string; size?: number; className?: string }) {
   return (
     <img
@@ -36,9 +38,14 @@ export function Icon3D({ src, size = 40, className = "" }: { src: string; size?:
   );
 }
 
-/** Direction glyph that nudges on hover of the parent `.group`. */
-export function Arrow({ dir = "right", className = "" }: { dir?: "right" | "up-right"; className?: string }) {
-  return <span aria-hidden="true" className={`oc-arrow inline-block leading-none font-sans ${className}`}>{dir === "right" ? "→" : "↗"}</span>;
+/** Phosphor icon in the duotone weight (interface icons only). */
+export function Ph({ icon: Icon, size = 20, className = "" }: { icon: PhIcon; size?: number; className?: string }) {
+  return <Icon size={size} weight="duotone" aria-hidden="true" className={`shrink-0 ${className}`} />;
+}
+
+/** Direction arrow (Phosphor duotone) that nudges on hover of the parent `.group`. */
+export function Arrow({ dir = "right", size = 18, className = "" }: { dir?: "right" | "up-right"; size?: number; className?: string }) {
+  return <Ph icon={dir === "right" ? ArrowRight : ArrowUpRight} size={size} className={`oc-arrow oc-arrow-${dir} ${className}`} />;
 }
 
 // ── Motifs ───────────────────────────────────────────────────────────────
@@ -151,13 +158,13 @@ export function CallAction({ branch, className = "" }: { branch: OCBranch; class
   if (isTbc(branch.phone)) {
     return (
       <span className={`${BTN_SECONDARY} opacity-80 cursor-default ${className}`} aria-disabled="true">
-        <Icon3D src={ic.phone} size={22} /> <Tbc>Phone [REPLACE]</Tbc>
+        <Ph icon={Phone} /> <Tbc>Phone [REPLACE]</Tbc>
       </span>
     );
   }
   return (
     <a href={`tel:${branch.phone.replace(/\s/g, "")}`} className={`${BTN_SECONDARY} ${className}`}>
-      <Icon3D src={ic.phone} size={22} />
+      <Ph icon={Phone} />
       <span className="oc-tnum">Call</span>
       <span className="sr-only"> {branch.shortName} on {branch.phone}</span>
     </a>
@@ -168,13 +175,13 @@ export function DirectionsAction({ branch, className = "" }: { branch: OCBranch;
   if (isTbc(branch.mapsUrl)) {
     return (
       <span className={`${BTN_SECONDARY} opacity-80 cursor-default ${className}`} aria-disabled="true">
-        <Icon3D src={ic.pin} size={22} /> <Tbc>Maps [REPLACE]</Tbc>
+        <Ph icon={NavigationArrow} /> <Tbc>Maps [REPLACE]</Tbc>
       </span>
     );
   }
   return (
     <a href={branch.mapsUrl} target="_blank" rel="noopener noreferrer" className={`${BTN_SECONDARY} ${className}`}>
-      <Icon3D src={ic.pin} size={22} /> Directions
+      <Ph icon={NavigationArrow} /> Directions
       <span className="sr-only"> to {branch.shortName} (opens Google Maps in a new tab)</span>
     </a>
   );

@@ -2,8 +2,9 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router";
 import { Drawer } from "vaul";
 import { onecareBrand } from "../branding";
-import { OC_BRANCHES, ic, isTbc } from "../data/onecare";
-import { BTN_PRIMARY, BranchPin, Icon3D, OpenStatus, Tbc, useBranch } from "./onecareUi";
+import { CalendarCheck, List, Phone, X } from "@phosphor-icons/react";
+import { OC_BRANCHES, isTbc } from "../data/onecare";
+import { BTN_PRIMARY, BranchPin, OpenStatus, Ph, Tbc, useBranch } from "./onecareUi";
 
 const BASE = onecareBrand.basePath;
 
@@ -39,7 +40,7 @@ function NavLink({ item, className, onNavigate, children }: { item: NavItem; cla
 function BookLink({ className, onNavigate }: { className: string; onNavigate?: () => void }) {
   return (
     <NavLink item={{ label: "Book", hash: "nhs-services" }} className={className} onNavigate={onNavigate}>
-      <Icon3D src={ic.calendar} size={24} className="-my-1" /> Book an appointment
+      <Ph icon={CalendarCheck} size={20} /> Book an appointment
     </NavLink>
   );
 }
@@ -90,11 +91,7 @@ export function HeaderOneCare() {
                   aria-controls="oc-mobile-menu"
                   className="xl:hidden oc-press w-12 h-12 inline-flex items-center justify-center rounded-full bg-oc-ink text-white cursor-pointer"
                 >
-                  <span aria-hidden="true" className="grid gap-[5px]">
-                    <span className="block w-5 h-[2px] rounded-full bg-current" />
-                    <span className="block w-5 h-[2px] rounded-full bg-current" />
-                    <span className="block w-3.5 h-[2px] rounded-full bg-current" />
-                  </span>
+                  <Ph icon={List} size={22} />
                 </button>
               </Drawer.Trigger>
               <Drawer.Portal>
@@ -106,10 +103,7 @@ export function HeaderOneCare() {
                   <div className="flex items-center justify-between h-20 px-5">
                     <Drawer.Title className="oc-h3 text-oc-ink">Menu</Drawer.Title>
                     <Drawer.Close aria-label="Close menu" className="oc-press w-12 h-12 inline-flex items-center justify-center rounded-full bg-oc-mist text-oc-ink cursor-pointer">
-                      <span aria-hidden="true" className="relative w-4 h-4">
-                        <span className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rotate-45 rounded-full bg-current" />
-                        <span className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 -rotate-45 rounded-full bg-current" />
-                      </span>
+                      <Ph icon={X} size={20} />
                     </Drawer.Close>
                   </div>
                   <Drawer.Description className="sr-only">Site navigation and branch phone numbers</Drawer.Description>
@@ -133,7 +127,7 @@ export function HeaderOneCare() {
                         </div>
                         {isTbc(b.phone) ? <Tbc>Phone [REPLACE]</Tbc> : (
                           <a href={`tel:${b.phone.replace(/\s/g, "")}`} className="oc-press shrink-0 w-12 h-12 inline-flex items-center justify-center rounded-full border border-oc-line-strong text-oc-ink">
-                            <Icon3D src={ic.phone} size={24} /><span className="sr-only">Call {b.shortName}</span>
+                            <Ph icon={Phone} size={22} /><span className="sr-only">Call {b.shortName}</span>
                           </a>
                         )}
                       </div>

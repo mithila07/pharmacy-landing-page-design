@@ -3,7 +3,8 @@ import {
   type OCMiniService, type OCService,
 } from "../data/onecare";
 import { STRETCH } from "./NhsServicesOneCare";
-import { Arrow, BTN_PRIMARY, BookLink, Eyebrow, Icon3D, Tbc } from "./onecareUi";
+import { AirplaneTilt } from "@phosphor-icons/react";
+import { Arrow, BTN_PRIMARY, BookLink, Eyebrow, Icon3D, Ph, Tbc } from "./onecareUi";
 
 const Price = ({ value }: { value?: string }) =>
   value ? <>From {isTbc(value) ? <Tbc>{value}</Tbc> : value}</> : null;
@@ -55,7 +56,7 @@ export function PrivateServicesOneCare() {
 function TravelTile({ t }: { t: OCMiniService }) {
   return (
     <li className="group relative rounded-oc-lg bg-white border border-oc-line p-5 sm:p-6 flex flex-col gap-3 hover:border-oc-dark transition-colors" data-reveal>
-      <Icon3D src={t.icon} size={56} className="transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-4deg]" />
+      <Icon3D src={t.icon} size={84} className="-ml-2 -mt-1 transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-4deg]" />
       <h4 className="font-semibold text-oc-ink text-[1.0625rem] leading-snug">
         <BookLink serviceId={t.serviceId} ariaLabel={`Book ${t.name}`} className={STRETCH}>{t.name}</BookLink>
       </h4>
@@ -80,7 +81,7 @@ export function TravelClinicOneCare() {
             </p>
             <div className="mt-8">
               <BookLink serviceId={OC_TRAVEL_CONSULT.serviceId} className={`${BTN_PRIMARY} group`}>
-                <Icon3D src={ic.airplane} size={24} className="-my-1" /> Book a travel consultation
+                <Ph icon={AirplaneTilt} size={20} /> Book a travel consultation
               </BookLink>
             </div>
           </div>
@@ -103,8 +104,8 @@ export function TravelClinicOneCare() {
 function ServiceRow({ t }: { t: OCMiniService }) {
   return (
     <li className="group relative flex items-center gap-4 rounded-oc-md px-3 py-3 -mx-3 hover:bg-white transition-colors">
-      <span className="w-14 h-14 shrink-0 rounded-oc-md bg-white border border-oc-line grid place-items-center group-hover:border-oc-dark transition-colors">
-        <Icon3D src={t.icon} size={36} />
+      <span className="w-16 h-16 shrink-0 rounded-oc-md bg-white border border-oc-line grid place-items-center group-hover:border-oc-dark transition-colors">
+        <Icon3D src={t.icon} size={58} />
       </span>
       <span className="flex-1 min-w-0">
         <BookLink serviceId={t.serviceId} ariaLabel={`Book ${t.name}`} className={`block font-semibold text-oc-ink ${STRETCH}`}>{t.name}</BookLink>
@@ -126,13 +127,13 @@ export function MoreServicesOneCare() {
 
         <div className="mt-12 grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-5 rounded-oc-xl bg-oc-mist p-6 sm:p-8" data-reveal>
-            <h3 className="oc-h3 text-oc-ink flex items-center gap-3"><Icon3D src={ic.syringe} size={40} /> Vaccinations</h3>
+            <h3 className="oc-h3 text-oc-ink flex items-center gap-3"><Icon3D src={ic.vaccines} size={60} /> Vaccinations</h3>
             <ul className="mt-5 grid gap-1">
               {OC_VACCINES.map((t) => <ServiceRow key={t.serviceId} t={t} />)}
             </ul>
           </div>
           <div className="lg:col-span-7 rounded-oc-xl bg-oc-mist p-6 sm:p-8" data-reveal>
-            <h3 className="oc-h3 text-oc-ink flex items-center gap-3"><Icon3D src={ic.pill} size={40} /> Everyday treatments</h3>
+            <h3 className="oc-h3 text-oc-ink flex items-center gap-3"><Icon3D src={ic.treatments} size={60} /> Everyday treatments</h3>
             <ul className="mt-5 grid sm:grid-cols-2 gap-x-6 gap-y-1">
               {OC_TREATMENTS.map((t) => <ServiceRow key={t.serviceId} t={t} />)}
             </ul>

@@ -111,7 +111,7 @@ export default function AboutPageOneCare() {
             <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 grid gap-10 lg:grid-cols-12 items-center">
               {/* Illustration until a photo of the superintendent is supplied. */}
               <div aria-hidden="true" className="lg:col-span-5 aspect-[4/5] w-full max-w-[440px] rounded-oc-xl bg-gradient-to-br from-oc-mist to-white border border-oc-line grid place-items-center" data-reveal>
-                <Icon3D src={ic.healthworker} size={180} />
+                <Icon3D src={ic["pharmacist-coat"]} size={220} />
               </div>
               <div className="lg:col-span-7" data-reveal>
                 <h2 id="oc-team-title" className="oc-h2 text-oc-ink">Your pharmacist</h2>
@@ -142,7 +142,7 @@ export default function AboutPageOneCare() {
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-3 oc-small">
                       {isTbc(b.gphc) ? <Tbc>GPhC premises no. [REPLACE]</Tbc> : (
                         <a href={gphcRegisterUrl(b.gphc)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-oc-dark underline underline-offset-4">
-                          GPhC premises {b.gphc} <Arrow dir="up-right" /><span className="sr-only"> (opens the GPhC register in a new tab)</span>
+                          GPhC premises {b.gphc} <Arrow dir="up-right" size={14} /><span className="sr-only"> (opens the GPhC register in a new tab)</span>
                         </a>
                       )}
                       <GphcBadge location={onecareLocations.find((l) => l.id === b.id)} className="h-7" />

@@ -1,13 +1,14 @@
-import { DAY_ORDER, ic, onecareLocations, dayLabel, formatAddress, formatDayHours, gphcRegisterUrl, isTbc, type OCBranch } from "../data/onecare";
+import { EnvelopeSimple, MapPin } from "@phosphor-icons/react";
+import { DAY_ORDER, onecareLocations, dayLabel, formatAddress, formatDayHours, gphcRegisterUrl, isTbc, type OCBranch } from "../data/onecare";
 import { londonTodayKey } from "../onecareOpenNow";
 import { GphcBadge } from "./GphcBadge";
-import { Arrow, BranchPin, CallAction, DirectionsAction, Icon3D, OpenStatus, Tbc, useBranch } from "./onecareUi";
+import { Arrow, BranchPin, CallAction, DirectionsAction, OpenStatus, Ph, Tbc, useBranch } from "./onecareUi";
 
 export function BranchAddress({ b }: { b: OCBranch }) {
   const addr = formatAddress(b);
   return (
     <address className="not-italic oc-body text-oc-text flex items-start gap-2.5">
-      <Icon3D src={ic.pin} size={24} />
+      <Ph icon={MapPin} size={22} className="text-oc-dark mt-0.5" />
       <span>{isTbc(addr) ? <Tbc>{addr}</Tbc> : addr}</span>
     </address>
   );
@@ -49,7 +50,7 @@ export function BranchDetailCard({ b }: { b: OCBranch }) {
         <BranchAddress b={b} />
         <p className="oc-small text-oc-quiet pl-[34px]">{isTbc(b.landmark) ? <Tbc>{b.landmark}</Tbc> : b.landmark}</p>
         <p className="oc-body flex items-center gap-2.5">
-          <Icon3D src={ic.envelope} size={24} />
+          <Ph icon={EnvelopeSimple} size={22} className="text-oc-dark" />
           {isTbc(b.email) ? <Tbc>{b.email}</Tbc> : <a href={`mailto:${b.email}`} className="text-oc-dark underline underline-offset-4">{b.email}</a>}
         </p>
       </div>
@@ -68,7 +69,7 @@ export function BranchDetailCard({ b }: { b: OCBranch }) {
           <Tbc>GPhC premises no. [REPLACE]</Tbc>
         ) : (
           <a href={gphcRegisterUrl(b.gphc)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 min-h-[24px] text-oc-dark underline underline-offset-4">
-            GPhC premises {b.gphc} <Arrow dir="up-right" /><span className="sr-only"> (opens the GPhC register in a new tab)</span>
+            GPhC premises {b.gphc} <Arrow dir="up-right" size={14} /><span className="sr-only"> (opens the GPhC register in a new tab)</span>
           </a>
         )}
         {/* Location-specific badge: one per branch, never a single group badge. */}

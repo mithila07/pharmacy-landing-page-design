@@ -758,7 +758,8 @@
 .theme-onecare .oc-dark :focus-visible,
 .oc-dark:focus-visible { outline-color: var(--focus-on-dark); }
 /* Keep focused elements clear of the sticky header */
-html:has(.theme-onecare.oc-page) { scroll-padding-top: 104px; scroll-behavior: smooth; }
+/* No global smooth scrolling: it would also animate page changes. In-page section links scroll smoothly via useOneCarePage. */
+html:has(.theme-onecare.oc-page) { scroll-padding-top: 104px; }
 
 /* Depth — only the hero branch card and sticky header get a shadow */
 .theme-onecare .oc-lift { box-shadow: 0 1px 2px rgba(18, 59, 57, 0.06), 0 8px 24px -8px rgba(18, 59, 57, 0.14); }
@@ -791,7 +792,11 @@ html:has(.theme-onecare.oc-page) { scroll-padding-top: 104px; scroll-behavior: s
 .theme-onecare .oc-rail { scrollbar-width: none; overscroll-behavior-x: contain; }
 .theme-onecare .oc-rail::-webkit-scrollbar { display: none; }
 .theme-onecare .oc-arrow { transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1); }
-.theme-onecare .group:hover .oc-arrow { transform: translate(2px, -2px); }
+/* Arrows nudge the way they point: forward arrows slide right, up-right arrows move diagonally. */
+.theme-onecare .group:hover .oc-arrow-right,
+.theme-onecare .group:focus-visible .oc-arrow-right { transform: translateX(4px); }
+.theme-onecare .group:hover .oc-arrow-up-right,
+.theme-onecare .group:focus-visible .oc-arrow-up-right { transform: translate(2px, -2px); }
 
 /* Frosted header material */
 .theme-onecare .oc-frost { background: rgba(255, 255, 255, 0.78); -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); }
@@ -823,11 +828,11 @@ html:has(.theme-onecare.oc-page) { scroll-padding-top: 104px; scroll-behavior: s
   .theme-onecare .oc-tile:hover,
   .theme-onecare .oc-img-zoom:hover img,
   .theme-onecare .oc-img-zoom:focus-within img,
-  .theme-onecare .group:hover .oc-arrow { transform: none; }
+  .theme-onecare .group:hover .oc-arrow,
+  .theme-onecare .group:focus-visible .oc-arrow { transform: none; }
   .theme-onecare .oc-assemble rect { animation: oc-fade-in 150ms linear both; animation-delay: 0ms !important; }
   .theme-onecare .oc-fade,
   .theme-onecare details[open] > .oc-faq-body { animation-duration: 150ms; }
-  html:has(.theme-onecare.oc-page) { scroll-behavior: auto; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .theme-onecare .oc-frost { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom: 1px solid var(--line); }

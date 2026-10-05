@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router";
+import RootLayout from "./RootLayout";
 import PharmacyIndex from "./pages/PharmacyIndex";
 import CustomWebsites from "./pages/CustomWebsites";
 import LandingPage from "./pages/LandingPage";
@@ -39,6 +40,8 @@ import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, central
 const basename = import.meta.env.BASE_URL.replace(/\/+$/, "") || undefined;
 
 export const router = createBrowserRouter([
+  // Every page renders inside RootLayout, which handles scroll position on navigation.
+  { Component: RootLayout, children: [
   // Showcase index — links out to every white-label pharmacy build.
   { path: "/", Component: PharmacyIndex },
   { path: "/fully-customised", Component: CustomWebsites },
@@ -118,4 +121,5 @@ export const router = createBrowserRouter([
   { path: "/onecare/accessibility", Component: AccessibilityPageOneCare },
   { path: "/onecare/book/:serviceId", element: <BookingPage brand={onecareBrand} /> },
   { path: "/onecare/questionnaire/:serviceId", element: <QuestionnairePage brand={onecareBrand} /> },
+  ] },
 ], { basename });

@@ -7,12 +7,11 @@ import { useOcReveal } from "../onecareMotion";
 import { HeaderOneCare } from "../components/HeaderOneCare";
 import { FooterOneCare } from "../components/FooterOneCare";
 import { BranchDetailCard } from "../components/BranchesOneCare";
-import { BTN_PRIMARY, Icon3D, OneCareBranchProvider, Tbc } from "../components/onecareUi";
+import { CheckCircle, Info, WarningCircle } from "@phosphor-icons/react";
+import { BTN_PRIMARY, Icon3D, OneCareBranchProvider, Ph, Tbc } from "../components/onecareUi";
 
-/** Error marker: a solid "!" disc, paired with the message text. */
-const ErrorMark = () => (
-  <span aria-hidden="true" className="mt-px w-[18px] h-[18px] shrink-0 rounded-full bg-oc-error text-white text-[12px] font-bold leading-none grid place-items-center">!</span>
-);
+/** Error marker, paired with the message text. */
+const ErrorMark = () => <Ph icon={WarningCircle} size={20} className="text-oc-error -mt-px" />;
 import { useOneCarePage } from "./onecarePage";
 
 type Fields = { name: string; email: string; phone: string; branch: string; message: string; consent: boolean };
@@ -95,7 +94,7 @@ function EnquiryForm() {
   if (status === "sent") {
     return (
       <div role="status" className="rounded-oc-xl bg-oc-mist p-8 sm:p-10">
-        <Icon3D src={ic.check} size={48} />
+        <Ph icon={CheckCircle} size={44} className="text-oc-open" />
         <h3 className="oc-h3 text-oc-ink mt-4">Thanks, your message has been sent</h3>
         <p className="oc-body text-oc-text mt-2">We'll reply by email within two working days. If it's urgent, please call the branch.</p>
         <button type="button" onClick={() => setStatus("idle")} className="mt-6 font-semibold text-oc-dark underline underline-offset-4 min-h-[44px] cursor-pointer">Send another message</button>
@@ -155,7 +154,7 @@ function EnquiryForm() {
 
       {status === "offline" && (
         <div role="status" className="rounded-oc-lg bg-oc-mist p-5 flex items-start gap-3">
-          <Icon3D src={ic.phone} size={28} />
+          <Ph icon={Info} size={24} className="text-oc-dark mt-0.5" />
           <p className="oc-body text-oc-text">Online messages aren't switched on yet, so this hasn't been sent. Please call or email the branch using the details below.</p>
         </div>
       )}
@@ -218,7 +217,7 @@ export default function ContactPageOneCare() {
                   />
                 </div>
                 <div aria-hidden="true" className="oc-glass absolute -bottom-5 left-5 sm:left-8 rounded-full pl-2 pr-5 py-2 flex items-center gap-2.5 text-[0.9375rem] font-semibold text-oc-ink">
-                  <Icon3D src={ic.phone} size={32} />
+                  <Icon3D src={ic.phone} size={36} />
                   Call either branch
                 </div>
               </div>

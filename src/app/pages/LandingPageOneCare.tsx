@@ -9,7 +9,8 @@ import { HeroSectionOneCare } from "../components/HeroSectionOneCare";
 import { NhsServicesOneCare } from "../components/NhsServicesOneCare";
 import { MoreServicesOneCare, PrivateServicesOneCare, TravelClinicOneCare } from "../components/PrivateServicesOneCare";
 import { FooterOneCare } from "../components/FooterOneCare";
-import { Arrow, BTN_ON_DARK, OneCareBranchProvider, Tbc } from "../components/onecareUi";
+import { Plus } from "@phosphor-icons/react";
+import { Arrow, BTN_ON_DARK, OneCareBranchProvider, Ph, Tbc } from "../components/onecareUi";
 import { useOneCarePage } from "./onecarePage";
 
 function Faq() {
@@ -29,9 +30,8 @@ function Faq() {
               <details key={f.q} className="group rounded-oc-lg bg-oc-tint open:bg-oc-mist transition-colors">
                 <summary className="list-none flex items-center justify-between gap-6 min-h-[64px] px-6 py-4 cursor-pointer [&::-webkit-details-marker]:hidden">
                   <span className="font-semibold text-oc-ink text-[1.0625rem]">{f.q}</span>
-                  <span aria-hidden="true" className="relative shrink-0 w-9 h-9 rounded-full bg-white transition-transform duration-300 group-open:rotate-45">
-                    <span className="absolute left-1/2 top-1/2 w-3.5 h-[2px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-oc-ink" />
-                    <span className="absolute left-1/2 top-1/2 w-[2px] h-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-oc-ink" />
+                  <span aria-hidden="true" className="shrink-0 w-9 h-9 rounded-full bg-white grid place-items-center text-oc-ink transition-transform duration-300 group-open:rotate-45">
+                    <Ph icon={Plus} size={18} />
                   </span>
                 </summary>
                 <div className="oc-faq-body px-6 pb-6 -mt-1 oc-body text-oc-text max-w-[68ch]">
