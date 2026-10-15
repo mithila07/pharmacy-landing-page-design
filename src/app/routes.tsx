@@ -6,6 +6,8 @@ import LandingPage from "./pages/LandingPage";
 import LandingPageSimple, { SimpleLanding } from "./pages/LandingPageSimple";
 import { AboutPageTemplate } from "./pages/AboutPageTemplate";
 import { ContactPageTemplate } from "./pages/ContactPageTemplate";
+import { ContactPageMeadows } from "./pages/ContactPageMeadows";
+import { ContactPageNomination } from "./pages/ContactPageNomination";
 import LandingPageOneCare from "./pages/LandingPageOneCare";
 import AccessibilityPageOneCare from "./pages/AccessibilityPageOneCare";
 import AboutPageOneCare from "./pages/AboutPageOneCare";
@@ -96,7 +98,8 @@ export const router = createBrowserRouter([
   // J Morris Pharmacy (Ashton-in-Makerfield)
   { path: "/j-morris", element: <SimpleLanding brand={jmorrisBrand} /> },
   { path: "/j-morris/about", element: <AboutPageTemplate brand={jmorrisBrand} /> },
-  { path: "/j-morris/contact", element: <ContactPageTemplate brand={jmorrisBrand} /> },
+  // J Morris takes repeat-prescription nominations: contact page has nomination + enquiry forms.
+  { path: "/j-morris/contact", element: <ContactPageNomination brand={jmorrisBrand} /> },
   { path: "/j-morris/book/:serviceId", element: <BookingPage brand={jmorrisBrand} /> },
   { path: "/j-morris/questionnaire/:serviceId", element: <QuestionnairePage brand={jmorrisBrand} /> },
 
@@ -110,7 +113,8 @@ export const router = createBrowserRouter([
   // Meadows Pharmacy (Maghull)
   { path: "/meadows", element: <SimpleLanding brand={meadowsBrand} /> },
   { path: "/meadows/about", element: <AboutPageTemplate brand={meadowsBrand} /> },
-  { path: "/meadows/contact", element: <ContactPageTemplate brand={meadowsBrand} /> },
+  // Meadows has its own contact page (no form, full-width map); J Morris and Acre keep the shared template.
+  { path: "/meadows/contact", element: <ContactPageMeadows brand={meadowsBrand} /> },
   { path: "/meadows/book/:serviceId", element: <BookingPage brand={meadowsBrand} /> },
   { path: "/meadows/questionnaire/:serviceId", element: <QuestionnairePage brand={meadowsBrand} /> },
 

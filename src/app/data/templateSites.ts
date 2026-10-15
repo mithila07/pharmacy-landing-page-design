@@ -28,6 +28,13 @@ export type TemplateConfig = {
   hero: { eyebrow: string; title1: string; title2: string; subtitle: string; slides: HeroSlide[] };
   privateCards: TemplateCard[];
   about: { accent: string; subtitle: string; story: string[]; stats: { value: string; label: string }[] };
+  /**
+   * Repeat-prescription nomination: adds the home-page banner and the contact
+   * page's nomination + enquiry forms. Requested by J Morris.
+   */
+  nomination?: boolean;
+  /** Where contact-page forms POST to. Leave unset and the forms run in preview (nothing is sent). */
+  forms?: { endpoint?: string };
 };
 
 const card = (id: string, imageUrl: string, label: string, icon: LucideIcon): TemplateCard => ({
@@ -48,6 +55,8 @@ const IMG = {
 
 export const templateSites: Record<string, TemplateConfig> = {
   jmorris: {
+    nomination: true,
+    forms: { endpoint: undefined }, // TODO: set to the pharmacy's form handler before launch
     hero: {
       eyebrow: "NHS & private pharmacy — Ashton-in-Makerfield",
       title1: "Trusted local care,",

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { publicEmail } from "./data/locations";
 import type { Brand } from "./branding";
 type OpeningHoursSpec = { "@type": "OpeningHoursSpecification"; dayOfWeek: string | string[]; opens: string; closes: string };
 import { pharmacyInfo, type Service } from "./data/services";
@@ -121,7 +122,7 @@ export function pharmacyGraph(
     url: base,
     image: logo,
     telephone: loc.phone,
-    email: loc.email,
+    ...(publicEmail(loc) ? { email: publicEmail(loc) } : {}),
     address: postalAddress(loc.address, addressRegion),
     geo: { "@type": "GeoCoordinates", latitude: loc.lat, longitude: loc.lng },
     openingHoursSpecification: hoursSpec,

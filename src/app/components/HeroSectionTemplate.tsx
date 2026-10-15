@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { ShieldCheck, Clock, Phone, ArrowRight, ArrowUpRight, ArrowLeft } from "lucide-react";
+import { Clock, ArrowRight, ArrowUpRight, ArrowLeft } from "lucide-react";
 import type { Brand } from "../branding";
 import { useOpenStatus } from "../openStatus";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { templateSites } from "../data/templateSites";
+import { TemplateEyebrow } from "./TemplateEyebrow";
+import { ServiceSearch } from "./ServiceSearch";
 
 /**
  * Shared Kepple-Lane-style hero for the template brands (J Morris, Acre,
@@ -41,7 +43,6 @@ export function HeroSectionTemplate({ brand }: { brand: Brand }) {
   }, [paused, reduced, count, index]);
 
   const go = useCallback((next: number) => setIndex(((next % count) + count) % count), [count]);
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   const book = (id: string) => navigate(`${brand.basePath}/book/${id}`);
 
   const dragStart = useRef<number | null>(null);
@@ -65,34 +66,21 @@ export function HeroSectionTemplate({ brand }: { brand: Brand }) {
           className="flex flex-col justify-center pr-6 lg:pr-12 py-12 lg:py-10"
           style={{ paddingLeft: "max(1rem, calc((100vw - 80rem) / 2 + 1rem))" }}
         >
-          <p className="inline-flex items-center gap-2 text-[0.76rem] tracking-[0.16em] uppercase text-brand-primary mb-5" style={{ fontWeight: 700 }}>
-            <ShieldCheck size={15} /> {cfg.eyebrow}
-          </p>
+          <TemplateEyebrow bar className="mb-5">{cfg.eyebrow}</TemplateEyebrow>
 
+          {/* Each line balances on its own, so a long first line never strands one word ("care,"). */}
           <h1 className="font-display text-slate-900 text-[2.5rem] lg:text-[3.6rem] leading-[1.04] mb-5" style={{ fontWeight: 700, letterSpacing: "-0.02em" }}>
-            {cfg.title1}
-            <br />
-            <span className="text-brand-secondary">{cfg.title2}</span>
+            <span className="block [text-wrap:balance]">{cfg.title1}</span>
+            <span className="block [text-wrap:balance] text-brand-secondary">{cfg.title2}</span>
           </h1>
 
           <p className="text-slate-500 text-[1.05rem] leading-relaxed mb-8 max-w-md">{cfg.subtitle}</p>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => scrollTo("nhs-services")}
-              className="group inline-flex items-center justify-center gap-2 px-8 min-h-[52px] rounded-full text-[1rem] cursor-pointer bg-brand-secondary text-white shadow-lg shadow-brand-secondary/25 hover:-translate-y-0.5 hover:shadow-xl transition-all"
-              style={{ fontWeight: 700 }}
-            >
-              Book an appointment <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-            <a
-              href={`tel:${branch.phone.replace(/\s/g, "")}`}
-              className="group inline-flex items-center justify-center gap-2 px-7 min-h-[52px] rounded-full text-[0.95rem] cursor-pointer no-underline bg-white/70 backdrop-blur-sm border border-slate-200 text-brand-primary hover:bg-white hover:border-brand-primary/40 transition-all"
-              style={{ fontWeight: 600 }}
-            >
-              <Phone size={16} className="group-hover:rotate-12 transition-transform" /> {branch.phone}
-            </a>
-          </div>
+          {/* Service search: the catalogue is large, so patients search rather than browse */}
+          <ServiceSearch
+            brand={brand}
+            popular={[{ id: "nhs-pfs", label: "Pharmacy First" }, ...cfg.slides.map((s) => ({ id: s.id, label: s.name }))]}
+          />
 
           {/* Live opening status */}
           <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2">

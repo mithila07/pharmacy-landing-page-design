@@ -53,10 +53,6 @@ export function AboutPageTemplate({ brand }: { brand: Brand }) {
         <div aria-hidden="true" className="absolute -top-24 right-0 w-[30rem] h-[30rem] rounded-full bg-brand-accent/15 blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 pt-14 pb-12 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center">
           <Reveal>
-            <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md rounded-full pl-1.5 pr-3.5 py-1.5 shadow-sm border border-slate-200 mb-5">
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-secondary text-white"><Check size={12} strokeWidth={3} /></span>
-              <span className="text-[0.78rem] text-slate-500" style={{ fontWeight: 600 }}>About us</span>
-            </span>
             <h1 className="font-display text-slate-900 text-[2.2rem] md:text-[3rem] leading-[1.05] mb-4" style={{ fontWeight: 700, letterSpacing: "-0.02em" }}>
               Trusted local care, <span className="text-brand-secondary">{cfg.accent}</span>
             </h1>
@@ -97,7 +93,6 @@ export function AboutPageTemplate({ brand }: { brand: Brand }) {
       <section className="relative py-16">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           <Reveal>
-            <span className="text-[0.8rem] text-brand-secondary uppercase tracking-widest" style={{ fontWeight: 700 }}>Our approach</span>
             <h2 className="font-display text-[1.75rem] md:text-[2.2rem] text-slate-900 mt-2 mb-4" style={{ fontWeight: 700, letterSpacing: "-0.01em" }}>Healthcare that fits around your life</h2>
             <div className="space-y-4 text-slate-600 text-[1.0625rem] leading-[1.65]">
               {cfg.story.map((p, i) => <p key={i}>{p}</p>)}
@@ -123,7 +118,6 @@ export function AboutPageTemplate({ brand }: { brand: Brand }) {
       <section className="relative py-16 bg-brand-light">
         <div className="max-w-7xl mx-auto px-4">
           <Reveal className="max-w-2xl mb-10">
-            <span className="text-[0.8rem] text-brand-secondary uppercase tracking-widest" style={{ fontWeight: 700 }}>What we offer</span>
             <h2 className="font-display text-[1.8rem] md:text-[2.2rem] text-slate-900 mt-2 mb-3" style={{ fontWeight: 700, letterSpacing: "-0.01em" }}>NHS and private care, side by side</h2>
             <p className="text-slate-500 text-[1rem] leading-relaxed">From everyday NHS services to private clinics you can book in minutes — here's what you'll find at {brand.name}.</p>
           </Reveal>
@@ -145,8 +139,7 @@ export function AboutPageTemplate({ brand }: { brand: Brand }) {
       <section className="relative py-16">
         <div className="max-w-7xl mx-auto px-4">
           <Reveal className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-[0.8rem] text-brand-secondary uppercase tracking-widest" style={{ fontWeight: 700 }}>Why {brand.name.replace(" Pharmacy", "")}</span>
-            <h2 className="font-display text-[1.8rem] md:text-[2.2rem] text-slate-900 mt-2" style={{ fontWeight: 700, letterSpacing: "-0.01em" }}>What you can count on</h2>
+            <h2 className="font-display text-[1.8rem] md:text-[2.2rem] text-slate-900 mt-2" style={{ fontWeight: 700, letterSpacing: "-0.01em" }}>Why patients choose {brand.name.replace(" Pharmacy", "")}</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {VALUES.map((v, i) => (
@@ -170,9 +163,6 @@ export function AboutPageTemplate({ brand }: { brand: Brand }) {
               <ImageWithFallback src={aboutBg} alt={`The ${brand.name} team`} className="absolute inset-0 w-full h-full object-cover" />
               <div aria-hidden="true" className="absolute inset-0" style={{ background: "linear-gradient(100deg, rgba(15,23,42,0.90) 0%, rgba(15,23,42,0.72) 45%, rgba(15,23,42,0.30) 100%)" }} />
               <div className="relative max-w-xl px-7 sm:px-10 py-10 text-white">
-                <span className="inline-flex items-center gap-2 text-[0.78rem] uppercase tracking-widest text-white/85" style={{ fontWeight: 700 }}>
-                  <Users size={15} /> Friendly faces
-                </span>
                 <h2 className="font-display text-[1.7rem] md:text-[2.2rem] leading-tight mt-3 mb-3" style={{ fontWeight: 700, letterSpacing: "-0.01em" }}>A team that knows the community</h2>
                 <p className="text-white/85 text-[1rem] leading-relaxed">
                   Our pharmacists and support staff live and work locally. We take the time to listen, explain your options in plain English, and make sure you leave feeling looked after.

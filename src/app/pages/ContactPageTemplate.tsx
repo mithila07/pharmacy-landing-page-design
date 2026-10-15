@@ -7,6 +7,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import type { Brand } from "../branding";
 import { useOpenStatus } from "../openStatus";
 import { useSeo, JsonLd, pharmacyGraph } from "../seo";
+import { publicEmail } from "../data/locations";
 import storefront from "../../assets/about-hero.jpeg";
 
 const directionsUrl = (address: string) =>
@@ -15,6 +16,7 @@ const directionsUrl = (address: string) =>
 export function ContactPageTemplate({ brand }: { brand: Brand }) {
   const branch = brand.locations[0];
   const status = useOpenStatus(branch);
+  const email = publicEmail(branch); // null when the pharmacy has asked to hide it
   const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
@@ -22,7 +24,7 @@ export function ContactPageTemplate({ brand }: { brand: Brand }) {
 
   useSeo({
     title: `Contact ${brand.name} | ${brand.seoArea}`,
-    description: `Get in touch with ${brand.name} in ${brand.seoArea}. Opening hours, phone, email and directions — or send us a message online.`,
+    description: `Get in touch with ${brand.name} in ${brand.seoArea}. Opening hours, phone${email ? ", email" : ""} and directions, or send us a message online.`,
     path: `${brand.basePath}/contact`,
     favicon: brand.favicon,
   });
@@ -42,10 +44,6 @@ export function ContactPageTemplate({ brand }: { brand: Brand }) {
         <div aria-hidden="true" className="absolute -top-24 right-0 w-[30rem] h-[30rem] rounded-full bg-brand-accent/15 blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 pt-14 pb-10 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center">
           <Reveal>
-            <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md rounded-full pl-1.5 pr-3.5 py-1.5 shadow-sm border border-slate-200 mb-5">
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-secondary text-white"><Check size={12} strokeWidth={3} /></span>
-              <span className="text-[0.78rem] text-slate-500" style={{ fontWeight: 600 }}>Get in touch</span>
-            </span>
             <h1 className="font-display text-slate-900 text-[2.2rem] md:text-[2.9rem] leading-[1.05] mb-4" style={{ fontWeight: 700, letterSpacing: "-0.02em" }}>
               We're here to <span className="text-brand-secondary">help</span>
             </h1>
@@ -89,11 +87,13 @@ export function ContactPageTemplate({ brand }: { brand: Brand }) {
                     <div><p className="text-[0.8rem] text-slate-500" style={{ fontWeight: 500 }}>Call the pharmacy</p>
                       <a href={`tel:${branch.phone.replace(/\s/g, "")}`} className="text-[0.95rem] text-slate-900 hover:text-brand-primary transition-colors" style={{ fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>{branch.phone}</a></div>
                   </li>
+                  {email && (
                   <li className="flex items-start gap-3">
                     <span className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center shrink-0"><Mail size={18} className="text-brand-primary" /></span>
                     <div className="min-w-0"><p className="text-[0.8rem] text-slate-500" style={{ fontWeight: 500 }}>Email us</p>
-                      <a href={`mailto:${branch.email}`} className="text-[0.95rem] text-slate-900 hover:text-brand-primary transition-colors break-all" style={{ fontWeight: 600 }}>{branch.email}</a></div>
+                      <a href={`mailto:${email}`} className="text-[0.95rem] text-slate-900 hover:text-brand-primary transition-colors break-all" style={{ fontWeight: 600 }}>{email}</a></div>
                   </li>
+                  )}
                   <li className="flex items-start gap-3">
                     <span className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center shrink-0"><MapPin size={18} className="text-brand-primary" /></span>
                     <div><p className="text-[0.8rem] text-slate-500" style={{ fontWeight: 500 }}>Visit us</p>

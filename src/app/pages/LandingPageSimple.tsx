@@ -10,6 +10,7 @@ import { HeroSectionKepple } from "../components/HeroSectionKepple";
 import { HeroSectionCentral } from "../components/HeroSectionCentral";
 import { HeroSectionCentralAlt } from "../components/HeroSectionCentralAlt";
 import { HeroSectionTemplate } from "../components/HeroSectionTemplate";
+import { NominationBanner } from "../components/nomination/NominationBanner";
 import { templateSites } from "../data/templateSites";
 import { DemoVariantSwitcher } from "../components/DemoVariantSwitcher";
 
@@ -415,6 +416,9 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
       />
       <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCardsForBrand.map((c) => c.id)]} />
       {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : isTemplate ? <HeroSectionTemplate brand={brand} /> : <HeroSection />}
+
+      {/* Repeat-prescription nomination invite, for template sites that take nominations */}
+      {isTemplate && templateSites[brand.id]?.nomination && <NominationBanner brand={brand} />}
 
       {/* NHS + Private service sections. Central leads with private clinics
           (its main draw); every other brand leads with NHS. */}

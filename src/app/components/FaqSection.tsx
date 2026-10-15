@@ -64,7 +64,7 @@ export function FaqSection({ brand = carefirstBrand }: { brand?: Brand } = {}) {
         {/* Intro */}
         <Reveal>
           <div className="lg:sticky lg:top-24">
-            <span className="text-[0.8rem] text-brand-secondary uppercase tracking-widest" style={{ fontWeight: 700 }}>FAQs</span>
+            {!brand.template && <span className="text-[0.8rem] text-brand-secondary uppercase tracking-widest" style={{ fontWeight: 700 }}>FAQs</span>}
             <h2 className="text-[1.8rem] md:text-[2.2rem] text-gray-900 mt-2 mb-4" style={{ fontWeight: 700 }}>
               {isHC ? <>Questions, <span className="hc-swoosh-text">answered</span></> : "Questions, answered"}
             </h2>

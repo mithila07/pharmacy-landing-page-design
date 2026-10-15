@@ -8,7 +8,7 @@ import type { PharmacyLocation } from "./data/locations";
  */
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-function dayMatches(label: string, weekday: number): boolean {
+export function dayMatches(label: string, weekday: number): boolean {
   const l = label.toLowerCase().trim();
   if (l === "weekdays") return weekday >= 1 && weekday <= 5;
   if (l === "weekends") return weekday === 0 || weekday === 6;

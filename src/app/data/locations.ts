@@ -13,6 +13,12 @@ export type PharmacyLocation = {
   address: string;
   phone: string;
   email: string;
+  /**
+   * Set to true when the pharmacy asks not to show its email address publicly.
+   * The address is then left off contact pages and structured data; use
+   * publicEmail(loc) rather than loc.email anywhere it is displayed.
+   */
+  hideEmail?: boolean;
   lat: number;
   lng: number;
   openingHours: { day: string; hours: string }[];
@@ -243,10 +249,14 @@ export const meadowsLocations: PharmacyLocation[] = [
     lat: 53.5165,
     lng: -2.9426,
     openingHours: templateHours,
-    googleMapsEmbedUrl: embed("87-89 Liverpool Road South, Maghull L31 7AD"),
+    googleMapsEmbedUrl: embed("Meadows Pharmacy, 87-89 Liverpool Road South, Maghull L31 7AD"),
     isDefault: true,
   },
 ];
+
+/** The email to show publicly, or null when the pharmacy has asked to hide it (or has none). */
+export const publicEmail = (loc: Pick<PharmacyLocation, "email" | "hideEmail">): string | null =>
+  !loc.hideEmail && loc.email?.trim() ? loc.email.trim() : null;
 
 /** Straight-line distance in miles between two coordinates (Haversine). */
 export function distanceMiles(
