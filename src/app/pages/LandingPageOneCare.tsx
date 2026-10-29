@@ -9,6 +9,7 @@ import { HeroSectionOneCare } from "../components/HeroSectionOneCare";
 import { NhsServicesOneCare } from "../components/NhsServicesOneCare";
 import { MoreServicesOneCare, PrivateServicesOneCare, TravelClinicOneCare } from "../components/PrivateServicesOneCare";
 import { FooterOneCare } from "../components/FooterOneCare";
+import { ReviewsOneCare } from "../components/ReviewsOneCare";
 import { Plus } from "@phosphor-icons/react";
 import { Arrow, BTN_ON_DARK, OneCareBranchProvider, Ph, Tbc } from "../components/onecareUi";
 import { useOneCarePage } from "./onecarePage";
@@ -117,6 +118,7 @@ export default function LandingPageOneCare() {
           <PrivateServicesOneCare />
           <TravelClinicOneCare />
           <MoreServicesOneCare />
+          <ReviewsOneCare />
           <Faq />
           <ClosingCta />
         </main>

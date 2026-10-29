@@ -94,7 +94,8 @@ The site no longer shows `[REPLACE]` placeholders. These stand-in values are fil
 - [ ] Photography: every photo on the site is a stand-in shared with other demo sites. Replace them with One Care's own photos (both shopfronts, the team, the consultation rooms, and a photo for each service). They're mapped in `OC_IMAGES` and on each service in `src/app/data/onecare.ts`
 - [ ] Answers to the FAQs that still show `[REPLACE]`
 - [ ] Open Graph share image (`/og-onecare.jpg`, 1200×630)
-- [ ] Reviews section: hidden on purpose. Add it only with real, verifiable reviews. Never add star ratings or an `AggregateRating`
+- [ ] Google reviews section (home page, after the services): the six reviews, the 4.9 rating and the 132 count in `OC_REVIEWS` / `OC_GOOGLE_RATING` (`src/app/data/onecare.ts`) are **DUMMY**. Before launch, show only real reviews from One Care's Google Business Profile (ideally pulled from the Places API so the rating and count stay in step with Google), or remove `<ReviewsOneCare />`. Never add an `AggregateRating` to the structured data
+- [ ] Google Place ID for each branch (`googlePlaceId` in `OC_BRANCHES`). Until it's set, "Write a review" opens the branch on Google Maps instead of Google's review box. Find it with Google's Place ID Finder
 
 ## 7. Booking
 

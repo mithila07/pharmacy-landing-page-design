@@ -69,6 +69,8 @@ export type OCBranch = {
   pin: "dark" | "mid";
   /** Stand-in branch: kept out of structured data so search engines never index dummy details. */
   demo?: boolean;
+  /** Google Business Profile Place ID. Opens Google's "write a review" box directly; until set, the review button opens the branch on Google Maps. */
+  googlePlaceId?: string;
 };
 
 const mapsSearch = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
@@ -102,6 +104,7 @@ export const OC_BRANCHES: OCBranch[] = [
     facilities: ["Private consultation room", "Step-free access", "On-street parking nearby"], // DUMMY
     landmark: "In Bensham, a short walk from Saltwell Park", // DUMMY
     ods: "FQ146", // DUMMY
+    googlePlaceId: "[REPLACE: Google Place ID]",
     pin: "dark",
   },
   {
@@ -132,6 +135,7 @@ export const OC_BRANCHES: OCBranch[] = [
     landmark: "On Durham Road in the centre of Low Fell",
     ods: "FW382",
     demo: true,
+    googlePlaceId: "[REPLACE: Google Place ID]",
     pin: "mid",
   },
 ];
@@ -268,6 +272,34 @@ export const OC_FAQS: { q: string; a: string }[] = [
   { q: "Is there parking, and is the pharmacy step-free?", a: "Both branches have step-free access. There's on-street parking near Bewick Road, and customer parking at the rear of our Low Fell branch." },
   { q: "How much do private services cost?", a: "Each private service shows its starting price before you book. The pharmacist will confirm the total with you before any treatment." },
 ];
+
+// ── Google reviews ──────────────────────────────────────────────────────────
+// DUMMY: stand-ins in the shape of Google reviews so the layout reads as
+// finished. Before launch, show only real reviews from One Care's Google
+// Business Profile (Places API, or copied with the reviewer's first name and
+// initial), keep the rating and count in step with Google, and keep the
+// Google attribution. Never add an AggregateRating to the structured data:
+// Google ignores self-served review markup for local businesses.
+
+export type OCReview = { quote: string; name: string; rating: 1 | 2 | 3 | 4 | 5; when: string; branch: "Bewick Road" | "Low Fell"; service: string };
+
+export const OC_GOOGLE_RATING = { rating: 4.9, count: 132 }; // DUMMY
+
+export const OC_REVIEWS: OCReview[] = [
+  { quote: "Walked in with a sore throat on a Saturday morning and was seen within ten minutes. The pharmacist explained everything and I didn't need to chase a GP appointment.", name: "Joanne R.", rating: 5, when: "2 weeks ago", branch: "Bewick Road", service: "Pharmacy First" },
+  { quote: "They sorted all the vaccines for our trip to Kenya in one visit and gave us a printed plan for the second doses. Really thorough.", name: "Kieran M.", rating: 5, when: "a month ago", branch: "Bewick Road", service: "Travel clinic" },
+  { quote: "Ear wax removal done in a proper private room, no rushing. I could hear the kettle again before I'd even left.", name: "Derek T.", rating: 5, when: "3 weeks ago", branch: "Low Fell", service: "Ear wax removal" },
+  { quote: "My mam's repeat prescriptions are always ready when they say. They ring if anything's out of stock, which takes a weight off.", name: "Sarah L.", rating: 5, when: "2 months ago", branch: "Bewick Road", service: "Prescriptions" },
+  { quote: "Booked a blood pressure check online for my lunch break. In and out in fifteen minutes, with clear advice on what to do next. Only wait was for parking.", name: "Graham P.", rating: 4, when: "a month ago", branch: "Low Fell", service: "Blood pressure check" },
+  { quote: "Friendly, never makes you feel like you're bothering them. The kind of local pharmacy you hope to have round the corner.", name: "Pauline W.", rating: 5, when: "5 days ago", branch: "Bewick Road", service: "Advice" },
+];
+
+/** Where "Write a review" sends someone for a branch: Google's review box when the Place ID is known, else the branch on Google Maps. */
+export const googleReviewUrl = (b: OCBranch) =>
+  !isTbc(b.googlePlaceId) ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(b.googlePlaceId!)}` : b.mapsUrl;
+/** All of a branch's Google reviews. */
+export const googleReviewsListUrl = (b: OCBranch) =>
+  !isTbc(b.googlePlaceId) ? `https://search.google.com/local/reviews?placeid=${encodeURIComponent(b.googlePlaceId!)}` : b.mapsUrl;
 
 // ── Adapter for the shared booking flow (BranchSelector / useResolvedLocation) ──
 
