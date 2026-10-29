@@ -12,6 +12,9 @@ import LandingPageOneCare from "./pages/LandingPageOneCare";
 import AccessibilityPageOneCare from "./pages/AccessibilityPageOneCare";
 import AboutPageOneCare from "./pages/AboutPageOneCare";
 import ContactPageOneCare from "./pages/ContactPageOneCare";
+import LandingPageShivakem from "./pages/LandingPageShivakem";
+import AboutPageShivakem from "./pages/AboutPageShivakem";
+import ContactPageShivakem from "./pages/ContactPageShivakem";
 import LandingPageStrachans from "./pages/LandingPageStrachans";
 import LandingPageCanada from "./pages/LandingPageCanada";
 import AboutPageICare from "./pages/AboutPageICare";
@@ -35,7 +38,7 @@ import UpdatesPageKepple from "./pages/UpdatesPageKepple";
 import LandingPageCentral from "./pages/LandingPageCentral";
 import AboutPageCentral from "./pages/AboutPageCentral";
 import ContactPageCentral from "./pages/ContactPageCentral";
-import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand, onecareBrand } from "./branding";
+import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand, onecareBrand, shivakemBrand } from "./branding";
 
 // Under GitHub Pages the app is served from /<repo>/, so routing is scoped to
 // Vite's configured base (BASE_URL). Locally this is just "/".
@@ -125,5 +128,11 @@ export const router = createBrowserRouter([
   { path: "/onecare/accessibility", Component: AccessibilityPageOneCare },
   { path: "/onecare/book/:serviceId", element: <BookingPage brand={onecareBrand} /> },
   { path: "/onecare/questionnaire/:serviceId", element: <QuestionnairePage brand={onecareBrand} /> },
+  // Shivakem Pharmacy (Wembley) — Kepple Lane hero on the One Care design system, in blue
+  { path: "/shivakem", Component: LandingPageShivakem },
+  { path: "/shivakem/about", Component: AboutPageShivakem },
+  { path: "/shivakem/contact", Component: ContactPageShivakem },
+  { path: "/shivakem/book/:serviceId", element: <BookingPage brand={shivakemBrand} /> },
+  { path: "/shivakem/questionnaire/:serviceId", element: <QuestionnairePage brand={shivakemBrand} /> },
   ] },
 ], { basename });

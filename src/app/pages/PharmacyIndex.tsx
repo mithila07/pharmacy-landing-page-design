@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ArrowUpRight, LayoutGrid, Sparkles, ArrowRight } from "lucide-react";
-import { carefirstBrand, strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand, onecareBrand } from "../branding";
+import { carefirstBrand, strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand, onecareBrand, shivakemBrand } from "../branding";
 import { useSeo } from "../seo";
 
 /** Prefix a route with Vite's base so previews work locally and on GitHub Pages. */
@@ -22,6 +22,7 @@ const SITES: Entry[] = [
   { name: acreBrand.name, tagline: acreBrand.tagline, location: "Huddersfield", path: "/acre" },
   { name: meadowsBrand.name, tagline: meadowsBrand.tagline, location: "Maghull", path: "/meadows" },
   { name: onecareBrand.name, tagline: onecareBrand.tagline, location: "Gateshead + 1 branch", path: "/onecare" },
+  { name: shivakemBrand.name, tagline: shivakemBrand.tagline, location: "Wembley, London", path: "/shivakem" },
 ];
 
 /** The chrome address-bar label — the domain for external sites, the route otherwise. */

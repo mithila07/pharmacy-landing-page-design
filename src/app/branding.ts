@@ -18,7 +18,11 @@ import meadowsMark from "../assets/Meadows logomark.svg";
 import onecareLogo from "../assets/onecare/OCP_Logo_Transparent.png";
 import onecareMark from "../assets/onecare/onecare-icon.svg";
 import onecareFavicon from "../assets/onecare/favicon.ico";
+import shivakemLogo from "../assets/shivakem/sk-logo.webp";
+import shivakemMark from "../assets/shivakem/sk-mark.webp";
+import shivakemFavicon from "../assets/shivakem/sk-favicon.png";
 import { onecareLocations, OC_LEGAL } from "./data/onecare";
+import { shivakemLocations, SK_LEGAL } from "./data/shivakem";
 import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, centralLocations, jmorrisLocations, acreLocations, meadowsLocations, type PharmacyLocation } from "./data/locations";
 
 /**
@@ -317,6 +321,29 @@ export const onecareBrand: Brand = {
     companyNumber: OC_LEGAL.companyNumber,
     superintendent: OC_LEGAL.superintendent,
     gphcNumber: OC_LEGAL.superintendentGphc,
+  },
+};
+
+export const shivakemBrand: Brand = {
+  id: "shivakem",
+  name: "Shivakem Pharmacy",
+  tagline: "Your community pharmacy in Wembley",
+  logo: shivakemLogo,
+  logoMark: shivakemMark,
+  favicon: shivakemFavicon,
+  logoIsWordmark: true,
+  // One Care's design system, re-pointed to Shivakem blue (styles/theme.css).
+  themeClass: "theme-onecare theme-shivakem",
+  basePath: "/shivakem",
+  seoArea: "Wembley",
+  locations: shivakemLocations,
+  aboutPath: "/shivakem/about",
+  contactPath: "/shivakem/contact",
+  legal: {
+    companyName: SK_LEGAL.owner,
+    companyNumber: SK_LEGAL.companyNumber,
+    superintendent: SK_LEGAL.superintendent,
+    gphcNumber: SK_LEGAL.superintendentGphc,
   },
 };
 

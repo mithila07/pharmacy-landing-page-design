@@ -8,13 +8,13 @@ import { useLocation } from "react-router";
  *    view once rendered, and again whenever the hash changes;
  *  - same-page section links scroll smoothly (instantly under reduced motion).
  */
-export function useOneCarePage() {
+export function useOneCarePage(themeColor = "#2E7A75") {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
     const prev = meta?.content;
-    meta?.setAttribute("content", "#2E7A75");
+    meta?.setAttribute("content", themeColor);
     return () => { if (meta && prev) meta.setAttribute("content", prev); };
   }, []);
 

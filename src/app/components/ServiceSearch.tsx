@@ -18,7 +18,7 @@ import { nhsServices, privateServices, type Service } from "../data/services";
  * here: promoting a POM by name to the public breaches MHRA advertising rules.
  * Patients reach them through the matching consultation instead.
  */
-const HIDDEN_FROM_SEARCH = new Set(["prv-wegovy", "prv-mounjaro", "prv-saxenda", "prv-orlistat", "prv-finasteride"]);
+export const HIDDEN_FROM_SEARCH = new Set(["prv-wegovy", "prv-mounjaro", "prv-saxenda", "prv-orlistat", "prv-finasteride"]);
 
 /** Everyday words patients type, mapped to the catalogue's wording. */
 const SYNONYMS: Record<string, string[]> = {

@@ -842,6 +842,89 @@ html:has(.theme-onecare.oc-page) { scroll-padding-top: 104px; }
   .theme-onecare { --line: var(--ink); --line-strong: var(--ink); --mist: #ffffff; --paper-tint: #ffffff; --daylight: #ffffff; }
 }
 
+/* ------------------------------------------------------------------
+ * Shivakem Pharmacy (Wembley). Built on the One Care design system:
+ * pages carry `theme-onecare theme-shivakem`, so every oc-* utility, type
+ * class and motion rule applies, and this block re-points the tokens to
+ * the logo's royal blue. Light, bright, no green (the logo's green cross
+ * stays in the logo only). Titles: Cal Sans. Everything else: Google Sans Flex.
+ * ------------------------------------------------------------------ */
+.theme-onecare.theme-shivakem {
+  --cross-dark: #0450b4;   /* logo wordmark blue: text, buttons (7.6:1 on white) */
+  --cross-mid: #2f6fd0;    /* large display, icons, borders */
+  --cross-light: #8db9ff;  /* decorative; text only on --ink */
+  --teal-deep: #033c8a;    /* hover / pressed */
+  --ink: #0a2352;          /* navy for headings and dark bands */
+  --paper: #ffffff;
+  --paper-tint: #f5f8ff;
+  --mist: #e8f0fe;
+  --daylight: #f7f9ff;
+  --text: #14244a;
+  --text-quiet: #4b5a7a;
+  --line: rgba(10, 35, 82, 0.12);
+  --line-strong: rgba(10, 35, 82, 0.24);
+  --open: #0450b4;         /* open-now is shown in brand blue, not green */
+  --focus: var(--ink);
+  --focus-on-dark: var(--cross-light);
+
+  /* Shared --brand-* palette → re-themes the booking/questionnaire flow */
+  --brand-primary: #0450b4;
+  --brand-primary-mid: #2f6fd0;
+  --brand-secondary: #0450b4;
+  --brand-accent: #2f6fd0;
+  --brand-dark: #033c8a;
+  --brand-darkest: #0a2352;
+  --brand-light: #e8f0fe;
+  --brand-light-alt: #f5f8ff;
+  --brand-cta: #0450b4;
+  --brand-alt: #2f6fd0;
+  --brand-light-cyan: #e8f0fe;
+  --brand-primary-hover: #033c8a;
+  --brand-green-ink: #0450b4;
+
+  font-family: "Google Sans Flex", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-optical-sizing: auto;
+}
+.theme-onecare.theme-shivakem :is(h1, h2, h3, h4),
+.theme-onecare.theme-shivakem :is(.oc-display, .oc-h2, .oc-h3) {
+  font-family: "Cal Sans", "Google Sans Flex", system-ui, sans-serif;
+  font-weight: 400; /* Cal Sans ships one weight; it's already heavy */
+  /* Shared pages (booking, questionnaire) ask for 600/700 inline. Without this
+     the browser fakes a bold by thickening each glyph, and Cal Sans's tight
+     letters run together. */
+  font-synthesis: none;
+  /* Cal Sans is drawn tight for large display use; small titles need air. */
+  letter-spacing: 0.02em;
+}
+/* Tracking scales with size: only the big display titles stay tight. */
+.theme-onecare.theme-shivakem .oc-display { letter-spacing: -0.012em; line-height: 1.04; }
+.theme-onecare.theme-shivakem .oc-h2 { letter-spacing: -0.004em; line-height: 1.08; }
+.theme-onecare.theme-shivakem .oc-h3 { letter-spacing: 0.012em; }
+.theme-onecare.theme-shivakem .oc-eyebrow { letter-spacing: 0.1em; }
+.theme-onecare.theme-shivakem .oc-hero-wash {
+  background:
+    radial-gradient(60% 55% at 85% 20%, rgba(47, 111, 208, 0.14), transparent 70%),
+    radial-gradient(40% 40% at 0% 100%, rgba(4, 80, 180, 0.07), transparent 70%);
+}
+/* Kepple-style hero ground: a bright blue mesh */
+.theme-onecare.theme-shivakem .sk-mesh {
+  background:
+    radial-gradient(60% 70% at 10% 15%, rgba(47, 111, 208, 0.16), transparent 70%),
+    radial-gradient(50% 60% at 45% 90%, rgba(141, 185, 255, 0.24), transparent 70%),
+    #f5f8ff;
+}
+.theme-onecare.theme-shivakem .sk-grad-text {
+  background: linear-gradient(100deg, #0450b4 10%, #2f6fd0 60%, #5b95ec 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.theme-onecare.theme-shivakem .oc-glass {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(10, 35, 82, 0.05), 0 12px 32px -12px rgba(10, 35, 82, 0.2);
+}
+@media (prefers-contrast: more) {
+  .theme-onecare.theme-shivakem { --line: var(--ink); --line-strong: var(--ink); --mist: #ffffff; --paper-tint: #ffffff; --daylight: #ffffff; }
+  .theme-onecare.theme-shivakem .sk-grad-text { background: none; color: var(--cross-dark); }
+}
+
 /* ── Eligibility assessment panel — bottom-up drawer ──
  * A tall bottom sheet on every viewport; slides up from the bottom edge. Both
  * disabled under reduced-motion. Brand-agnostic. */
