@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Calendar, CalendarPlus, Clock, Phone, Mail, CheckCircle, MapPin, Video, PhoneCall, Pencil, ChevronLeft, ChevronRight, ShieldCheck, AlertTriangle, ThumbsUp, Info, ClipboardList, RotateCcw, Home, Zap, CreditCard, Store, Lock } from "lucide-react";
+import { ArrowLeft, Calendar, CalendarPlus, Clock, Phone, Mail, CheckCircle, MapPin, Video, PhoneCall, Pencil, ChevronLeft, ChevronRight, ShieldCheck, AlertTriangle, ThumbsUp, Info, ClipboardList, RotateCcw, Home, Zap, CreditCard, Store, Lock, UserPlus, Repeat } from "lucide-react";
 import { nhsServices, privateServices } from "../data/services";
 import { getServiceContent } from "../data/serviceContent";
 import { ServiceInfoSection } from "../components/ServiceInfoSection";
@@ -10,7 +10,7 @@ import { carefirstBrand, homePath, type Brand } from "../branding";
 import { useResolvedLocation } from "../useLocation";
 import { useSeo, serviceSeo } from "../seo";
 import { getEligibilityFlow, type EligOutcome } from "../data/eligibility";
-import { getBookingConfig, STAGE_LABELS, NO_PAYMENT, type StageKind, type PaymentConfig } from "../data/bookingConfig";
+import { getBookingConfig, STAGE_LABELS, CONSULT_LABELS, NO_PAYMENT, type StageKind, type PaymentConfig, type ConsultKind } from "../data/bookingConfig";
 import { EligibilityChat, EligibilityGate } from "../components/EligibilityChat";
 import { WeightAssessment, WeightAssessmentGate } from "../components/WeightAssessment";
 import { WEIGHT_SERVICE_ID } from "../data/weightAssessment";
@@ -195,6 +195,11 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   });
   const [pdsResult, setPdsResult] = useState<PdsResult | null>(null);
   const [pdsLoading, setPdsLoading] = useState(false);
+  // Edited details invalidate the previous PDS lookup.
+  useEffect(() => { setPdsResult(null); }, [patient]);
+
+  // Weight management: first consultation or follow-up (separate consultations in the backend)
+  const [consultKind, setConsultKind] = useState<ConsultKind | null>(null);
 
   // Step 3 — confirm/enter contact
   const [contactPhone, setContactPhone] = useState("");
@@ -229,6 +234,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     setTriageOutcome(null);
     setChatOpen(false);
     setWeightBlocked(false);
+    setConsultKind(null);
     setPaymentSetting(service && service.id.startsWith("nhs-") ? "off" : "online");
     setCard({ name: "", number: "", expiry: "", cvc: "" });
     setPayAcknowledged(false);
@@ -255,7 +261,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     : paymentSetting === "online" ? { enabled: true, kind: "service", method: "online", amount: servicePriceNum }
     : { enabled: true, kind: "service", method: "counter", amount: servicePriceNum };
 
-  const config = getBookingConfig({ isNHS, hasTriage, payment });
+  const config = getBookingConfig({ isNHS, hasTriage, askConsultKind: isWeightMgmt, payment });
   const stages = config.steps;
   const stage = stages[stageIdx];
   const hasPayment = stages.includes("payment");
@@ -297,7 +303,8 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     const target = stages[stageIdx + 1];
     if (!target) return;
     // Verifying contact needs the patient details + an NHS PDS lookup first.
-    if (target === "contact" && !pdsResult) {
+    // Where the consultation-type question is asked, the lookup runs before it.
+    if ((target === "contact" || target === "consult") && !pdsResult) {
       setPdsLoading(true);
       setTimeout(() => {
         setPdsResult(mockPdsLookup(patient, demoMode));
@@ -341,6 +348,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
             <p><span className="text-gray-500">Date:</span> <span style={{ fontWeight: 500 }}>{selectedDate?.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}</span></p>
             <p><span className="text-gray-500">Time:</span> <span style={{ fontWeight: 500 }}>{selectedTime}</span></p>
             <p><span className="text-gray-500">Type:</span> <span style={{ fontWeight: 500 }}>{appointmentType === "face-to-face" ? "Face to Face" : appointmentType === "video" ? "Video Call" : "Telephone"}</span></p>
+            {consultKind && <p><span className="text-gray-500">Consultation:</span> <span style={{ fontWeight: 500 }}>{CONSULT_LABELS[consultKind]}</span></p>}
             <p><span className="text-gray-500">Location:</span> <span style={{ fontWeight: 500 }}>{branch.name} · {branch.address}</span></p>
             <p><span className="text-gray-500">Phone:</span> <span style={{ fontWeight: 500 }}>{contactPhone}</span></p>
             {payment.enabled && (
@@ -359,7 +367,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
             onClick={() => selectedDate && downloadIcs({
               date: selectedDate,
               time: selectedTime,
-              title: `${service.name} — ${brand.name}`,
+              title: `${service.name}${consultKind ? ` (${CONSULT_LABELS[consultKind].toLowerCase()})` : ""} — ${brand.name}`,
               location: `${branch.name}, ${branch.address}`,
               description: `Appointment type: ${appointmentType === "face-to-face" ? "Face to Face" : appointmentType === "video" ? "Video Call" : "Telephone"}. Booked for ${patientName || "patient"}.`,
             })}
@@ -826,6 +834,77 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                   {pdsLoading ? "Checking NHS records…" : "Continue"}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* First consultation or follow-up — asked straight after the PDS check.
+            The answer picks which of the two backend consultations is booked. */}
+        {stage === "consult" && (
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            {pdsResult && (
+              <p className={`text-[0.82rem] mb-5 flex items-center gap-1.5 ${pdsResult.matched ? "text-gray-600" : "text-gray-500"}`}>
+                {pdsResult.matched
+                  ? <><CheckCircle size={15} className="text-green-600 shrink-0" /> We found your NHS record. You'll confirm your contact details later on.</>
+                  : <><Info size={15} className="text-brand-accent shrink-0" /> We couldn't find a matching NHS record. That's fine for this private service.</>}
+              </p>
+            )}
+
+            <fieldset>
+              <legend className="text-gray-900 text-[1rem] mb-1.5" style={{ fontWeight: 600 }}>Have you had a weight management consultation with us before?</legend>
+              <p className="text-[0.85rem] text-gray-500 mb-5">This tells us which appointment to book for you.</p>
+
+              <div className="grid sm:grid-cols-2 gap-3" role="radiogroup">
+                {([
+                  { value: "initial" as const, icon: UserPlus, title: "No, this is my first", body: "An initial consultation: a health check and a conversation about your goals and options." },
+                  { value: "follow-up" as const, icon: Repeat, title: "Yes, it's a follow-up", body: "A review with your pharmacist to see how you're getting on since your last appointment." },
+                ]).map((opt) => {
+                  const on = consultKind === opt.value;
+                  const Icon = opt.icon;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => setConsultKind(opt.value)}
+                      className={`text-left rounded-xl border-2 p-4 min-h-[44px] transition-colors cursor-pointer flex items-start gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 ${on ? "border-brand-primary bg-brand-primary/5" : "border-gray-200 hover:border-brand-primary/50"}`}
+                    >
+                      <span className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${on ? "bg-brand-primary text-white" : "bg-brand-primary/10 text-brand-primary"}`}>
+                        <Icon size={19} />
+                      </span>
+                      <span className="flex-1 min-w-0">
+                        <span className="flex items-center justify-between gap-2">
+                          <span className={`text-[0.95rem] ${on ? "text-brand-primary" : "text-gray-900"}`} style={{ fontWeight: 600 }}>{opt.title}</span>
+                          <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${on ? "border-brand-primary" : "border-gray-300"}`}>
+                            {on && <span className="w-2.5 h-2.5 rounded-full bg-brand-primary" />}
+                          </span>
+                        </span>
+                        <span className="block text-[0.83rem] text-gray-600 mt-1">{opt.body}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            {consultKind === "follow-up" && (
+              <p className="mt-4 text-[0.82rem] text-gray-600 flex items-start gap-2 rounded-lg bg-brand-light/60 border border-brand-primary/15 p-3">
+                <Info size={15} className="text-brand-primary mt-0.5 shrink-0" />
+                If your last appointment was with a different pharmacy, choose "No, this is my first" so we can do a full health check.
+              </p>
+            )}
+
+            <div className="mt-8 flex items-center justify-between gap-3">
+              <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>
+              <button
+                disabled={!consultKind}
+                onClick={goNext}
+                className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center gap-2"
+                style={{ fontWeight: 600 }}
+              >
+                Continue <ChevronRight size={16} />
+              </button>
             </div>
           </div>
         )}

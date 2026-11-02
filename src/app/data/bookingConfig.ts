@@ -9,6 +9,9 @@
  * Stages:
  *  - "triage"   — NHS eligibility questionnaire (only used when a flow exists)
  *  - "details"  — patient information (name, DOB, etc.)
+ *  - "consult"  — first consultation or follow-up? Asked straight after the NHS
+ *                 PDS check, for services the backend books as two separate
+ *                 consultation types (e.g. weight management)
  *  - "datetime" — appointment type, date & time
  *  - "contact"  — verify contact details (NHS PDS)
  *  - "payment"  — advance booking fee / private service payment (admin-configured)
@@ -17,11 +20,20 @@
  * builds on the entered details), `triage` before `datetime`/`contact`, and
  * `payment` is always last (the patient pays once everything else is settled).
  */
-export type StageKind = "triage" | "details" | "datetime" | "contact" | "payment";
+export type StageKind = "triage" | "details" | "consult" | "datetime" | "contact" | "payment";
+
+/** Initial vs follow-up: the backend has a separate consultation for each. */
+export type ConsultKind = "initial" | "follow-up";
+
+export const CONSULT_LABELS: Record<ConsultKind, string> = {
+  initial: "First consultation",
+  "follow-up": "Follow-up",
+};
 
 export const STAGE_LABELS: Record<StageKind, string> = {
   triage: "Eligibility",
   details: "Patient Info",
+  consult: "Consultation",
   datetime: "Date & Time",
   contact: "Verify Contact",
   payment: "Payment",
@@ -64,9 +76,15 @@ const NHS_WITH_TRIAGE_STEPS: StageKind[] = ["details", "triage", "datetime", "co
 const STANDARD_STEPS: StageKind[] = ["datetime", "details", "contact"];
 
 export function getBookingConfig(
-  { hasTriage, payment = NO_PAYMENT }: { isNHS: boolean; hasTriage: boolean; payment?: PaymentConfig },
+  { hasTriage, askConsultKind = false, payment = NO_PAYMENT }: { isNHS: boolean; hasTriage: boolean; askConsultKind?: boolean; payment?: PaymentConfig },
 ): BookingConfig {
-  const base = hasTriage ? NHS_WITH_TRIAGE_STEPS : STANDARD_STEPS;
+  let base = hasTriage ? NHS_WITH_TRIAGE_STEPS : STANDARD_STEPS;
+  // The consultation-type question sits directly after patient details, so it
+  // follows the PDS check (which runs on leaving the details stage).
+  if (askConsultKind) {
+    const i = base.indexOf("details");
+    base = [...base.slice(0, i + 1), "consult", ...base.slice(i + 1)];
+  }
   // Payment, when enabled, is appended as the final stage.
   const steps = payment.enabled ? [...base, "payment" as const] : [...base];
   return { steps, payment };
