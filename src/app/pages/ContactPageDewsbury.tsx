@@ -55,7 +55,7 @@ export default function ContactPageDewsbury() {
             <ul className="grid gap-3">
               {ways.map(({ icon: Icon, title, line, href, external }) => (
                 <li key={title}>
-                  <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="dmp-glass group flex items-center gap-4 p-4 hover:bg-white/15 transition-colors">
+                  <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="dmp-glass group flex items-center gap-4 p-4 hover:bg-white/15 transition-colors duration-300 ease-[var(--dmp-ease)]">
                     <span className="w-11 h-11 rounded-2xl bg-brand-cta text-brand-darkest grid place-items-center shrink-0"><Icon width={22} height={22} /></span>
                     <span className="min-w-0">
                       <span className="block text-white/70 text-[0.85rem]">{title}</span>

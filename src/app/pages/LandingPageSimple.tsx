@@ -22,7 +22,8 @@ const TEMPLATE_AREA: Record<string, { area: string[]; region: string }> = {
   dewsbury: { area: ["Dewsbury", "Dewsbury Moor", "West Yorkshire"], region: "West Yorkshire" },
 };
 import { ReviewsSection } from "../components/ReviewsSection";
-import { BentoServicesTemplate, ClosingCtaTemplate, QuickBookTemplate } from "../components/TemplateExtras";
+import { BentoServicesTemplate, ClosingCtaTemplate } from "../components/TemplateExtras";
+import { PrivateServicesDewsbury } from "../components/dewsbury/PrivateServicesDewsbury";
 import { HeroDewsbury } from "../components/dewsbury/HeroDewsbury";
 import { ReviewsDewsbury } from "../components/dewsbury/ReviewsDewsbury";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
@@ -383,7 +384,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {pharmacyFirstCards.map((c) => (
-            <ServiceCard key={c.id} item={c} brand={brand} />
+            <ServiceCard key={c.id} item={extras && templateSites[brand.id]?.pfImages?.[c.id] ? { ...c, imageUrl: templateSites[brand.id].pfImages![c.id] } : c} brand={brand} />
           ))}
         </div>
       </div>
@@ -426,12 +427,9 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
       {/* Repeat-prescription nomination invite, for template sites that take nominations */}
       {isTemplate && templateSites[brand.id]?.nomination && <NominationBanner brand={brand} />}
 
-      {/* Booking straight under the hero, by need */}
-      {extras?.quickBook && <QuickBookTemplate brand={brand} />}
-
       {/* NHS + Private service sections. Central leads with private clinics
           (its main draw); every other brand leads with NHS. */}
-      {isCentral ? <>{privateSection}{nhsSection}</> : <>{nhsSection}{extras?.bento ? <BentoServicesTemplate brand={brand} /> : privateSection}</>}
+      {isCentral ? <>{privateSection}{nhsSection}</> : <>{nhsSection}{extras?.bento ? <BentoServicesTemplate brand={brand} /> : privateSection}{brand.id === "dewsbury" && <PrivateServicesDewsbury />}</>}
 
       {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : brand.id === "dewsbury" ? <ReviewsDewsbury /> : <ReviewsSection />}
       {brand.blogPath && <BlogTeaserSection brand={brand} />}

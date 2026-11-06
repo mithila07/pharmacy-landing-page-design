@@ -21,10 +21,13 @@ Facts come from dewsburymoorpharmacy.co.uk (read 6 November 2026). Anything not 
 - [ ] Medicines Use Review is listed on the current site but ended in England in 2021. It's been left off.
 
 ## Services
-- [ ] Is the pharmacy signed up to NHS Pharmacy First? The site and the About stats ("7 conditions treated free on the NHS") assume it is.
-- [ ] NHS: flu jab, blood pressure check, stop smoking support (bookable), inhaler check (walk-in). Confirm each.
-- [ ] Private: private flu jab (bookable, from £15), emergency contraception and pregnancy test (walk-in). Confirm prices; they come from `src/app/data/services.ts`.
-- [ ] Anything else to add, such as contraception, travel vaccines, ear wax removal or weight management.
+Everything below is shown on the home page and in the booking overlay. Confirm each one before launch, and remove any the pharmacy doesn't offer (`src/app/data/dewsbury.ts` and the `dewsbury` entry in `templateSites.ts`). Prices come from `src/app/data/services.ts`.
+- [ ] NHS Pharmacy First, all seven conditions (the About stats also say "7 conditions treated free on the NHS").
+- [ ] NHS: flu jab, blood pressure check, stop smoking support, New Medicine Service, inhaler checks (walk-in).
+- [ ] Private, headline: weight loss clinic (from £30), ear wax removal (from £40).
+- [ ] Travel clinic: consultation (from £25), hepatitis A, hepatitis B, typhoid, cholera, rabies, meningitis ACWY, Japanese encephalitis, tick-borne encephalitis, malaria prevention, altitude sickness. Yellow fever is left out until the pharmacy confirms it's a registered centre.
+- [ ] Other private: private flu jab, chickenpox, HPV, period delay, hay fever, cold sores, migraine, fungal nail, vitamin B12 service; emergency contraception and pregnancy tests (walk-in).
+- [ ] Weight loss copy and photo deliberately don't mention or show any medicine (MHRA rules on prescription-only medicines). Keep it that way.
 
 ## Google reviews
 - [ ] The six reviews and the 4.8 rating (57 reviews) on the home page are placeholders (`DMP_REVIEWS` and `DMP_GOOGLE_RATING` in `src/app/data/dewsbury.ts`). Replace them with real reviews from the pharmacy's Google Business Profile, and keep the rating and count in step with Google.

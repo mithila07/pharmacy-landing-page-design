@@ -7,7 +7,7 @@ import { templateSites, type QuickService } from "../../data/templateSites";
 
 type Row = QuickService & { group: string };
 
-const PATHS = templateSites.dewsbury.extras?.quickBook ?? [];
+const PATHS = templateSites.dewsbury.extras?.bookingGroups ?? [];
 const ALL: Row[] = PATHS.flatMap((p) => p.services.map((s) => ({ ...s, group: p.label })));
 
 /** Every typed word must appear in the name, note or group. */
@@ -83,7 +83,7 @@ export function BookOverlayDewsbury({ open, onOpenChange }: { open: boolean; onO
                   type="button"
                   aria-pressed={group === f.id}
                   onClick={() => setGroup(f.id)}
-                  className="min-h-[44px] px-5 rounded-full text-[0.95rem] cursor-pointer transition-colors bg-white/80 text-slate-700 ring-1 ring-black/10 hover:bg-white aria-pressed:bg-brand-primary aria-pressed:text-white aria-pressed:ring-brand-primary"
+                  className="min-h-[44px] px-5 rounded-full text-[0.95rem] cursor-pointer transition-colors duration-300 ease-[var(--dmp-ease)] bg-white/80 text-slate-700 ring-1 ring-black/10 hover:bg-white aria-pressed:bg-brand-primary aria-pressed:text-white aria-pressed:ring-brand-primary"
                   style={{ fontWeight: 600 }}
                 >
                   {f.label}
@@ -110,7 +110,7 @@ export function BookOverlayDewsbury({ open, onOpenChange }: { open: boolean; onO
                           <Link
                             to={`${dewsburyBrand.basePath}/book/${r.id}`}
                             onClick={() => close(false)}
-                            className="group flex items-center justify-between gap-4 min-h-[76px] rounded-2xl bg-white px-5 py-4 ring-1 ring-black/5 shadow-sm hover:ring-brand-secondary/50 hover:shadow-md transition-[box-shadow] no-underline"
+                            className="group flex items-center justify-between gap-4 min-h-[76px] rounded-2xl bg-white px-5 py-4 ring-1 ring-black/5 shadow-sm hover:ring-brand-secondary/50 hover:shadow-md transition-[box-shadow] duration-500 ease-[var(--dmp-ease)] no-underline"
                           >
                             <span className="min-w-0">
                               <span className="block text-slate-900 text-[1.05rem]" style={{ fontWeight: 600 }}>{r.name}</span>

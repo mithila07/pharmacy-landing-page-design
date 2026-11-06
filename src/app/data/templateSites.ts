@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import { Plane, Scale, Syringe, Calendar, Activity, HeartPulse, Pill, ShieldCheck, Sparkles, Clock, type LucideIcon } from "lucide-react";
-import { Activity as IcActivity, ChatBubble, ClipboardCheck, HealthShield, Heart, NoSmokingCircle, PharmacyCrossCircle, Sparks } from "iconoir-react";
+import { Activity as IcActivity, Airplane, ChatBubble, ClipboardCheck, HealthShield, Heart, NoSmokingCircle, PharmacyCrossCircle, Sparks } from "iconoir-react";
 import travelImg from "../../assets/travel.jpeg";
 import weightImg from "../../assets/weight-loss.jpeg";
 import throatImg from "../../assets/sorethroat.jpg";
@@ -8,6 +8,7 @@ import heroImg from "../../assets/hero-bg.jpeg";
 import imageBg from "../../assets/image-bg.jpeg";
 import adviceImg from "../../assets/about-1.jpeg";
 import bpImg from "../../assets/about-2.jpeg";
+import { DMP_IMG } from "./dewsbury";
 import counterImg from "../../assets/about-bg.jpeg";
 
 /**
@@ -43,11 +44,13 @@ export type TemplateConfig = {
   /**
    * Optional sections inspired by pharmappy.com's design suite, so a template
    * site can look its own. Requested for Dewsbury Moor; other brands leave it unset.
-   *  - quickBook: "How can we help today?" pathways straight under the hero
-   *  - bento: a bento grid of everyday services in place of the private cards
+   *  - bookingGroups: the services in the full-page booking overlay, grouped by need
+   *  - bento: a bento grid of everyday services, with its own heading
    *  - closingCta: a last "book or call" band above the footer
    */
-  extras?: { quickBook?: QuickPathway[]; bento?: BentoTile[]; closingCta?: { title: string; subtitle: string; img?: string } };
+  extras?: { bookingGroups?: QuickPathway[]; bento?: BentoTile[]; bentoHeading?: { lead: string; accent: string; intro: string; id?: string }; closingCta?: { title: string; subtitle: string; img?: string } };
+  /** Replacement photos for the Pharmacy First cards, keyed by service id. */
+  pfImages?: Record<string, string>;
   /** The home page's questions, when the shared set mentions services this pharmacy doesn't offer. */
   faqs?: { q: string; a: string }[];
 };
@@ -198,6 +201,7 @@ export const templateSites: Record<string, TemplateConfig> = {
   },
 
   dewsbury: {
+    pfImages: DMP_IMG,
     faqs: [
       { q: "Do I need an appointment, or can I just walk in?", a: "You can walk in during opening hours to see a pharmacist. Booking ahead means we'll have the consultation room ready for you, so you won't wait as long." },
       { q: "Is NHS Pharmacy First really free?", a: "Yes. The consultation is free on the NHS. If the pharmacist gives you a medicine, the usual prescription charge applies unless you're exempt." },
@@ -235,7 +239,7 @@ export const templateSites: Record<string, TemplateConfig> = {
       ],
     },
     extras: {
-      quickBook: [
+      bookingGroups: [
         {
           id: "unwell",
           label: "I'm feeling unwell",
@@ -260,6 +264,7 @@ export const templateSites: Record<string, TemplateConfig> = {
             { id: "nhs-flu", name: "Flu jab", note: "Free if you're eligible", access: "book" },
             { id: "nhs-bp", name: "Blood pressure check", note: "Adults aged 40 and over", access: "book" },
             { id: "nhs-smoking", name: "Stop smoking support", note: "Weekly help to quit", access: "book" },
+            { id: "nhs-nms", name: "New Medicine Service", note: "Support when you start a new medicine", access: "book" },
             { id: "inhaler-check", name: "Inhaler check", note: "Just ask at the counter", access: "walk-in" },
           ],
         },
@@ -269,18 +274,48 @@ export const templateSites: Record<string, TemplateConfig> = {
           intro: "Quick, confidential care that isn't covered by the NHS.",
           icon: Sparks,
           services: [
+            { id: "prv-weight-consult", name: "Weight loss clinic", note: "A confidential consultation", access: "book" },
+            { id: "prv-ear-wax", name: "Ear wax removal", note: "Both ears checked first", access: "book" },
             { id: "prv-flu-private", name: "Private flu jab", note: "If you don't qualify on the NHS", access: "book" },
+            { id: "prv-chicken-pox", name: "Chickenpox vaccine", note: "For children and adults", access: "book" },
+            { id: "prv-hpv", name: "HPV vaccine", note: "Protection against HPV", access: "book" },
+            { id: "prv-period-delay", name: "Period delay", note: "For holidays and special occasions", access: "book" },
+            { id: "prv-hayfever", name: "Hay fever", note: "When remedies aren't enough", access: "book" },
+            { id: "prv-cold-sore", name: "Cold sores", note: "Treatment to shorten an outbreak", access: "book" },
+            { id: "prv-migraine", name: "Migraine", note: "A review of your options", access: "book" },
+            { id: "prv-fungal", name: "Fungal nail", note: "Discoloured or thickened nails", access: "book" },
+            { id: "prv-vitamin-injection", name: "Vitamin B12 service", note: "A consultation to check it suits you", access: "book" },
             { id: "prv-ehc", name: "Emergency contraception", note: "Just ask at the counter", access: "walk-in" },
             { id: "pregnancy-test", name: "Pregnancy test", note: "Just ask at the counter", access: "walk-in" },
           ],
         },
+        {
+          id: "travel",
+          label: "Travel clinic",
+          intro: "Vaccines and advice for your trip. Book six to eight weeks before you travel.",
+          icon: Airplane,
+          services: [
+            { id: "prv-travel-consult", name: "Travel consultation", note: "We'll plan what you need", access: "book" },
+            { id: "prv-hep-a", name: "Hepatitis A", note: "Travel vaccine", access: "book" },
+            { id: "prv-hep-b", name: "Hepatitis B", note: "Travel vaccine, given as a course", access: "book" },
+            { id: "prv-typhoid", name: "Typhoid", note: "Travel vaccine", access: "book" },
+            { id: "prv-cholera", name: "Cholera", note: "Travel vaccine", access: "book" },
+            { id: "prv-rabies", name: "Rabies", note: "Travel vaccine", access: "book" },
+            { id: "prv-meningitis", name: "Meningitis ACWY", note: "For Hajj, Umrah and some regions", access: "book" },
+            { id: "prv-japanese-enc", name: "Japanese encephalitis", note: "Travel vaccine", access: "book" },
+            { id: "prv-tickborne", name: "Tick-borne encephalitis", note: "Travel vaccine", access: "book" },
+            { id: "prv-malaria", name: "Malaria prevention", note: "Advice and tablets if suitable", access: "book" },
+            { id: "prv-altitude", name: "Altitude sickness", note: "Advice and treatment if suitable", access: "book" },
+          ],
+        },
       ],
+      bentoHeading: { id: "more-nhs", lead: "More free NHS care,", accent: "right on your doorstep.", intro: "Checks, jabs and support with your medicines, all free on the NHS for people who qualify." },
       bento: [
         { size: "lg", title: "Your prescriptions, sorted", desc: "Choose us as your pharmacy in the NHS App or at your GP surgery, and your prescriptions come straight to us, ready to collect.", img: heroImg, icon: ClipboardCheck, tag: "NHS prescriptions", href: "https://www.nhs.uk/nhs-app/nhs-app-help-and-support/prescriptions-in-the-nhs-app/", cta: "How to choose us in the NHS App" },
-        { title: "Private flu jab", desc: "For anyone who doesn't qualify for a free NHS flu jab.", img: IMG.flu, icon: PharmacyCrossCircle, tag: "From £15", serviceId: "prv-flu-private", cta: "Book a flu jab" },
-        { title: "Blood pressure check", desc: "A free NHS check for adults aged 40 and over.", img: bpImg, icon: IcActivity, tag: "Free on the NHS", serviceId: "nhs-bp", cta: "Book a check" },
+        { title: "NHS flu jab", desc: "Free if you're 65 or over, pregnant or have certain health conditions.", img: DMP_IMG["nhs-flu"], icon: PharmacyCrossCircle, tag: "Free if you're eligible", serviceId: "nhs-flu", cta: "Book a flu jab" },
+        { title: "Blood pressure check", desc: "A quick, free check for adults aged 40 and over.", img: bpImg, icon: IcActivity, tag: "Free on the NHS", serviceId: "nhs-bp", cta: "Book a check" },
         { title: "Stop smoking support", desc: "Friendly weekly support to help you quit for good.", img: imageBg, icon: NoSmokingCircle, tag: "Free on the NHS", serviceId: "nhs-smoking", cta: "Book a chat" },
-        { title: "Emergency contraception", desc: "Confidential advice and the morning-after pill, with no appointment needed.", img: adviceImg, icon: ChatBubble, tag: "Walk in", cta: "Just ask at the counter" },
+        { title: "Help with your medicines", desc: "Extra support when you start a new medicine, and inhaler checks to make sure yours is working.", img: DMP_IMG["nhs-nms"], icon: ChatBubble, tag: "Free on the NHS", serviceId: "nhs-nms", cta: "Book a medicines chat" },
       ],
       closingCta: {
         title: "Not sure what you need?",

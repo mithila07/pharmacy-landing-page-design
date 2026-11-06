@@ -1,108 +1,19 @@
-import { useState } from "react";
 import { Link } from "react-router";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRight, ArrowUpRight, Clock } from "iconoir-react";
 import type { Brand } from "../branding";
-import { templateSites, type BentoTile, type QuickService } from "../data/templateSites";
+import { templateSites, type BentoTile } from "../data/templateSites";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { openDewsburyBook } from "../data/dewsbury";
 
 /**
  * Optional template sections, inspired by pharmappy.com's design suite and
  * switched on per brand through `templateSites[id].extras` (Dewsbury Moor):
- *  - QuickBookTemplate: booking straight under the hero, by need
  *  - BentoServicesTemplate: everyday services as a bento grid
  *  - ClosingCtaTemplate: one last "book or call" band before the footer
  * Colours come from the brand's --brand-* tokens, like the rest of the template.
  */
 
 const bookPath = (brand: Brand, id: string) => `${brand.basePath}/book/${id}`;
-
-// ── Quick booking, by need ─────────────────────────────────────────────────
-
-function QuickRow({ s, brand }: { s: QuickService; brand: Brand }) {
-  const inner = (
-    <>
-      <span className="min-w-0">
-        <span className="block text-slate-900 text-[0.98rem]" style={{ fontWeight: 600 }}>{s.name}</span>
-        <span className="block text-slate-500 text-[0.86rem]">{s.note}</span>
-      </span>
-      {s.access === "book" ? (
-        <span className="dmp-btn dmp-btn--sm shrink-0">Book</span>
-      ) : (
-        <span className="shrink-0 rounded-full bg-brand-light text-brand-primary px-4 py-2 text-[0.84rem]" style={{ fontWeight: 600 }}>Walk in</span>
-      )}
-    </>
-  );
-  const cls = "group flex items-center justify-between gap-4 min-h-[64px] rounded-xl border border-slate-200 bg-white px-4 py-3";
-  return s.access === "book"
-    ? <Link to={bookPath(brand, s.id)} aria-label={`Book ${s.name}`} className={`${cls} transition-[border-color,box-shadow] hover:border-brand-secondary/50 hover:shadow-md`}>{inner}</Link>
-    : <div className={cls}>{inner}</div>;
-}
-
-export function QuickBookTemplate({ brand }: { brand: Brand }) {
-  const paths = templateSites[brand.id]?.extras?.quickBook;
-  const [active, setActive] = useState(0);
-  const reduce = useReducedMotion();
-  if (!paths?.length) return null;
-  const path = paths[active];
-
-  return (
-    <section id="quick-book" aria-labelledby="quick-book-title" className="relative pt-8 lg:pt-12 scroll-mt-24">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="rounded-3xl bg-white shadow-[0_24px_60px_-24px_rgba(2,32,28,0.28)] ring-1 ring-slate-200/70 p-5 sm:p-8">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-6">
-            <div>
-              <h2 id="quick-book-title" className="font-display text-slate-900 text-[1.6rem] md:text-[2rem] leading-tight" style={{ fontWeight: 700 }}>How can we help today?</h2>
-              <p className="text-slate-500 mt-1">Choose what you need. Some services you can book, others you can just walk in for.</p>
-            </div>
-          </div>
-
-          <div role="tablist" aria-label="What do you need?" className="grid sm:grid-cols-3 gap-3">
-            {paths.map((p, i) => {
-              const on = i === active;
-              const Icon = p.icon;
-              return (
-                <button
-                  key={p.id}
-                  role="tab"
-                  type="button"
-                  id={`qb-tab-${p.id}`}
-                  aria-selected={on}
-                  aria-controls="qb-panel"
-                  onClick={() => setActive(i)}
-                  className={`relative flex items-center gap-3 rounded-2xl px-4 py-4 min-h-[64px] text-left cursor-pointer transition-colors ${on ? "text-white" : "bg-brand-light/70 text-slate-900 hover:bg-brand-light"}`}
-                >
-                  {on && <motion.span layoutId="qb-active" className="absolute inset-0 rounded-2xl bg-brand-primary" transition={reduce ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.35 }} />}
-                  <span className={`relative w-10 h-10 rounded-xl grid place-items-center shrink-0 ${on ? "bg-white/15" : "bg-white text-brand-secondary"}`}><Icon width={20} height={20} /></span>
-                  <span className="relative text-[1rem]" style={{ fontWeight: 600 }}>{p.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div id="qb-panel" role="tabpanel" aria-labelledby={`qb-tab-${path.id}`} className="mt-6">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={path.id}
-                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, transition: { duration: 0.12 } }}
-                transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
-              >
-                <p className="text-slate-600 mb-4 max-w-2xl">{path.intro}</p>
-                <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {path.services.map((s) => <li key={s.id}><QuickRow s={s} brand={brand} /></li>)}
-                </ul>
-                {path.id === "unwell" && <p className="text-slate-500 text-[0.88rem] mt-4">Very unwell? Call 999. For urgent advice, call NHS 111.</p>}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ── Bento services ─────────────────────────────────────────────────────────
 
@@ -112,12 +23,12 @@ function Tile({ t, brand }: { t: BentoTile; brand: Brand }) {
   const cta = (
     <span className="inline-flex items-center gap-1.5 text-white text-[0.92rem]" style={{ fontWeight: 600 }}>
       {t.cta}
-      {t.serviceId ? <ArrowRight width={16} height={16} className="transition-transform group-hover:translate-x-0.5" /> : t.href ? <ArrowUpRight width={16} height={16} /> : null}
+      {t.serviceId ? <ArrowRight width={16} height={16} className="transition-transform duration-500 ease-[var(--dmp-ease)] group-hover:translate-x-0.5" /> : t.href ? <ArrowUpRight width={16} height={16} /> : null}
     </span>
   );
   const body = (
     <>
-      <ImageWithFallback src={t.img} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+      <ImageWithFallback src={t.img} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-[var(--dmp-ease)] group-hover:scale-[1.03]" />
       <div className="absolute inset-0 bg-gradient-to-t from-brand-darkest/90 via-brand-darkest/45 to-brand-darkest/5" />
       <div className="relative h-full flex flex-col justify-between p-5 sm:p-6">
         <span className="self-start inline-flex items-center gap-1.5 rounded-full bg-white/90 text-brand-primary px-3 py-1 text-[0.8rem]" style={{ fontWeight: 600 }}>
@@ -139,15 +50,16 @@ function Tile({ t, brand }: { t: BentoTile; brand: Brand }) {
 
 export function BentoServicesTemplate({ brand }: { brand: Brand }) {
   const tiles = templateSites[brand.id]?.extras?.bento;
+  const heading = templateSites[brand.id]?.extras?.bentoHeading;
   if (!tiles?.length) return null;
   return (
-    <section id="private-services" aria-labelledby="bento-title" className="relative py-20 scroll-mt-20">
+    <section id={heading?.id ?? "private-services"} aria-labelledby="bento-title" className="relative py-20 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-4 lg:items-end mb-10">
           <h2 id="bento-title" className="font-display text-slate-900 text-[1.8rem] md:text-[2.4rem] leading-tight" style={{ fontWeight: 700 }}>
-            More ways we can <span className="text-brand-secondary">help you.</span>
+            {heading ? <>{heading.lead} <span className="text-brand-secondary">{heading.accent}</span></> : <>More ways we can <span className="text-brand-secondary">help you.</span></>}
           </h2>
-          <p className="text-slate-600 text-[1rem] leading-relaxed lg:max-w-md lg:justify-self-end">From your regular prescriptions to a quick check-up, it's all here on Heckmondwike Road.</p>
+          <p className="text-slate-600 text-[1rem] leading-relaxed lg:max-w-md lg:justify-self-end">{heading?.intro ?? "From your regular prescriptions to a quick check-up, it's all here on Heckmondwike Road."}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {tiles.map((t) => <Tile key={t.title} t={t} brand={brand} />)}
