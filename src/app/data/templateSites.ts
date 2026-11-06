@@ -1,9 +1,13 @@
+import type { ComponentType } from "react";
 import { Plane, Scale, Syringe, Calendar, Activity, HeartPulse, Pill, ShieldCheck, Sparkles, Clock, type LucideIcon } from "lucide-react";
+import { Activity as IcActivity, ChatBubble, ClipboardCheck, HealthShield, Heart, NoSmokingCircle, PharmacyCrossCircle, Sparks } from "iconoir-react";
 import travelImg from "../../assets/travel.jpeg";
 import weightImg from "../../assets/weight-loss.jpeg";
 import throatImg from "../../assets/sorethroat.jpg";
 import heroImg from "../../assets/hero-bg.jpeg";
 import imageBg from "../../assets/image-bg.jpeg";
+import adviceImg from "../../assets/about-1.jpeg";
+import bpImg from "../../assets/about-2.jpeg";
 
 /**
  * Per-brand content for the three Kepple-Lane-template builds (J Morris, Acre,
@@ -35,6 +39,35 @@ export type TemplateConfig = {
   nomination?: boolean;
   /** Where contact-page forms POST to. Leave unset and the forms run in preview (nothing is sent). */
   forms?: { endpoint?: string };
+  /**
+   * Optional sections inspired by pharmappy.com's design suite, so a template
+   * site can look its own. Requested for Dewsbury Moor; other brands leave it unset.
+   *  - quickBook: "How can we help today?" pathways straight under the hero
+   *  - bento: a bento grid of everyday services in place of the private cards
+   *  - closingCta: a last "book or call" band above the footer
+   */
+  extras?: { quickBook?: QuickPathway[]; bento?: BentoTile[]; closingCta?: { title: string; subtitle: string } };
+};
+
+/** Any icon component (Lucide or Iconoir) — sized with width/height. */
+export type IconType = ComponentType<{ className?: string; width?: number | string; height?: number | string; strokeWidth?: number | string }>;
+
+/** How a patient gets a service: book a time online, or just come in. */
+export type Access = "book" | "walk-in";
+export type QuickService = { id: string; name: string; note: string; access: Access };
+export type QuickPathway = { id: string; label: string; intro: string; icon: IconType; services: QuickService[] };
+
+/** A bento tile: a bookable service (`serviceId`), a walk-in service, or a link (`href`). */
+export type BentoTile = {
+  title: string;
+  desc: string;
+  img: string;
+  icon: IconType;
+  tag: string;
+  size?: "lg";
+  serviceId?: string;
+  href?: string;
+  cta: string;
 };
 
 const card = (id: string, imageUrl: string, label: string, icon: LucideIcon): TemplateCard => ({
@@ -158,6 +191,90 @@ export const templateSites: Record<string, TemplateConfig> = {
         { value: "1:1", label: "Private consultation room" },
         { value: "L31", label: "Liverpool Road South, Maghull" },
       ],
+    },
+  },
+
+  dewsbury: {
+    hero: {
+      eyebrow: "Your community pharmacy, Dewsbury Moor",
+      title1: "Friendly local care,",
+      title2: "on Heckmondwike Road.",
+      subtitle: "See a pharmacist today without a GP appointment, collect your prescriptions, or book a flu jab. Open Monday to Friday, 9am to 6pm.",
+      slides: [
+        { id: "nhs-pf-sore-throat", name: "NHS Pharmacy First", tag: "Free on the NHS", desc: "Help with sore throats, earache, urine infections and more, without waiting for your GP.", icon: HeartPulse, img: adviceImg },
+        { id: "nhs-flu", name: "Flu jabs", tag: "Free if you're eligible", desc: "NHS flu vaccinations, plus a private flu jab if you don't qualify.", icon: Syringe, img: heroImg },
+        { id: "nhs-bp", name: "Blood pressure check", tag: "Free on the NHS", desc: "A quick, free check for adults aged 40 and over.", icon: Activity, img: bpImg },
+      ],
+    },
+    privateCards: [
+      card("prv-flu-private", IMG.flu, "For non-NHS patients", ShieldCheck),
+    ],
+    about: {
+      accent: "who knows you.",
+      subtitle: "Dewsbury Moor Pharmacy on Heckmondwike Road looks after local families with prescriptions, NHS services and friendly advice, close to home.",
+      story: [
+        "Dewsbury Moor Pharmacy is an independent community pharmacy on Heckmondwike Road. Alongside your NHS prescriptions, we offer free NHS services such as Pharmacy First, flu jabs and blood pressure checks, plus a small range of private services.",
+        "Our team has time to talk. If you'd rather speak in private, just ask at the counter and we'll take you into our consultation room. We stock a wide range of over-the-counter and pharmacy medicines, and we're happy to help you choose.",
+      ],
+      stats: [
+        { value: "7", label: "Conditions treated free on the NHS" },
+        { value: "1:1", label: "Private consultation room" },
+        { value: "Mon–Fri", label: "Open 9am to 6pm" },
+        { value: "WF13", label: "Heckmondwike Road, Dewsbury" },
+      ],
+    },
+    extras: {
+      quickBook: [
+        {
+          id: "unwell",
+          label: "I'm feeling unwell",
+          intro: "See a pharmacist today with NHS Pharmacy First. It's free, and you don't need a GP appointment.",
+          icon: Heart,
+          services: [
+            { id: "nhs-pf-sore-throat", name: "Sore throat", note: "Age 5 and over", access: "book" },
+            { id: "nhs-pf-earache", name: "Earache", note: "Age 1 to 17", access: "book" },
+            { id: "nhs-pf-sinusitis", name: "Sinusitis", note: "Age 12 and over", access: "book" },
+            { id: "nhs-pf-uti", name: "Urine infection", note: "Women aged 16 to 64", access: "book" },
+            { id: "nhs-pf-insect-bite", name: "Infected insect bite", note: "Age 1 and over", access: "book" },
+            { id: "nhs-pf-impetigo", name: "Impetigo", note: "Age 1 and over", access: "book" },
+            { id: "nhs-pf-shingles", name: "Shingles", note: "Age 18 and over", access: "book" },
+          ],
+        },
+        {
+          id: "nhs",
+          label: "Free NHS checks and jabs",
+          intro: "Free NHS services for people who qualify. We'll check you're eligible when you come in.",
+          icon: HealthShield,
+          services: [
+            { id: "nhs-flu", name: "Flu jab", note: "Free if you're eligible", access: "book" },
+            { id: "nhs-bp", name: "Blood pressure check", note: "Adults aged 40 and over", access: "book" },
+            { id: "nhs-smoking", name: "Stop smoking support", note: "Weekly help to quit", access: "book" },
+            { id: "inhaler-check", name: "Inhaler check", note: "Just ask at the counter", access: "walk-in" },
+          ],
+        },
+        {
+          id: "private",
+          label: "Private services",
+          intro: "Quick, confidential care that isn't covered by the NHS.",
+          icon: Sparks,
+          services: [
+            { id: "prv-flu-private", name: "Private flu jab", note: "If you don't qualify on the NHS", access: "book" },
+            { id: "prv-ehc", name: "Emergency contraception", note: "Just ask at the counter", access: "walk-in" },
+            { id: "pregnancy-test", name: "Pregnancy test", note: "Just ask at the counter", access: "walk-in" },
+          ],
+        },
+      ],
+      bento: [
+        { size: "lg", title: "Your prescriptions, sorted", desc: "Choose us as your pharmacy in the NHS App or at your GP surgery, and your prescriptions come straight to us, ready to collect.", img: heroImg, icon: ClipboardCheck, tag: "NHS prescriptions", href: "https://www.nhs.uk/nhs-app/nhs-app-help-and-support/prescriptions-in-the-nhs-app/", cta: "How to choose us in the NHS App" },
+        { title: "Private flu jab", desc: "For anyone who doesn't qualify for a free NHS flu jab.", img: IMG.flu, icon: PharmacyCrossCircle, tag: "From £15", serviceId: "prv-flu-private", cta: "Book a flu jab" },
+        { title: "Blood pressure check", desc: "A free NHS check for adults aged 40 and over.", img: bpImg, icon: IcActivity, tag: "Free on the NHS", serviceId: "nhs-bp", cta: "Book a check" },
+        { title: "Stop smoking support", desc: "Friendly weekly support to help you quit for good.", img: imageBg, icon: NoSmokingCircle, tag: "Free on the NHS", serviceId: "nhs-smoking", cta: "Book a chat" },
+        { title: "Emergency contraception", desc: "Confidential advice and the morning-after pill, with no appointment needed.", img: adviceImg, icon: ChatBubble, tag: "Walk in", cta: "Just ask at the counter" },
+      ],
+      closingCta: {
+        title: "Not sure what you need?",
+        subtitle: "Pop in, give us a call or book online. We'll point you in the right direction.",
+      },
     },
   },
 };

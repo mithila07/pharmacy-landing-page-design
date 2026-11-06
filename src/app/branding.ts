@@ -23,6 +23,10 @@ import shivakemMark from "../assets/shivakem/sk-mark.webp";
 import shivakemFavicon from "../assets/shivakem/sk-favicon.png";
 import { onecareLocations, OC_LEGAL } from "./data/onecare";
 import { shivakemLocations, SK_LEGAL } from "./data/shivakem";
+import dewsburyLogo from "../assets/dewsbury/dewsbury-moor-logo.svg";
+import dewsburyMark from "../assets/dewsbury/dmp-logomark.png";
+import dewsburyFavicon from "../assets/dewsbury/dmp-favicon.png";
+import { dewsburyLocations, DMP_LEGAL } from "./data/dewsbury";
 import { carefirstLocations, strachansLocations, canadaLocations, healthcheckLocations, kepplelaneLocations, centralLocations, jmorrisLocations, acreLocations, meadowsLocations, type PharmacyLocation } from "./data/locations";
 
 /**
@@ -59,6 +63,8 @@ export type Brand = {
   locations: PharmacyLocation[];
   /** Route to this brand's About page, if it has one. */
   aboutPath?: string;
+  /** Extra top-level nav links after Contact (e.g. a nomination page). */
+  navLinks?: { label: string; path: string }[];
   /**
    * Grouped nav items rendered as hover dropdowns in the header. A group is a
    * label only — it has no page of its own, so it never navigates. When a brand
@@ -344,6 +350,33 @@ export const shivakemBrand: Brand = {
     companyNumber: SK_LEGAL.companyNumber,
     superintendent: SK_LEGAL.superintendent,
     gphcNumber: SK_LEGAL.superintendentGphc,
+  },
+};
+
+export const dewsburyBrand: Brand = {
+  id: "dewsbury",
+  name: "Dewsbury Moor Pharmacy",
+  tagline: "Your local pharmacy on Heckmondwike Road",
+  logo: dewsburyLogo,
+  logoMark: dewsburyMark,
+  favicon: dewsburyFavicon,
+  logoIsWordmark: true,
+  headerLogoClass: "h-14",
+  // Kepple Lane template, in the logo's lime + forest green (styles/theme.css).
+  themeClass: "theme-dewsbury",
+  basePath: "/dewsbury",
+  seoArea: "Dewsbury",
+  locations: dewsburyLocations,
+  aboutPath: "/dewsbury/about",
+  contactPath: "/dewsbury/contact",
+  navLinks: [{ label: "Nominate us", path: "/dewsbury/nominate" }],
+  hideHeaderContact: true,
+  template: true,
+  legal: {
+    companyName: DMP_LEGAL.owner,
+    companyNumber: DMP_LEGAL.companyNumber,
+    superintendent: DMP_LEGAL.superintendent,
+    gphcNumber: DMP_LEGAL.superintendentGphc,
   },
 };
 

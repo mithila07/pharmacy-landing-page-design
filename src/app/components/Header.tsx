@@ -1,10 +1,12 @@
 import { Phone, Mail, Clock, MapPin, Menu, X, ChevronRight, ChevronDown, Calendar } from "lucide-react";
 import { Calendar as PhCalendar } from "@phosphor-icons/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router";
 import { pharmacyInfo, nhsServices, privateServices } from "../data/services";
 import { carefirstBrand, type Brand } from "../branding";
+import { BookOverlayDewsbury } from "./dewsbury/BookOverlayDewsbury";
+import { DMP_BOOK_EVENT } from "../data/dewsbury";
 
 type HeaderProps = {
   /** Service IDs offered in the "Book Appointment Now" picker modal. The landing
@@ -33,6 +35,15 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
   const { pathname } = useLocation();
 
   const isHC = brand.id === "healthcheck";
+  // Dewsbury Moor books through a full-page search overlay instead of the picker modal,
+  // and any page can open it (hero buttons dispatch DMP_BOOK_EVENT).
+  const bookOverlay = brand.id === "dewsbury";
+  useEffect(() => {
+    if (!bookOverlay) return;
+    const open = () => setBookOpen(true);
+    window.addEventListener(DMP_BOOK_EVENT, open);
+    return () => window.removeEventListener(DMP_BOOK_EVENT, open);
+  }, [bookOverlay]);
   /** Active-link styling is opt-in per brand (currently Kepple Lane only). */
   const showsActive = brand.id === "kepplelane";
   const isActive = (path: string) => showsActive && pathname.replace(/\/+$/, "") === path.replace(/\/+$/, "");
@@ -185,6 +196,9 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
             {brand.contactPath && (
               <button onClick={() => goTo(brand.contactPath!)} className={navLinkClass(isActive(brand.contactPath))} style={{ fontWeight: 500 }}>Contact</button>
             )}
+            {brand.navLinks?.map((l) => (
+              <button key={l.path} onClick={() => goTo(l.path)} className={navLinkClass(isActive(l.path))} style={{ fontWeight: 500 }}>{l.label}</button>
+            ))}
           </nav>
 
           {/* Right: CTA */}
@@ -274,6 +288,17 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
               <ChevronRight size={16} className="text-gray-400" />
             </button>
           )}
+          {brand.navLinks?.map((l) => (
+            <button
+              key={l.path}
+              onClick={() => goTo(l.path)}
+              className={`flex items-center justify-between w-full py-2.5 text-[0.9rem] cursor-pointer ${isActive(l.path) ? "text-brand-primary" : "text-gray-700"}`}
+              style={{ fontWeight: isActive(l.path) ? 600 : 500 }}
+            >
+              {l.label}
+              <ChevronRight size={16} className="text-gray-400" />
+            </button>
+          ))}
           <button
             onClick={() => { setMobileOpen(false); setBookOpen(true); }}
             className="hc-btn-grad-green w-full bg-brand-secondary text-white py-2.5 rounded-lg text-center text-[0.9rem] mt-2 cursor-pointer flex items-center justify-center gap-1.5 transition-all"
@@ -285,7 +310,8 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
       )}
 
       {/* Book Appointment Now — service picker modal (portaled so sticky header's backdrop-filter doesn't trap it) */}
-      {bookOpen && createPortal(
+      {bookOverlay && <BookOverlayDewsbury open={bookOpen} onOpenChange={setBookOpen} />}
+      {bookOpen && !bookOverlay && createPortal(
         <div className={`fixed inset-0 z-[60] flex items-start sm:items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm overflow-y-auto ${brand.themeClass}`} onClick={() => setBookOpen(false)}>
           <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 overflow-hidden">
             <div className="flex items-start justify-between p-5 border-b border-gray-100">

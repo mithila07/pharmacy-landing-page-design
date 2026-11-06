@@ -29,6 +29,10 @@ import LandingPageHealthCheck from "./pages/LandingPageHealthCheck";
 import AboutPageHealthCheck from "./pages/AboutPageHealthCheck";
 import ContactPageHealthCheck from "./pages/ContactPageHealthCheck";
 import LandingPageKepple from "./pages/LandingPageKepple";
+import AboutPageDewsbury from "./pages/AboutPageDewsbury";
+import ContactPageDewsbury from "./pages/ContactPageDewsbury";
+import NominatePageDewsbury from "./pages/NominatePageDewsbury";
+import { DewsburyLayout } from "./components/dewsbury/DewsburyLayout";
 import AboutPageKepple from "./pages/AboutPageKepple";
 import ContactPageKepple from "./pages/ContactPageKepple";
 import DispensingProcessPageKepple from "./pages/DispensingProcessPageKepple";
@@ -38,7 +42,7 @@ import UpdatesPageKepple from "./pages/UpdatesPageKepple";
 import LandingPageCentral from "./pages/LandingPageCentral";
 import AboutPageCentral from "./pages/AboutPageCentral";
 import ContactPageCentral from "./pages/ContactPageCentral";
-import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand, onecareBrand, shivakemBrand } from "./branding";
+import { strachansBrand, canadaBrand, healthcheckBrand, kepplelaneBrand, centralBrand, jmorrisBrand, acreBrand, meadowsBrand, onecareBrand, shivakemBrand, dewsburyBrand } from "./branding";
 
 // Under GitHub Pages the app is served from /<repo>/, so routing is scoped to
 // Vite's configured base (BASE_URL). Locally this is just "/".
@@ -134,5 +138,19 @@ export const router = createBrowserRouter([
   { path: "/shivakem/contact", Component: ContactPageShivakem },
   { path: "/shivakem/book/:serviceId", element: <BookingPage brand={shivakemBrand} /> },
   { path: "/shivakem/questionnaire/:serviceId", element: <QuestionnairePage brand={shivakemBrand} /> },
+  // Dewsbury Moor Pharmacy (Dewsbury) — Kepple Lane template landing with its own hero,
+  // own About / Contact / Nominate pages, a full-page booking overlay and a cookie notice
+  {
+    path: "/dewsbury",
+    element: <DewsburyLayout />,
+    children: [
+      { index: true, element: <SimpleLanding brand={dewsburyBrand} /> },
+      { path: "about", Component: AboutPageDewsbury },
+      { path: "contact", Component: ContactPageDewsbury },
+      { path: "nominate", Component: NominatePageDewsbury },
+      { path: "book/:serviceId", element: <BookingPage brand={dewsburyBrand} /> },
+      { path: "questionnaire/:serviceId", element: <QuestionnairePage brand={dewsburyBrand} /> },
+    ],
+  },
   ] },
 ], { basename });

@@ -19,8 +19,11 @@ const TEMPLATE_AREA: Record<string, { area: string[]; region: string }> = {
   jmorris: { area: ["Ashton-in-Makerfield", "Wigan", "Greater Manchester"], region: "Greater Manchester" },
   acre: { area: ["Huddersfield", "West Yorkshire"], region: "West Yorkshire" },
   meadows: { area: ["Maghull", "Merseyside"], region: "Merseyside" },
+  dewsbury: { area: ["Dewsbury", "Dewsbury Moor", "West Yorkshire"], region: "West Yorkshire" },
 };
 import { ReviewsSection } from "../components/ReviewsSection";
+import { BentoServicesTemplate, ClosingCtaTemplate, QuickBookTemplate } from "../components/TemplateExtras";
+import { HeroDewsbury } from "../components/dewsbury/HeroDewsbury";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
 import { BlogTeaserSection } from "../components/BlogTeaserSection";
 import { FaqSection } from "../components/FaqSection";
@@ -352,6 +355,8 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
   const isKL = brand.id === "kepplelane";
   const isCentral = brand.id === "central";
   const isTemplate = !!brand.template;
+  // Pharmappy-inspired extras, switched on per template brand (Dewsbury Moor)
+  const extras = isTemplate ? templateSites[brand.id]?.extras : undefined;
   const privateCardsForBrand = isKL ? kepplePrivateCards : isCentral ? centralPrivateCards : isTemplate ? templateSites[brand.id].privateCards : privateCards;
 
   // Demo toggle: /central?hero=carousel renders the alternative full-width
@@ -415,19 +420,23 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
         )}
       />
       <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCardsForBrand.map((c) => c.id)]} />
-      {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : isTemplate ? <HeroSectionTemplate brand={brand} /> : <HeroSection />}
+      {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : brand.id === "dewsbury" ? <HeroDewsbury /> : isTemplate ? <HeroSectionTemplate brand={brand} /> : <HeroSection />}
 
       {/* Repeat-prescription nomination invite, for template sites that take nominations */}
       {isTemplate && templateSites[brand.id]?.nomination && <NominationBanner brand={brand} />}
 
+      {/* Booking straight under the hero, by need */}
+      {extras?.quickBook && <QuickBookTemplate brand={brand} />}
+
       {/* NHS + Private service sections. Central leads with private clinics
           (its main draw); every other brand leads with NHS. */}
-      {isCentral ? <>{privateSection}{nhsSection}</> : <>{nhsSection}{privateSection}</>}
+      {isCentral ? <>{privateSection}{nhsSection}</> : <>{nhsSection}{extras?.bento ? <BentoServicesTemplate brand={brand} /> : privateSection}</>}
 
       {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : <ReviewsSection />}
       {brand.blogPath && <BlogTeaserSection brand={brand} />}
       {isCentral && <DemoVariantSwitcher />}
       <FaqSection brand={brand} />
+      {extras?.closingCta && <ClosingCtaTemplate brand={brand} />}
       {/* Inline "Find Us" only for single-location brands; multi-location brands use a dedicated Contact page. */}
       {!brand.contactPath && <ContactSection brand={brand} />}
       <Footer brand={brand} />

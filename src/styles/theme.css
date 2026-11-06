@@ -670,6 +670,185 @@
   font-family: "Poppins", "Inter", system-ui, sans-serif;
 }
 
+/* Dewsbury Moor Pharmacy (Dewsbury) — Kepple Lane template in the logo's
+ * lime #78c336 + forest #02201c. Lime is too light for white text, so buttons
+ * use a deepened green; lime stays for accents and the gradient headline. */
+.theme-dewsbury {
+  --brand-primary: #1f4d1c;       /* deep forest green — headings, links, nav (AAA) */
+  --brand-primary-mid: #4f8f23;   /* mid green */
+  --brand-secondary: #3d7317;     /* deep lime — white-text buttons (AA) */
+  --brand-accent: #5fa82a;        /* lime, darkened — icons */
+  --brand-dark: #0f3a1f;          /* footer gradient stop */
+  --brand-darkest: #02201c;       /* logo forest — footer base */
+  --brand-light: #f2f8ea;         /* soft lime wash */
+  --brand-light-alt: #f5f7f1;     /* warm neutral wash */
+  --brand-cta: #78c336;           /* logo lime */
+  --brand-alt: #78c336;
+  --brand-light-cyan: #e7f4d9;
+  --brand-primary-hover: #2c5a10;
+  --brand-green-ink: #3d7317;
+  font-family: "Clarity City", "Inter", system-ui, -apple-system, sans-serif;
+}
+.theme-dewsbury .font-display,
+.theme-dewsbury h1, .theme-dewsbury h2, .theme-dewsbury h3, .theme-dewsbury h4 {
+  font-family: "Jost", "Clarity City", system-ui, sans-serif;
+}
+
+/* Dewsbury Moor buttons: glossy glass on a green gradient, text only (no icons).
+ *  .dmp-btn          primary — deep lime-to-forest gradient, glass sheen, shine sweep on hover
+ *  .dmp-btn--glass   frosted glass, for photos and dark bands
+ *  .dmp-btn--light   pale glass with green text, for white backgrounds
+ *  .dmp-btn--sm      compact size
+ * The shared header button (.hc-btn-grad-green) and form submit buttons take the
+ * primary look too. Unlayered, so these win over Tailwind utilities. Dewsbury only. */
+.theme-dewsbury .dmp-btn,
+.theme-dewsbury .hc-btn-grad-green,
+.theme-dewsbury .dmp-form button[type="submit"] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-height: 50px;
+  padding: 0 26px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4c9a22 0%, #2f7419 48%, #1f4d1c 100%);
+  color: #fff;
+  font-size: 0.97rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -8px 16px -8px rgba(2, 32, 28, 0.45),
+    0 12px 26px -14px rgba(31, 77, 28, 0.75);
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms ease, filter 200ms ease;
+}
+.theme-dewsbury .dmp-btn { display: inline-flex; }
+/* The glass sheen: a soft highlight across the top half */
+.theme-dewsbury .dmp-btn::before,
+.theme-dewsbury .hc-btn-grad-green::before,
+.theme-dewsbury .dmp-form button[type="submit"]::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px 50% 1px;
+  z-index: -1;
+  border-radius: 999px 999px 40% 40% / 999px 999px 18px 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.04));
+  pointer-events: none;
+}
+/* The shine that sweeps across on hover */
+.theme-dewsbury .dmp-btn::after,
+.theme-dewsbury .hc-btn-grad-green::after,
+.theme-dewsbury .dmp-form button[type="submit"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  transform: skewX(-18deg) translateX(0);
+  transition: transform 700ms cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .theme-dewsbury .dmp-btn:hover,
+  .theme-dewsbury .hc-btn-grad-green:hover,
+  .theme-dewsbury .dmp-form button[type="submit"]:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08) saturate(1.05);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -8px 16px -8px rgba(2, 32, 28, 0.4),
+      0 18px 32px -14px rgba(31, 77, 28, 0.8);
+  }
+  .theme-dewsbury .dmp-btn:hover::after,
+  .theme-dewsbury .hc-btn-grad-green:hover::after,
+  .theme-dewsbury .dmp-form button[type="submit"]:hover::after { transform: skewX(-18deg) translateX(420%); }
+}
+.theme-dewsbury .dmp-btn:active,
+.theme-dewsbury .hc-btn-grad-green:active,
+.theme-dewsbury .dmp-form button[type="submit"]:active { transform: translateY(0) scale(0.97); }
+.theme-dewsbury .dmp-btn:focus-visible,
+.theme-dewsbury .hc-btn-grad-green:focus-visible,
+.theme-dewsbury .dmp-form button[type="submit"]:focus-visible { outline: 3px solid #78c336; outline-offset: 3px; }
+/* Buttons are text only on this site */
+.theme-dewsbury .hc-btn-grad-green > svg,
+.theme-dewsbury .dmp-form button[type="submit"] > svg { display: none; }
+.theme-dewsbury .hc-btn-grad-green { min-height: 44px; padding: 0 22px; }
+
+/* Frosted glass: on photos and the dark band */
+.theme-dewsbury .dmp-btn--glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08));
+  border-color: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 12px 26px -16px rgba(2, 32, 28, 0.6);
+}
+/* Pale glass with green text: on white */
+.theme-dewsbury .dmp-btn--light {
+  background: linear-gradient(135deg, #ffffff 0%, #eef7e4 100%);
+  border-color: rgba(31, 77, 28, 0.18);
+  color: #1f4d1c;
+  box-shadow: inset 0 1px 0 #fff, 0 10px 22px -16px rgba(31, 77, 28, 0.55);
+}
+.theme-dewsbury .dmp-btn--light::after { background: linear-gradient(100deg, transparent, rgba(120, 195, 54, 0.28), transparent); }
+@media (prefers-reduced-transparency: reduce) {
+  .theme-dewsbury .dmp-btn--glass { background: rgba(2, 32, 28, 0.55); backdrop-filter: none; }
+}
+.theme-dewsbury .dmp-btn--sm { min-height: 40px; padding: 0 18px; font-size: 0.875rem; }
+.theme-dewsbury .dmp-btn--lg { min-height: 56px; padding: 0 32px; font-size: 1.02rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-dewsbury .dmp-btn, .theme-dewsbury .hc-btn-grad-green, .theme-dewsbury .dmp-form button[type="submit"] { transition: none; }
+  .theme-dewsbury .dmp-btn::after, .theme-dewsbury .hc-btn-grad-green::after, .theme-dewsbury .dmp-form button[type="submit"]::after { display: none; }
+  .theme-dewsbury .dmp-btn:hover, .theme-dewsbury .hc-btn-grad-green:hover, .theme-dewsbury .dmp-form button[type="submit"]:hover { transform: none; }
+}
+
+/* Glass cards. .dmp-glass is the hero carousel card (on photos and dark bands);
+ * .dmp-glass-light is the same material for light sections, which sit on
+ * .dmp-wash so there is colour behind the glass to soften. */
+.theme-dewsbury .dmp-glass {
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 20px 40px -24px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+.theme-dewsbury .dmp-glass-light {
+  border-radius: 1.75rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.5));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff, 0 24px 50px -30px rgba(31, 77, 28, 0.45);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+.theme-dewsbury .dmp-wash {
+  background:
+    radial-gradient(56rem 32rem at 88% 4%, rgba(120, 195, 54, 0.2), transparent 62%),
+    radial-gradient(48rem 30rem at 4% 70%, rgba(31, 77, 28, 0.1), transparent 60%),
+    linear-gradient(180deg, #f3f8ec 0%, #fbfdf8 55%, #eef6e5 100%);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .theme-dewsbury .dmp-glass { background: rgba(2, 32, 28, 0.82); backdrop-filter: none; }
+  .theme-dewsbury .dmp-glass-light { background: #fff; backdrop-filter: none; }
+}
+
+@keyframes dmpFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .theme-dewsbury [class*="dmpFade"] { animation: none !important; } }
+
+/* Slow drift on the hero photos (Ken Burns), off for reduced motion */
+@keyframes dmp-drift { from { transform: scale(1.04); } to { transform: scale(1.14); } }
+.theme-dewsbury .dmp-drift { animation: dmp-drift 9s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .theme-dewsbury .dmp-drift { animation: none; } }
+
 /* ------------------------------------------------------------------
  * OneCare Pharmacy — "The Cross, in Squares". Tokens per DESIGN.md §4–6.
  * Contrast-led: Dark Teal is the only teal used for text on white;
