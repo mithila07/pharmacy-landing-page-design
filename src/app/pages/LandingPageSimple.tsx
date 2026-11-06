@@ -24,6 +24,7 @@ const TEMPLATE_AREA: Record<string, { area: string[]; region: string }> = {
 import { ReviewsSection } from "../components/ReviewsSection";
 import { BentoServicesTemplate, ClosingCtaTemplate, QuickBookTemplate } from "../components/TemplateExtras";
 import { HeroDewsbury } from "../components/dewsbury/HeroDewsbury";
+import { ReviewsDewsbury } from "../components/dewsbury/ReviewsDewsbury";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
 import { BlogTeaserSection } from "../components/BlogTeaserSection";
 import { FaqSection } from "../components/FaqSection";
@@ -432,7 +433,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
           (its main draw); every other brand leads with NHS. */}
       {isCentral ? <>{privateSection}{nhsSection}</> : <>{nhsSection}{extras?.bento ? <BentoServicesTemplate brand={brand} /> : privateSection}</>}
 
-      {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : <ReviewsSection />}
+      {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : brand.id === "dewsbury" ? <ReviewsDewsbury /> : <ReviewsSection />}
       {brand.blogPath && <BlogTeaserSection brand={brand} />}
       {isCentral && <DemoVariantSwitcher />}
       <FaqSection brand={brand} />

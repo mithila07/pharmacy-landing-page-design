@@ -6,6 +6,7 @@ import { Headset as PhHeadset, ArrowRight as PhArrowRight } from "@phosphor-icon
 import { Reveal } from "./Reveal";
 import { carefirstBrand, type Brand } from "../branding";
 import { JsonLd } from "../seo";
+import { templateSites } from "../data/templateSites";
 
 const faqSchema = (items: { q: string; a: string }[]) => ({
   "@context": "https://schema.org",
@@ -17,7 +18,7 @@ const faqSchema = (items: { q: string; a: string }[]) => ({
   })),
 });
 
-const faqs = [
+const DEFAULT_FAQS = [
   {
     q: "Do I need an appointment, or can I just walk in?",
     a: "Many of our services welcome walk-ins, but booking ahead means we'll have a private consultation room ready and can see you faster. For clinics like weight management or travel health, we'd always recommend booking.",
@@ -45,6 +46,8 @@ const faqs = [
 ];
 
 export function FaqSection({ brand = carefirstBrand }: { brand?: Brand } = {}) {
+  // A template brand can replace the shared questions (Dewsbury Moor offers a smaller range).
+  const faqs = (brand.template && templateSites[brand.id]?.faqs) || DEFAULT_FAQS;
   const [open, setOpen] = useState<number | null>(0);
   const navigate = useNavigate();
   const isHC = brand.id === "healthcheck";

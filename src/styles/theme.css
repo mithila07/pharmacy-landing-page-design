@@ -703,6 +703,7 @@
  * primary look too. Unlayered, so these win over Tailwind utilities. Dewsbury only. */
 .theme-dewsbury .dmp-btn,
 .theme-dewsbury .hc-btn-grad-green,
+.theme-dewsbury .hc-btn-grad-blue,
 .theme-dewsbury .dmp-form button[type="submit"] {
   position: relative;
   isolation: isolate;
@@ -733,6 +734,7 @@
 /* The glass sheen: a soft highlight across the top half */
 .theme-dewsbury .dmp-btn::before,
 .theme-dewsbury .hc-btn-grad-green::before,
+.theme-dewsbury .hc-btn-grad-blue::before,
 .theme-dewsbury .dmp-form button[type="submit"]::before {
   content: "";
   position: absolute;
@@ -745,6 +747,7 @@
 /* The shine that sweeps across on hover */
 .theme-dewsbury .dmp-btn::after,
 .theme-dewsbury .hc-btn-grad-green::after,
+.theme-dewsbury .hc-btn-grad-blue::after,
 .theme-dewsbury .dmp-form button[type="submit"]::after {
   content: "";
   position: absolute;
@@ -761,6 +764,7 @@
 @media (hover: hover) and (pointer: fine) {
   .theme-dewsbury .dmp-btn:hover,
   .theme-dewsbury .hc-btn-grad-green:hover,
+  .theme-dewsbury .hc-btn-grad-blue:hover,
   .theme-dewsbury .dmp-form button[type="submit"]:hover {
     transform: translateY(-1px);
     filter: brightness(1.08) saturate(1.05);
@@ -771,16 +775,20 @@
   }
   .theme-dewsbury .dmp-btn:hover::after,
   .theme-dewsbury .hc-btn-grad-green:hover::after,
+  .theme-dewsbury .hc-btn-grad-blue:hover::after,
   .theme-dewsbury .dmp-form button[type="submit"]:hover::after { transform: skewX(-18deg) translateX(420%); }
 }
 .theme-dewsbury .dmp-btn:active,
 .theme-dewsbury .hc-btn-grad-green:active,
+.theme-dewsbury .hc-btn-grad-blue:active,
 .theme-dewsbury .dmp-form button[type="submit"]:active { transform: translateY(0) scale(0.97); }
 .theme-dewsbury .dmp-btn:focus-visible,
 .theme-dewsbury .hc-btn-grad-green:focus-visible,
+.theme-dewsbury .hc-btn-grad-blue:focus-visible,
 .theme-dewsbury .dmp-form button[type="submit"]:focus-visible { outline: 3px solid #78c336; outline-offset: 3px; }
 /* Buttons are text only on this site */
 .theme-dewsbury .hc-btn-grad-green > svg,
+.theme-dewsbury .hc-btn-grad-blue > svg,
 .theme-dewsbury .dmp-form button[type="submit"] > svg { display: none; }
 .theme-dewsbury .hc-btn-grad-green { min-height: 44px; padding: 0 22px; }
 
@@ -807,9 +815,9 @@
 .theme-dewsbury .dmp-btn--lg { min-height: 56px; padding: 0 32px; font-size: 1.02rem; }
 
 @media (prefers-reduced-motion: reduce) {
-  .theme-dewsbury .dmp-btn, .theme-dewsbury .hc-btn-grad-green, .theme-dewsbury .dmp-form button[type="submit"] { transition: none; }
-  .theme-dewsbury .dmp-btn::after, .theme-dewsbury .hc-btn-grad-green::after, .theme-dewsbury .dmp-form button[type="submit"]::after { display: none; }
-  .theme-dewsbury .dmp-btn:hover, .theme-dewsbury .hc-btn-grad-green:hover, .theme-dewsbury .dmp-form button[type="submit"]:hover { transform: none; }
+  .theme-dewsbury .dmp-btn, .theme-dewsbury .hc-btn-grad-green, .theme-dewsbury .hc-btn-grad-blue, .theme-dewsbury .dmp-form button[type="submit"] { transition: none; }
+  .theme-dewsbury .dmp-btn::after, .theme-dewsbury .hc-btn-grad-green::after, .theme-dewsbury .hc-btn-grad-blue::after, .theme-dewsbury .dmp-form button[type="submit"]::after { display: none; }
+  .theme-dewsbury .dmp-btn:hover, .theme-dewsbury .hc-btn-grad-green:hover, .theme-dewsbury .hc-btn-grad-blue:hover, .theme-dewsbury .dmp-form button[type="submit"]:hover { transform: none; }
 }
 
 /* Glass cards. .dmp-glass is the hero carousel card (on photos and dark bands);

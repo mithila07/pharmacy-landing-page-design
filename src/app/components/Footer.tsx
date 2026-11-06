@@ -3,6 +3,7 @@ import { Facebook, Instagram, Twitter, MapPin, Phone } from "lucide-react";
 import { carefirstBrand, homePath, type Brand } from "../branding";
 import { FooterHealthCheck } from "./FooterHealthCheck";
 import { GphcBadge } from "./GphcBadge";
+import { FooterParticles } from "./dewsbury/FooterParticles";
 import nhsBadge from "../../assets/Providing NHS Services RGB BLUE 2.svg";
 
 const LEGAL_LINKS = [
@@ -43,6 +44,7 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
     return (
       <footer className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-darkest via-brand-dark to-brand-primary" />
+        {brand.id === "dewsbury" && <FooterParticles />}
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
             {/* Brand + trust */}
@@ -100,6 +102,8 @@ export function Footer({ brand = carefirstBrand, variant = "full" }: { brand?: B
     <footer className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-brand-darkest via-brand-dark to-brand-primary" />
       <div className="absolute top-0 right-0 w-[320px] h-[320px] bg-brand-secondary/10 rounded-full blur-3xl" />
+      {/* Dewsbury Moor only: subtle rising micro particles */}
+      {brand.id === "dewsbury" && <FooterParticles />}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4">
         {/* Top */}

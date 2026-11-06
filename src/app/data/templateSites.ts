@@ -8,6 +8,7 @@ import heroImg from "../../assets/hero-bg.jpeg";
 import imageBg from "../../assets/image-bg.jpeg";
 import adviceImg from "../../assets/about-1.jpeg";
 import bpImg from "../../assets/about-2.jpeg";
+import counterImg from "../../assets/about-bg.jpeg";
 
 /**
  * Per-brand content for the three Kepple-Lane-template builds (J Morris, Acre,
@@ -46,7 +47,9 @@ export type TemplateConfig = {
    *  - bento: a bento grid of everyday services in place of the private cards
    *  - closingCta: a last "book or call" band above the footer
    */
-  extras?: { quickBook?: QuickPathway[]; bento?: BentoTile[]; closingCta?: { title: string; subtitle: string } };
+  extras?: { quickBook?: QuickPathway[]; bento?: BentoTile[]; closingCta?: { title: string; subtitle: string; img?: string } };
+  /** The home page's questions, when the shared set mentions services this pharmacy doesn't offer. */
+  faqs?: { q: string; a: string }[];
 };
 
 /** Any icon component (Lucide or Iconoir) — sized with width/height. */
@@ -195,6 +198,14 @@ export const templateSites: Record<string, TemplateConfig> = {
   },
 
   dewsbury: {
+    faqs: [
+      { q: "Do I need an appointment, or can I just walk in?", a: "You can walk in during opening hours to see a pharmacist. Booking ahead means we'll have the consultation room ready for you, so you won't wait as long." },
+      { q: "Is NHS Pharmacy First really free?", a: "Yes. The consultation is free on the NHS. If the pharmacist gives you a medicine, the usual prescription charge applies unless you're exempt." },
+      { q: "Can I talk to someone in private?", a: "Of course. Just ask at the counter and we'll take you into our consultation room, where no one else can hear." },
+      { q: "How do I get my repeat prescriptions from you?", a: "Choose Dewsbury Moor Pharmacy as your nominated pharmacy, using our online form, the NHS App or at your GP surgery. Your GP then sends your prescriptions straight to us." },
+      { q: "Who can have a free NHS flu jab?", a: "Usually people aged 65 and over, pregnant women and people with certain long-term health conditions. If you don't qualify, you can book a private flu jab with us." },
+      { q: "Is my information kept confidential?", a: "Always. We handle your information in line with NHS confidentiality and data protection rules, and only share what's needed for your care, with your consent." },
+    ],
     hero: {
       eyebrow: "Your community pharmacy, Dewsbury Moor",
       title1: "Friendly local care,",
@@ -274,6 +285,7 @@ export const templateSites: Record<string, TemplateConfig> = {
       closingCta: {
         title: "Not sure what you need?",
         subtitle: "Pop in, give us a call or book online. We'll point you in the right direction.",
+        img: counterImg,
       },
     },
   },

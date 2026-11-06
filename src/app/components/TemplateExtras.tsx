@@ -167,8 +167,16 @@ export function ClosingCtaTemplate({ brand }: { brand: Brand }) {
   return (
     <section aria-labelledby="closing-cta-title" className="pb-20">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-darkest via-brand-dark to-brand-primary px-6 py-12 sm:px-12 sm:py-14">
-          <div aria-hidden="true" className="absolute -right-24 -top-24 w-[26rem] h-[26rem] rounded-full bg-brand-cta/25 blur-3xl" />
+        <div className="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-brand-darkest via-brand-dark to-brand-primary px-6 py-14 sm:px-12 sm:py-20">
+          {cta.img && (
+            <div aria-hidden="true" className="absolute inset-0 -z-10">
+              <ImageWithFallback src={cta.img} alt="" className="w-full h-full object-cover object-[70%_35%]" />
+              {/* Same forest shade as the page heroes: deep behind the words, lighter over the photo */}
+              <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(2,32,28,0.94) 0%, rgba(2,32,28,0.82) 42%, rgba(2,32,28,0.45) 75%, rgba(2,32,28,0.35) 100%)" }} />
+              <div className="absolute inset-0" style={{ background: "radial-gradient(40rem 22rem at 100% 100%, rgba(120,195,54,0.28), transparent 70%)" }} />
+            </div>
+          )}
+          {!cta.img && <div aria-hidden="true" className="absolute -right-24 -top-24 w-[26rem] h-[26rem] rounded-full bg-brand-cta/25 blur-3xl" />}
           <div className="relative grid lg:grid-cols-[1.4fr_1fr] gap-8 lg:items-center">
             <div>
               <h2 id="closing-cta-title" className="font-display text-white text-[1.9rem] md:text-[2.5rem] leading-tight" style={{ fontWeight: 700 }}>{cta.title}</h2>

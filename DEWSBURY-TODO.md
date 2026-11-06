@@ -26,6 +26,10 @@ Facts come from dewsburymoorpharmacy.co.uk (read 6 November 2026). Anything not 
 - [ ] Private: private flu jab (bookable, from £15), emergency contraception and pregnancy test (walk-in). Confirm prices; they come from `src/app/data/services.ts`.
 - [ ] Anything else to add, such as contraception, travel vaccines, ear wax removal or weight management.
 
+## Google reviews
+- [ ] The six reviews and the 4.8 rating (57 reviews) on the home page are placeholders (`DMP_REVIEWS` and `DMP_GOOGLE_RATING` in `src/app/data/dewsbury.ts`). Replace them with real reviews from the pharmacy's Google Business Profile, and keep the rating and count in step with Google.
+- [ ] Google Place ID (`DMP_GOOGLE_PLACE_ID`). Until it's set, "Write a review" and "See all on Google" open the pharmacy on Google Maps instead of the review box.
+
 ## Forms and cookies
 - [ ] The contact and nomination forms run in preview: nothing is sent until `forms.endpoint` is set on the `dewsbury` entry in `templateSites.ts`.
 - [ ] The cookie notice saves the visitor's choice (`dmp-cookie-consent` in localStorage). When analytics are added, load them only if the choice is "all".
