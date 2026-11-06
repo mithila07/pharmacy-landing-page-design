@@ -71,7 +71,7 @@ export default function ContactPageDewsbury() {
         <div className="dmp-wash">
           {/* Opening hours and map */}
           <section className="pt-20 lg:pt-24 pb-14">
-            <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-stretch">
+            <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-[0.8fr_1.2fr] gap-8 items-stretch">
               <div className="dmp-glass-light p-7 sm:p-9">
                 <h2 className="font-display text-slate-900 text-[2rem] lg:text-[2.4rem] leading-tight" style={{ fontWeight: 700 }}>Opening hours</h2>
                 <p className="mt-3 inline-flex items-center gap-2 text-[0.98rem]">
