@@ -24,6 +24,7 @@ const TEMPLATE_AREA: Record<string, { area: string[]; region: string }> = {
 import { ReviewsSection } from "../components/ReviewsSection";
 import { BentoServicesTemplate, ClosingCtaTemplate } from "../components/TemplateExtras";
 import { PrivateServicesDewsbury } from "../components/dewsbury/PrivateServicesDewsbury";
+import { PharmacyFirstDewsbury } from "../components/dewsbury/PharmacyFirstDewsbury";
 import { HeroDewsbury } from "../components/dewsbury/HeroDewsbury";
 import { ReviewsDewsbury } from "../components/dewsbury/ReviewsDewsbury";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
@@ -429,7 +430,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
 
       {/* NHS + Private service sections. Central leads with private clinics
           (its main draw); every other brand leads with NHS. */}
-      {isCentral ? <>{privateSection}{nhsSection}</> : <>{nhsSection}{extras?.bento ? <BentoServicesTemplate brand={brand} /> : privateSection}{brand.id === "dewsbury" && <PrivateServicesDewsbury />}</>}
+      {isCentral ? <>{privateSection}{nhsSection}</> : <>{brand.id === "dewsbury" ? <PharmacyFirstDewsbury /> : nhsSection}{extras?.bento ? <BentoServicesTemplate brand={brand} /> : privateSection}{brand.id === "dewsbury" && <PrivateServicesDewsbury />}</>}
 
       {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : brand.id === "dewsbury" ? <ReviewsDewsbury /> : <ReviewsSection />}
       {brand.blogPath && <BlogTeaserSection brand={brand} />}

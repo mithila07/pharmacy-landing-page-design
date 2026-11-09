@@ -72,7 +72,10 @@ export const dewsburyLocations: PharmacyLocation[] = [{
 
 /** Opens the full-page "Book an appointment" overlay (listened for in Header). */
 export const DMP_BOOK_EVENT = "dmp:book";
-export const openDewsburyBook = () => window.dispatchEvent(new Event(DMP_BOOK_EVENT));
+/** Filter the overlay opens on: a booking group's label, or "vaccinations". */
+export type BookFilter = string;
+export const openDewsburyBook = (filter?: BookFilter) =>
+  window.dispatchEvent(new CustomEvent<BookFilter | undefined>(DMP_BOOK_EVENT, { detail: filter }));
 
 export const DMP_NOMINATE_PATH = "/dewsbury/nominate";
 

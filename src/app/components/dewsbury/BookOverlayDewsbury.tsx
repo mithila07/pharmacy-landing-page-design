@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Phone, Search, Xmark } from "iconoir-react";
@@ -9,6 +9,10 @@ type Row = QuickService & { group: string };
 
 const PATHS = templateSites.dewsbury.extras?.bookingGroups ?? [];
 const ALL: Row[] = PATHS.flatMap((p) => p.services.map((s) => ({ ...s, group: p.label })));
+
+/** The "Vaccinations" filter cuts across groups: NHS, private and travel jabs. */
+const VACCINES = "vaccinations";
+const isVaccine = (r: Row) => /jab|vaccin/i.test(`${r.name} ${r.note}`) || (r.group === "Travel clinic" && r.id !== "prv-malaria" && r.id !== "prv-altitude" && r.id !== "prv-travel-consult");
 
 /** Every typed word must appear in the name, note or group. */
 const match = (r: Row, q: string) => {
@@ -21,14 +25,17 @@ const match = (r: Row, q: string) => {
  * pharmacy's services grouped by need. Radix Dialog handles focus trapping,
  * Escape and returning focus to the button that opened it.
  */
-export function BookOverlayDewsbury({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+export function BookOverlayDewsbury({ open, onOpenChange, initialFilter = "all" }: { open: boolean; onOpenChange: (o: boolean) => void; initialFilter?: string }) {
   const [q, setQ] = useState("");
-  const [group, setGroup] = useState("all");
+  const [group, setGroup] = useState(initialFilter);
+  // Opening from a hero option (e.g. Vaccinations) starts on that filter
+  useEffect(() => { if (open) setGroup(initialFilter); }, [open, initialFilter]);
   const input = useRef<HTMLInputElement>(null);
   const branch = dewsburyBrand.locations[0];
 
   const groups = useMemo(() => {
-    const rows = ALL.filter((r) => (group === "all" || r.group === group) && match(r, q));
+    const inGroup = (r: Row) => group === "all" || (group === VACCINES ? isVaccine(r) : r.group === group);
+    const rows = ALL.filter((r) => inGroup(r) && match(r, q));
     return PATHS.map((p) => ({ title: p.label, rows: rows.filter((r) => r.group === p.label) })).filter((g) => g.rows.length);
   }, [q, group]);
   const count = groups.reduce((n, g) => n + g.rows.length, 0);
@@ -77,7 +84,7 @@ export function BookOverlayDewsbury({ open, onOpenChange }: { open: boolean; onO
             </div>
 
             <div role="group" aria-label="Filter services" className="mt-5 flex flex-wrap gap-2">
-              {[{ id: "all", label: "Everything" }, ...PATHS.map((p) => ({ id: p.label, label: p.label }))].map((f) => (
+              {[{ id: "all", label: "Everything" }, ...PATHS.map((p) => ({ id: p.label, label: p.label })), { id: VACCINES, label: "Vaccinations" }].map((f) => (
                 <button
                   key={f.id}
                   type="button"

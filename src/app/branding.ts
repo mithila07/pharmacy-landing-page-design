@@ -49,6 +49,8 @@ export type Brand = {
   logoIsWordmark: boolean;
   /** Height utility for the header wordmark. Defaults to `h-9`. */
   headerLogoClass?: string;
+  /** Height utility for the header bar itself. Defaults to `h-[68px]`. */
+  headerHeightClass?: string;
   /** Per-brand favicon (usually the square logo mark). Applied at runtime by `useSeo`. */
   favicon?: string;
   /** Full-colour logo variant for the dark footer (rendered as-is, not inverted). */
@@ -361,7 +363,9 @@ export const dewsburyBrand: Brand = {
   logoMark: dewsburyMark,
   favicon: dewsburyFavicon,
   logoIsWordmark: true,
-  headerLogoClass: "h-14",
+  // Taller bar and larger logo: the client felt the logo was cramped
+  headerLogoClass: "h-[52px] sm:h-[64px]",
+  headerHeightClass: "h-[76px] sm:h-[88px]",
   // Kepple Lane template, in the logo's lime + forest green (styles/theme.css).
   themeClass: "theme-dewsbury",
   basePath: "/dewsbury",

@@ -851,6 +851,64 @@
   .theme-dewsbury .dmp-glass-light { background: #fff; backdrop-filter: none; }
 }
 
+/* Forest-green frosted glass for text over bright photos: the photo stays
+ * bright (no shade over it) and only the panel behind the words is dark. */
+.theme-dewsbury .dmp-glass-forest {
+  border-radius: 1.5rem;
+  background: rgba(2, 32, 28, 0.66);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 24px 48px -26px rgba(2, 32, 28, 0.65);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+}
+@media (prefers-reduced-transparency: reduce) { .theme-dewsbury .dmp-glass-forest { background: rgba(2, 32, 28, 0.92); backdrop-filter: none; } }
+
+/* Hero photo: a very slow zoom in and back out */
+@keyframes dmp-zoom { from { transform: scale(1); } to { transform: scale(1.06); } }
+.theme-dewsbury .dmp-zoom { animation: dmp-zoom 30s ease-in-out infinite alternate; transform-origin: 50% 50%; }
+@media (prefers-reduced-motion: reduce) { .theme-dewsbury .dmp-zoom { animation: none; } }
+
+/* Photo service cards: name and price show; the description and booking link
+ * slide open on hover or keyboard focus. Touch screens keep the compact card
+ * (a tap books), so small cards never overflow. */
+.theme-dewsbury .dmp-reveal { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 500ms var(--dmp-ease), opacity 400ms var(--dmp-ease); }
+.theme-dewsbury .dmp-reveal > * { overflow: hidden; min-height: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .theme-dewsbury .group:hover .dmp-reveal,
+  .theme-dewsbury .group:focus-visible .dmp-reveal { grid-template-rows: 1fr; opacity: 1; }
+}
+.theme-dewsbury .dmp-reveal--open { grid-template-rows: 1fr; opacity: 1; }
+
+/* The label panel: clear by default (the card's foot gradient carries the name),
+ * forest glass on hover or focus, or always for an open feature card. */
+.theme-dewsbury .dmp-card-panel {
+  border-radius: 1rem;
+  background: rgba(2, 32, 28, 0);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0);
+  transition: background-color 500ms var(--dmp-ease), box-shadow 500ms var(--dmp-ease), backdrop-filter 500ms var(--dmp-ease);
+}
+.theme-dewsbury .dmp-card-panel--open {
+  background: rgba(2, 32, 28, 0.66);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .theme-dewsbury .group:hover .dmp-card-panel,
+  .theme-dewsbury .group:focus-visible .dmp-card-panel {
+    background: rgba(2, 32, 28, 0.66);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+}
+@media (prefers-reduced-motion: reduce) { .theme-dewsbury .dmp-card-panel { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .theme-dewsbury .dmp-reveal { transition: none; } }
+
+/* The hero's main action: bigger on phones so it's the first thing to tap */
+.theme-dewsbury .dmp-btn--hero { min-height: 60px; font-size: 1.08rem; padding: 0 34px; }
+@media (min-width: 640px) { .theme-dewsbury .dmp-btn--hero { min-height: 56px; } }
+
 @keyframes dmpFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .theme-dewsbury [class*="dmpFade"] { animation: none !important; } }
 

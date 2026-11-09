@@ -28,6 +28,7 @@ const DEFAULT_BOOK_SERVICES = [
 export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps = {}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bookOpen, setBookOpen] = useState(false);
+  const [bookFilter, setBookFilter] = useState("all");
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   // Small close delay so the pointer can cross the gap into the panel.
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -38,9 +39,11 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
   // Dewsbury Moor books through a full-page search overlay instead of the picker modal,
   // and any page can open it (hero buttons dispatch DMP_BOOK_EVENT).
   const bookOverlay = brand.id === "dewsbury";
+  // Dewsbury has five links and a larger logo, so the full menu waits for lg (1024px)
+  const lgNav = brand.id === "dewsbury";
   useEffect(() => {
     if (!bookOverlay) return;
-    const open = () => setBookOpen(true);
+    const open = (e: Event) => { setBookFilter((e as CustomEvent<string | undefined>).detail ?? "all"); setBookOpen(true); };
     window.addEventListener(DMP_BOOK_EVENT, open);
     return () => window.removeEventListener(DMP_BOOK_EVENT, open);
   }, [bookOverlay]);
@@ -98,7 +101,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
     <header className="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-emerald-100/60">
       <div className="max-w-7xl mx-auto px-4">
         {/* Single row layout */}
-        <div className="flex items-center justify-between h-[68px]">
+        <div className={`flex items-center justify-between ${brand.headerHeightClass ?? "h-[68px]"}`}>
           {/* Left: Logo + name + quick info */}
           <div className="flex items-center gap-5">
             <a
@@ -132,7 +135,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
           </div>
 
           {/* Center: Nav links */}
-          <nav className="hidden md:flex items-center gap-7 text-[0.85rem] text-gray-600">
+          <nav className={`hidden ${lgNav ? "lg:flex" : "md:flex"} items-center gap-7 text-[0.85rem] text-gray-600`}>
             <button onClick={() => scrollTo("nhs-services")} className="hover:text-brand-primary transition-colors cursor-pointer" style={{ fontWeight: 500 }}>NHS Services</button>
             <button onClick={() => scrollTo("private-services")} className="hover:text-brand-primary transition-colors cursor-pointer" style={{ fontWeight: 500 }}>Private Services</button>
             {brand.blogPath && (
@@ -205,12 +208,12 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
           <div className="flex items-center gap-3">
             <button
               onClick={() => setBookOpen(true)}
-              className="hc-btn-grad-green hidden md:inline-flex items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] transition-all cursor-pointer"
+              className={`hc-btn-grad-green hidden ${lgNav ? "lg:inline-flex" : "md:inline-flex"} items-center gap-1.5 bg-brand-secondary text-white px-5 py-2 rounded-lg text-[0.85rem] transition-all cursor-pointer`}
               style={{ fontWeight: 600 }}
             >
               {isHC ? <PhCalendar size={15} weight="duotone" /> : <Calendar size={14} />} Book Appointment Now
             </button>
-            <button className="md:hidden text-gray-600 cursor-pointer" onClick={() => setMobileOpen(!mobileOpen)}>
+            <button className={`${lgNav ? "lg:hidden" : "md:hidden"} text-gray-600 cursor-pointer`} onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
@@ -219,7 +222,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-1">
+        <div className={`${lgNav ? "lg:hidden" : "md:hidden"} bg-white border-t border-gray-100 px-4 py-4 space-y-1`}>
           {showContactStrip && (
             <div className="flex items-center gap-4 text-[0.8rem] text-gray-500 pb-3 mb-2 border-b border-gray-100">
               <span className="flex items-center gap-1.5"><Phone size={12} className="text-brand-accent" /> {primaryPhone}</span>
@@ -310,7 +313,7 @@ export function Header({ bookNowServices, brand = carefirstBrand }: HeaderProps 
       )}
 
       {/* Book Appointment Now — service picker modal (portaled so sticky header's backdrop-filter doesn't trap it) */}
-      {bookOverlay && <BookOverlayDewsbury open={bookOpen} onOpenChange={setBookOpen} />}
+      {bookOverlay && <BookOverlayDewsbury open={bookOpen} initialFilter={bookFilter} onOpenChange={(o) => { setBookOpen(o); if (!o) setBookFilter("all"); }} />}
       {bookOpen && !bookOverlay && createPortal(
         <div className={`fixed inset-0 z-[60] flex items-start sm:items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm overflow-y-auto ${brand.themeClass}`} onClick={() => setBookOpen(false)}>
           <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 overflow-hidden">

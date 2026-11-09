@@ -214,7 +214,7 @@ export const templateSites: Record<string, TemplateConfig> = {
       eyebrow: "Your community pharmacy, Dewsbury Moor",
       title1: "Friendly local care,",
       title2: "on Heckmondwike Road.",
-      subtitle: "See a pharmacist today without a GP appointment, collect your prescriptions, or book a flu jab. Open Monday to Friday, 9am to 6pm.",
+      subtitle: "See a pharmacist today without a GP appointment, collect your prescriptions, or book a flu jab.",
       slides: [
         { id: "nhs-pf-sore-throat", name: "NHS Pharmacy First", tag: "Free on the NHS", desc: "Help with sore throats, earache, urine infections and more, without waiting for your GP.", icon: HeartPulse, img: adviceImg },
         { id: "nhs-flu", name: "Flu jabs", tag: "Free if you're eligible", desc: "NHS flu vaccinations, plus a private flu jab if you don't qualify.", icon: Syringe, img: heroImg },

@@ -3,6 +3,7 @@ import { Airplane, Calendar, Check, NavArrowRight, Suitcase } from "iconoir-reac
 import { dewsburyBrand } from "../../branding";
 import { DMP_FEATURED_PRIVATE, DMP_IMG, DMP_OTHER_PRIVATE, DMP_PRIVATE_NOTE, DMP_TRAVEL, DMP_TRAVEL_IMG, dmpPrice } from "../../data/dewsbury";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
+import { RevealCard } from "./RevealCard";
 
 const book = (id: string) => `${dewsburyBrand.basePath}/book/${id}`;
 
@@ -22,10 +23,9 @@ function FeaturedPrivate() {
 
         <div className="grid lg:grid-cols-2 gap-6">
           {DMP_FEATURED_PRIVATE.map((s) => (
-            <article key={s.id} className="group relative isolate overflow-hidden rounded-[2rem] min-h-[34rem] flex items-end p-4 sm:p-5">
+            <article key={s.id} className="group relative isolate overflow-hidden rounded-[2rem] min-h-[30rem] sm:min-h-[34rem] flex items-end p-3 sm:p-5">
               <ImageWithFallback src={s.img} alt="" className="absolute inset-0 -z-10 w-full h-full object-cover transition-transform duration-[1200ms] ease-[var(--dmp-ease)] group-hover:scale-[1.025]" style={{ objectPosition: s.pos }} />
-              <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: "linear-gradient(180deg, rgba(2,32,28,0.05) 30%, rgba(2,32,28,0.7) 100%)" }} />
-              <div className="dmp-glass w-full p-6 sm:p-7">
+              <div className="dmp-glass-forest w-full p-6 sm:p-7">
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="font-display text-white text-[1.7rem] sm:text-[1.9rem] leading-tight" style={{ fontWeight: 700 }}>{s.name}</h3>
                   <span className="shrink-0 rounded-full bg-brand-cta text-brand-darkest px-3.5 py-1.5 text-[0.88rem]" style={{ fontWeight: 700 }}>{dmpPrice(s.id)}</span>
@@ -53,10 +53,9 @@ function TravelClinic() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="relative isolate overflow-hidden rounded-[2rem] min-h-[24rem] lg:min-h-[26rem] flex items-end">
           <ImageWithFallback src={DMP_TRAVEL_IMG} alt="" className="absolute inset-0 -z-10 w-full h-full object-cover object-right" />
-          <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: "linear-gradient(90deg, rgba(2,32,28,0.92) 0%, rgba(2,32,28,0.75) 45%, rgba(2,32,28,0.25) 100%)" }} />
-          <div className="w-full grid lg:grid-cols-[1.3fr_1fr] gap-8 items-end p-6 sm:p-10 lg:p-12">
-            <div>
-              <h2 id="dmp-travel-title" className="font-display text-white text-[2rem] md:text-[2.7rem] leading-tight" style={{ fontWeight: 700 }}>
+          <div className="w-full grid lg:grid-cols-[1.3fr_1fr] gap-5 lg:gap-8 items-end p-4 sm:p-8 lg:p-10">
+            <div className="dmp-glass-forest p-6 sm:p-8">
+              <h2 id="dmp-travel-title" className="font-display text-white text-[2rem] md:text-[2.6rem] leading-tight" style={{ fontWeight: 700 }}>
                 Going abroad? <span className="text-brand-cta">Travel with peace of mind.</span>
               </h2>
               <p className="text-white/85 text-[1.05rem] leading-relaxed mt-4 max-w-xl">Tell us where you're going and we'll plan the vaccines and medicines you need, all in one place.</p>
@@ -64,7 +63,7 @@ function TravelClinic() {
                 <Link to={book("prv-travel-consult")} className="dmp-btn dmp-btn--lg">Book a travel appointment</Link>
               </div>
             </div>
-            <div className="dmp-glass p-5 lg:justify-self-end w-full max-w-sm">
+            <div className="dmp-glass-forest p-5 lg:justify-self-end w-full lg:max-w-sm">
               <ul className="grid gap-3 text-white/90 text-[0.95rem]">
                 <li className="flex gap-3"><Calendar width={20} height={20} className="text-brand-cta shrink-0" /> Book six to eight weeks before you travel</li>
                 <li className="flex gap-3"><Suitcase width={20} height={20} className="text-brand-cta shrink-0" /> Bring your trip dates and vaccine history</li>
@@ -78,20 +77,7 @@ function TravelClinic() {
         <ul className="mt-6 grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           {DMP_TRAVEL.map((t) => (
             <li key={t.id}>
-              <Link
-                to={book(t.id)}
-                aria-label={`Book ${t.name}, ${dmpPrice(t.id)}`}
-                className="group relative isolate flex flex-col justify-end h-full min-h-[15rem] sm:min-h-[17rem] overflow-hidden rounded-[1.5rem] p-4 sm:p-5 no-underline shadow-[0_18px_40px_-26px_rgba(2,32,28,0.55)] ring-1 ring-black/5 transition-[transform,box-shadow] duration-500 ease-[var(--dmp-ease)] hover:-translate-y-0.5 hover:shadow-[0_26px_50px_-24px_rgba(2,32,28,0.6)]"
-              >
-                <ImageWithFallback src={DMP_IMG[t.id]} alt="" className="absolute inset-0 -z-10 w-full h-full object-cover transition-transform duration-[1200ms] ease-[var(--dmp-ease)] group-hover:scale-[1.035]" />
-                <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: "linear-gradient(180deg, rgba(2,32,28,0) 25%, rgba(2,32,28,0.55) 55%, rgba(2,32,28,0.92) 100%)" }} />
-                <span className="text-white text-[1.05rem] sm:text-[1.12rem] leading-tight" style={{ fontWeight: 700 }}>{t.name}</span>
-                <span className="mt-1 text-white/80 text-[0.84rem] leading-snug line-clamp-2">{t.line}</span>
-                <span className="mt-3 flex items-center justify-between gap-2">
-                  <span className="text-white/85 text-[0.84rem]">{dmpPrice(t.id)}</span>
-                  <span className="rounded-full bg-white/15 ring-1 ring-white/35 backdrop-blur-sm px-3 py-1 text-white text-[0.82rem] transition-[background-color,color,box-shadow] duration-300 ease-[var(--dmp-ease)] group-hover:bg-brand-cta group-hover:text-brand-darkest group-hover:ring-brand-cta" style={{ fontWeight: 600 }}>Book</span>
-                </span>
-              </Link>
+              <RevealCard to={book(t.id)} img={DMP_IMG[t.id]} name={t.name} tag={dmpPrice(t.id)} desc={t.line} cta="Book now" className="h-full min-h-[14rem] sm:min-h-[17rem]" />
             </li>
           ))}
         </ul>

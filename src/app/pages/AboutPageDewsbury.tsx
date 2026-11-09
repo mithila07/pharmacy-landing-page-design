@@ -1,14 +1,12 @@
 import { useEffect } from "react";
-import { Link } from "react-router";
 import { ChatBubble, CheckCircle, Community, HomeSimpleDoor, OpenNewWindow } from "iconoir-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Reveal } from "../components/Reveal";
-import { ClosingCtaTemplate } from "../components/TemplateExtras";
 import { PageHeroDewsbury } from "../components/dewsbury/PageHeroDewsbury";
 import { dewsburyBrand } from "../branding";
 import { templateSites } from "../data/templateSites";
-import { DMP_LEGAL, openDewsburyBook } from "../data/dewsbury";
+import { DMP_LEGAL } from "../data/dewsbury";
 import { useSeo, JsonLd, pharmacyGraph } from "../seo";
 import heroPhoto from "../../assets/about-hero.jpeg";
 
@@ -47,26 +45,6 @@ export default function AboutPageDewsbury() {
           title1="A pharmacy that"
           title2="knows Dewsbury Moor."
           intro={about.subtitle}
-          actions={<>
-            <button type="button" onClick={openDewsburyBook} aria-haspopup="dialog" className="dmp-btn dmp-btn--lg">Book an appointment</button>
-            <Link to={`${brand.basePath}/contact`} className="dmp-btn dmp-btn--glass dmp-btn--lg">Find us</Link>
-          </>}
-          aside={
-            <div className="dmp-glass p-6">
-              <p className="text-white/70 text-[0.9rem]" style={{ fontWeight: 600 }}>At a glance</p>
-              <dl className="mt-4 grid grid-cols-2 gap-x-5 gap-y-5">
-                {about.stats.map((s) => (
-                  <div key={s.label}>
-                    <dt className="sr-only">{s.label}</dt>
-                    <dd>
-                      <span className="block font-display text-brand-cta text-[1.9rem] leading-none" style={{ fontWeight: 700 }}>{s.value}</span>
-                      <span className="block text-white/80 text-[0.88rem] mt-1.5 leading-snug">{s.label}</span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          }
         />
 
         <div className="dmp-wash">
@@ -133,7 +111,6 @@ export default function AboutPageDewsbury() {
             </div>
           </section>
 
-          <ClosingCtaTemplate brand={brand} />
         </div>
       </main>
 

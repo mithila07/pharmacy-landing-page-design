@@ -49,23 +49,28 @@ export default function NominatePageDewsbury() {
             <a href="#nominate-form" className="dmp-btn dmp-btn--lg">Nominate us now</a>
             <a href="https://www.nhs.uk/nhs-app/nhs-app-help-and-support/prescriptions-in-the-nhs-app/" target="_blank" rel="noopener noreferrer" className="dmp-btn dmp-btn--glass dmp-btn--lg">Use the NHS App instead</a>
           </>}
-          aside={
-            <ol className="grid gap-3">
-              {STEPS.map((s, i) => (
-                <li key={s.title} className="dmp-glass flex gap-4 p-4">
-                  <span className="w-10 h-10 rounded-full bg-brand-cta text-brand-darkest grid place-items-center font-display text-[1.05rem] shrink-0" style={{ fontWeight: 700 }} aria-hidden="true">{i + 1}</span>
-                  <div>
-                    <h2 className="text-[1.02rem]" style={{ fontWeight: 600 }}>{s.title}</h2>
-                    <p className="text-white/75 text-[0.9rem] mt-0.5 leading-relaxed">{s.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          }
         />
 
         <div className="dmp-wash">
-          <section id="nominate-form" className="py-20 lg:py-24 scroll-mt-20">
+          {/* How it works: three steps, straight under the hero */}
+          <section aria-labelledby="dmp-steps-title" className="pt-14 lg:pt-16">
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 id="dmp-steps-title" className="sr-only">How it works</h2>
+              <ol className="grid md:grid-cols-3 gap-4">
+                {STEPS.map((st, i) => (
+                  <li key={st.title} className="dmp-glass-light flex gap-4 p-6">
+                    <span className="w-11 h-11 rounded-full bg-brand-cta text-brand-darkest grid place-items-center font-display text-[1.1rem] shrink-0" style={{ fontWeight: 700 }} aria-hidden="true">{i + 1}</span>
+                    <div>
+                      <h3 className="text-slate-900 text-[1.08rem]" style={{ fontWeight: 700 }}>{st.title}</h3>
+                      <p className="text-slate-600 text-[0.95rem] mt-1 leading-relaxed">{st.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+
+          <section id="nominate-form" className="pt-8 pb-20 lg:pt-10 lg:pb-24 scroll-mt-20">
             <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-[1.35fr_0.65fr] gap-8 items-start">
               <div className="dmp-form dmp-glass-light p-6 sm:p-10">
                 <h2 className="font-display text-slate-900 text-[1.9rem] lg:text-[2.2rem] leading-tight mb-2" style={{ fontWeight: 700 }}>Nominate Dewsbury Moor Pharmacy</h2>

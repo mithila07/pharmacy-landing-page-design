@@ -47,25 +47,6 @@ export default function ContactPageDewsbury() {
           title1="Get in touch,"
           title2="we're happy to help."
           intro="Call, email or pop in. For anything about your medicines, the quickest way is to give us a ring."
-          actions={<>
-            <a href={tel} className="dmp-btn dmp-btn--lg">Call {branch.phone}</a>
-            <a href={directions} target="_blank" rel="noopener noreferrer" className="dmp-btn dmp-btn--glass dmp-btn--lg">Get directions</a>
-          </>}
-          aside={
-            <ul className="grid gap-3">
-              {ways.map(({ icon: Icon, title, line, href, external }) => (
-                <li key={title}>
-                  <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="dmp-glass group flex items-center gap-4 p-4 hover:bg-white/15 transition-colors duration-300 ease-[var(--dmp-ease)]">
-                    <span className="w-11 h-11 rounded-2xl bg-brand-cta text-brand-darkest grid place-items-center shrink-0"><Icon width={22} height={22} /></span>
-                    <span className="min-w-0">
-                      <span className="block text-white/70 text-[0.85rem]">{title}</span>
-                      <span className="block text-[1.02rem] break-words group-hover:underline underline-offset-4" style={{ fontWeight: 600 }}>{line}</span>
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          }
         />
 
         <div className="dmp-wash">
@@ -73,6 +54,20 @@ export default function ContactPageDewsbury() {
           <section className="pt-20 lg:pt-24 pb-14">
             <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-[0.8fr_1.2fr] gap-8 items-stretch">
               <div className="dmp-glass-light p-7 sm:p-9">
+                <h2 className="sr-only">Contact details</h2>
+                <ul className="grid gap-3 mb-8">
+                  {ways.map(({ icon: Icon, title, line, href, external }) => (
+                    <li key={title}>
+                      <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="group flex items-center gap-4 rounded-2xl bg-white/80 ring-1 ring-slate-200 p-3.5 transition-[box-shadow,background-color] duration-300 ease-[var(--dmp-ease)] hover:bg-white hover:ring-brand-secondary/50 hover:shadow-[0_14px_30px_-18px_rgba(31,77,28,0.5)]">
+                        <span className="w-11 h-11 rounded-2xl bg-brand-light text-brand-secondary grid place-items-center shrink-0 transition-colors duration-300 ease-[var(--dmp-ease)] group-hover:bg-brand-secondary group-hover:text-white"><Icon width={22} height={22} /></span>
+                        <span className="min-w-0">
+                          <span className="block text-slate-500 text-[0.85rem]">{title}</span>
+                          <span className="block text-slate-900 text-[1rem] break-words" style={{ fontWeight: 600 }}>{line}</span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
                 <h2 className="font-display text-slate-900 text-[2rem] lg:text-[2.4rem] leading-tight" style={{ fontWeight: 700 }}>Opening hours</h2>
                 <p className="mt-3 inline-flex items-center gap-2 text-[0.98rem]">
                   <Clock width={18} height={18} className="text-brand-secondary" />
