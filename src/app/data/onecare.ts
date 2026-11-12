@@ -10,6 +10,7 @@ import imgTravel from "../../assets/travel.jpeg";
 import imgSoreThroat from "../../assets/sorethroat.jpg";
 import imgWeightConsult from "../../assets/onecare/weight-consult.webp";
 import imgTravelClinic from "../../assets/onecare/travel-clinic.webp";
+import imgEhc from "../../assets/condition images/image (22).jpeg";
 
 /**
  * One Care 3D illustrations, generated for this site in one consistent style
@@ -192,6 +193,7 @@ export const OC_NHS_SERVICES: OCService[] = [
   { slug: "flu-nhs", serviceId: "nhs-flu", name: "NHS flu vaccination", type: "nhs", summary: "Free if you're eligible, for example if you're 65 or over, pregnant, or have certain long-term health conditions.", eligibility: "NHS eligibility applies", branches: BOTH, image: imgPharmacist, imagePos: "50% 30%", learnMore: "https://www.nhs.uk/vaccinations/flu-vaccine/" },
   { slug: "blood-pressure", serviceId: "nhs-bp", name: "Blood pressure check", type: "nhs", summary: "A free check for adults aged 40 and over who haven't been diagnosed with high blood pressure.", eligibility: "Age 40+", branches: BOTH, image: imgBloodPressure, imagePos: "60% 40%", learnMore: "https://www.nhs.uk/conditions/high-blood-pressure/" },
   { slug: "contraception", serviceId: "nhs-contraception", name: "Contraception", type: "nhs", summary: "Start or continue the contraceptive pill with a pharmacist, without seeing your GP first.", branches: BOTH, image: imgCounter, imagePos: "30% 50%", learnMore: "https://www.nhs.uk/contraception/" },
+  { slug: "emergency-contraception", serviceId: "nhs-sti", name: "Emergency contraception", type: "nhs", summary: "Free and confidential. The sooner it's taken the better, so book or join our live queue.", branches: BOTH, image: imgEhc, imagePos: "50% 35%", learnMore: "https://www.nhs.uk/contraception/emergency-contraception/" },
   { slug: "new-medicine-service", serviceId: "nhs-nms", name: "New Medicine Service", type: "nhs", summary: "Extra support from a pharmacist in the first weeks of a new medicine for certain long-term conditions.", branches: BOTH, image: imgConsult, imagePos: "50% 35%", learnMore: "https://www.nhs.uk/nhs-services/pharmacies/how-pharmacies-can-help/" },
 ];
 

@@ -11,6 +11,7 @@ import imgFriends from "../../assets/image-bg.jpeg";
 import imgTravel from "../../assets/travel.jpeg";
 import imgWeight from "../../assets/weight-loss.jpeg";
 import imgSoreThroat from "../../assets/sorethroat.jpg";
+import imgEhc from "../../assets/condition images/image (22).jpeg";
 
 /**
  * Shivakem Pharmacy, Wembley — the single source of truth for the site.
@@ -124,6 +125,7 @@ export const SK_NHS_SERVICES: OCService[] = [
   { slug: "flu-nhs", serviceId: "nhs-flu", name: "NHS flu vaccination", type: "nhs", summary: "Free every autumn and winter for people who qualify, including over-65s, pregnant women and those with some long-term conditions.", branches: W, image: imgPharmacist, imagePos: "50% 30%" },
   { slug: "blood-pressure", serviceId: "nhs-bp", name: "Blood pressure check", type: "nhs", summary: "A quick, free reading for anyone aged 40 or over who doesn't already have a high blood pressure diagnosis.", branches: W, image: imgBloodPressure, imagePos: "60% 40%" },
   { slug: "contraception", serviceId: "nhs-contraception", name: "Contraception", type: "nhs", summary: "Begin or carry on with the contraceptive pill through your pharmacist, with no GP visit needed first.", branches: W, image: imgCounter, imagePos: "30% 50%" },
+  { slug: "emergency-contraception", serviceId: "nhs-sti", name: "Emergency contraception", type: "nhs", summary: "Free, private and quick. It works best the sooner it's taken, so book or join our live queue.", branches: W, image: imgEhc, imagePos: "50% 35%", learnMore: "https://www.nhs.uk/contraception/emergency-contraception/" },
   { slug: "new-medicine-service", serviceId: "nhs-nms", name: "New Medicine Service", type: "nhs", summary: "Just started a medicine for a long-term condition? We'll check in over the first few weeks to see how it's going.", branches: W, image: imgConsult, imagePos: "50% 35%" },
 ];
 

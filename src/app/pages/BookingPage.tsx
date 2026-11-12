@@ -14,6 +14,9 @@ import { getBookingConfig, STAGE_LABELS, CONSULT_LABELS, NO_PAYMENT, type StageK
 import { EligibilityChat, EligibilityGate } from "../components/EligibilityChat";
 import { WeightAssessment, WeightAssessmentGate } from "../components/WeightAssessment";
 import { WEIGHT_SERVICE_ID } from "../data/weightAssessment";
+import { useOpenStatus } from "../openStatus";
+import { getQueueSnapshot, isQueueService, joinQueue, loadTicket, type QueueDemo, type QueueTicket } from "../data/liveQueue";
+import { LiveQueueScreen, QueueChoice, QueueJoinPanel, QueueSummary, type BookMode } from "../components/LiveQueue";
 
 const allServices = [...nhsServices, ...privateServices];
 
@@ -223,6 +226,20 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   const [card, setCard] = useState({ name: "", number: "", expiry: "", cvc: "" });
   const [payAcknowledged, setPayAcknowledged] = useState(false);
 
+  // Live walk-in queue: NHS contraception services offer "Join the live queue"
+  // alongside "Book a time" (data/liveQueue.ts, simulated until an API exists).
+  const queueEnabled = isQueueService(service?.id);
+  const [bookMode, setBookMode] = useState<BookMode | null>(null);
+  const [queueDemo, setQueueDemo] = useState<QueueDemo>("busy"); // demo-only — drop when the queue API is wired
+  const [queueTicket, setQueueTicket] = useState<QueueTicket | null>(null);
+  const branchStatus = useOpenStatus(branch);
+  const queueSnapshot = getQueueSnapshot(branch.id, service?.id ?? "", branchStatus.open, queueDemo);
+  const inQueueMode = queueEnabled && bookMode === "queue";
+  // Queue closes (or the demo switches to closed) while choosing: fall back to booking a time
+  useEffect(() => {
+    if (bookMode === "queue" && !queueSnapshot.open) setBookMode("time");
+  }, [bookMode, queueSnapshot.open]);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [serviceId]);
@@ -235,11 +252,23 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     setChatOpen(false);
     setWeightBlocked(false);
     setConsultKind(null);
+    setBookMode(null);
+    setQueueTicket(null);
+    setSubmitted(false);
     setPaymentSetting(service && service.id.startsWith("nhs-") ? "off" : "online");
     setCard({ name: "", number: "", expiry: "", cvc: "" });
     setPayAcknowledged(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceId]);
+
+  // A queue ticket held from earlier (refresh, closed tab) goes straight to the
+  // live screen. Runs after the reset above, and again if the branch resolves late.
+  useEffect(() => {
+    if (!service || !isQueueService(service.id)) return;
+    const held = loadTicket(branch.id, service.id);
+    if (held) { setQueueTicket(held); setSubmitted(true); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceId, branch.id]);
 
   // Backend-configurable journey: the ordered stages, incl. where the questionnaire sits.
   const isNHS = !!service && service.id.startsWith("nhs-");
@@ -320,6 +349,11 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     }
   };
 
+  const finish = () => {
+    if (inQueueMode) setQueueTicket(joinQueue(queueSnapshot, branch.id, service.id, patient.firstName.trim() || "there"));
+    setSubmitted(true);
+  };
+
   const days = getWeekFromOffset(weekOffset);
   const maxOffset = Math.floor((MAX_DAYS_AHEAD - 1) / 7);
   const canGoPrev = weekOffset > 0;
@@ -327,6 +361,20 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   const rangeLabel = days.length
     ? `${days[0].toLocaleDateString("en-GB", { day: "numeric", month: "short" })} – ${days[days.length - 1].toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
     : "";
+
+  if (submitted && queueTicket) {
+    return (
+      <div className={`min-h-screen bg-gray-50 flex items-center justify-center p-4 ${brand.themeClass}`}>
+        <LiveQueueScreen
+          ticket={queueTicket}
+          branch={branch}
+          serviceName={service.name}
+          onLeave={() => { setQueueTicket(null); setSubmitted(false); setBookMode(null); setStageIdx(0); }}
+          onHome={() => navigate(homePath(brand))}
+        />
+      </div>
+    );
+  }
 
   if (submitted) {
     const patientName = `${patient.firstName} ${patient.lastName}`.trim();
@@ -446,7 +494,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           {stages.map((kind, i) => (
             <div key={kind} className="flex items-center gap-2 flex-1">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[0.8rem] shrink-0 ${i <= stageIdx ? "bg-brand-primary text-white" : "bg-gray-200 text-gray-500"}`} style={{ fontWeight: 600 }}>{i + 1}</div>
-              <span className={`text-[0.85rem] hidden sm:inline ${i <= stageIdx ? "text-gray-900" : "text-gray-400"}`} style={{ fontWeight: 500 }}>{STAGE_LABELS[kind]}</span>
+              <span className={`text-[0.85rem] hidden sm:inline ${i <= stageIdx ? "text-gray-900" : "text-gray-400"}`} style={{ fontWeight: 500 }}>{kind === "datetime" && inQueueMode ? "Live queue" : STAGE_LABELS[kind]}</span>
               {i < stages.length - 1 && <div className={`flex-1 h-0.5 ${i < stageIdx ? "bg-brand-primary" : "bg-gray-200"}`} />}
             </div>
           ))}
@@ -497,7 +545,12 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           )
         )}
 
-        {stage === "datetime" && (
+        {stage === "datetime" && queueEnabled && (
+          <QueueChoice serviceId={service.id} mode={bookMode} onMode={setBookMode} snapshot={queueSnapshot} demo={queueDemo} onDemo={setQueueDemo} />
+        )}
+        {stage === "datetime" && inQueueMode && <QueueJoinPanel branch={branch} snapshot={queueSnapshot} onContinue={goNext} />}
+
+        {stage === "datetime" && (!queueEnabled || bookMode === "time") && (
           <>
             {/* Pharmacy & Appointment Type card */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
@@ -681,7 +734,9 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           </>
         )}
 
-        {(stage === "details" || stage === "contact" || stage === "payment") && selectedDate && selectedTime && (
+        {(stage === "details" || stage === "contact" || stage === "payment") && inQueueMode && <QueueSummary branch={branch} snapshot={queueSnapshot} />}
+
+        {(stage === "details" || stage === "contact" || stage === "payment") && !inQueueMode && selectedDate && selectedTime && (
           <>
             {/* Pharmacy & Booking Summary */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
@@ -1038,11 +1093,11 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                     !contactEmail ||
                     (!pdsResult.matched && isNHS && !continuePrivate)
                   }
-                  onClick={() => (hasPayment ? goNext() : setSubmitted(true))}
+                  onClick={() => (hasPayment ? goNext() : finish())}
                   className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                   style={{ fontWeight: 600 }}
                 >
-                  {hasPayment ? "Continue to payment" : "Confirm Booking"} <ChevronRight size={16} />
+                  {hasPayment ? "Continue to payment" : inQueueMode ? "Join the queue" : "Confirm Booking"} <ChevronRight size={16} />
                 </button>
                 <p className="text-[0.75rem] text-gray-500 sm:text-right max-w-xs">
                   By continuing you agree to our <a href="#" className="text-brand-primary underline">terms and conditions</a> and <a href="#" className="text-brand-primary underline">privacy policy</a>.
@@ -1143,7 +1198,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                       <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>
                       <button
                         disabled={!cardValid}
-                        onClick={() => setSubmitted(true)}
+                        onClick={finish}
                         className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                         style={{ fontWeight: 600 }}
                       >
@@ -1164,7 +1219,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                   <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer">Back</button>
                   <button
                     disabled={!payAcknowledged}
-                    onClick={() => setSubmitted(true)}
+                    onClick={finish}
                     className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                     style={{ fontWeight: 600 }}
                   >

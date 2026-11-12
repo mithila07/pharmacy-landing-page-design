@@ -11,6 +11,8 @@ const CONDITIONS = [
   { id: "nhs-pf-insect-bite", name: "Infected insect bite", age: "Age 1+", desc: "A bite that's red, swollen or getting worse can be checked and treated here." },
   { id: "nhs-pf-impetigo", name: "Impetigo", age: "Age 1+", desc: "Crusty, spreading skin sores, assessed and treated quickly by our pharmacist." },
   { id: "nhs-pf-shingles", name: "Shingles", age: "Age 18+", desc: "A painful band of rash? Getting treatment early can help, so come and see us." },
+  // Not a Pharmacy First condition, but free on the NHS and often needed in a hurry
+  { id: "nhs-sti", name: "Emergency contraception", age: "Free on the NHS", desc: "Confidential, and best taken as soon as possible. Book a time or join our live queue." },
 ];
 
 /** NHS Pharmacy First for Dewsbury Moor: bright photo cards that open on hover. */
@@ -29,11 +31,11 @@ export function PharmacyFirstDewsbury() {
             <li key={c.id}>
               <RevealCard
                 to={`${dewsburyBrand.basePath}/book/${c.id}`}
-                img={DMP_IMG[c.id]}
+                img={DMP_IMG[c.id] ?? DMP_IMG["prv-ehc"]}
                 name={c.name}
                 tag={c.age}
                 desc={c.desc}
-                cta="Book free consultation"
+                cta={c.id === "nhs-sti" ? "Book or join the queue" : "Book free consultation"}
                 className="h-full min-h-[15rem] sm:min-h-[19rem]"
               />
             </li>

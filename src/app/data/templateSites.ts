@@ -265,6 +265,8 @@ export const templateSites: Record<string, TemplateConfig> = {
             { id: "nhs-bp", name: "Blood pressure check", note: "Adults aged 40 and over", access: "book" },
             { id: "nhs-smoking", name: "Stop smoking support", note: "Weekly help to quit", access: "book" },
             { id: "nhs-nms", name: "New Medicine Service", note: "Support when you start a new medicine", access: "book" },
+            { id: "nhs-contraception", name: "Contraception", note: "Start or continue the pill", access: "book" },
+            { id: "nhs-sti", name: "Emergency contraception", note: "Book or join the live queue", access: "book" },
             { id: "inhaler-check", name: "Inhaler check", note: "Just ask at the counter", access: "walk-in" },
           ],
         },

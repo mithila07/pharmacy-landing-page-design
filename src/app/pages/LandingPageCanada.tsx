@@ -8,6 +8,7 @@ import { HeaderICare } from "../components/HeaderICare";
 import { FooterICare } from "../components/FooterICare";
 import { Watermark, GRAD_HERO, GRAD_MIST, GRAD_DEEP, GRAD_WHITE, GRAD_INK } from "../components/icareUi";
 import { canadaBrand } from "../branding";
+import ehcImg from "../../assets/condition images/image (22).jpeg";
 import { pharmacyInfo } from "../data/services";
 import { useOpenStatus } from "../openStatus";
 import { useSeo, JsonLd, pharmacyGraph, faqPageSchema } from "../seo";
@@ -32,6 +33,7 @@ const NHS_CARDS: Card[] = [
   { id: "nhs-pf-shingles", name: "Shingles", img: cover("1522844990619-4951c40f7eda"), chip: "Adults 18+", desc: "Early antiviral treatment for shingles." },
   { id: "nhs-pf-insect-bite", name: "Insect Bites", img: cover("1488646953014-85cb44e25828"), chip: "Age 1+", desc: "Treatment for infected insect bites." },
   { id: "nhs-pf-impetigo", name: "Impetigo", img: cover("1607619056574-7b8d3ee536b2"), chip: "Age 1+", desc: "Clear up impetigo skin infections fast." },
+  { id: "nhs-sti", name: "Emergency Contraception", img: ehcImg, chip: "Free on NHS", desc: "Confidential help, fast. Book or join the live queue." },
 ];
 
 const PRIVATE_CARDS: Card[] = [

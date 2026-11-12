@@ -25,6 +25,9 @@ export function dayMatches(label: string, weekday: number): boolean {
   return DAYS[weekday].toLowerCase() === l;
 }
 
+/** Splits "9:00 AM - 6:00 PM" and "09:00 to 18:00" (One Care and Shivakem write hours this way). */
+const TIME_SEP = /\s*(?:[-–]|\bto\b)\s*/i;
+
 /** Parse "9:00 AM" → minutes since midnight. Returns null if unparseable. */
 function toMinutes(time: string): number | null {
   const m = time.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i);
@@ -58,7 +61,7 @@ export function computeOpenStatus(
   const ranges = todays
     .flatMap((h) => h.hours.split(","))
     .map((r) => {
-      const [openStr = "", closeStr = ""] = r.split(/\s*[-–]\s*/);
+      const [openStr = "", closeStr = ""] = r.split(TIME_SEP);
       return { openStr: openStr.trim(), closeStr: closeStr.trim(), open: toMinutes(openStr), close: toMinutes(closeStr) };
     })
     .filter((r): r is typeof r & { open: number; close: number } => r.open !== null && r.close !== null)
@@ -75,7 +78,7 @@ export function computeOpenStatus(
     const d = (weekday + i) % 7;
     const entry = openingHours.find((h) => dayMatches(h.day, d) && !/closed/i.test(h.hours));
     if (entry) {
-      const openStr = entry.hours.split(/\s*[-–]\s*/)[0];
+      const openStr = entry.hours.split(TIME_SEP)[0];
       const when = i === 1 ? "tomorrow" : DAYS[d];
       return { open: false, label: "Closed", detail: `Opens ${when} ${openStr.trim()}` };
     }

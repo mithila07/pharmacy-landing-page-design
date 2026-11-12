@@ -34,6 +34,7 @@ import { ContactSection } from "../components/ContactSection";
 import { Footer } from "../components/Footer";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { nhsServices, privateServices } from "../data/services";
+import ehcImg from "../../assets/condition images/image (22).jpeg";
 import { carefirstBrand, type Brand } from "../branding";
 import { useSeo, JsonLd, pharmacyGraph } from "../seo";
 
@@ -100,6 +101,15 @@ const pharmacyFirstCards: CardItem[] = [
     accent: "nhs",
   },
 ];
+
+// Not a Pharmacy First condition, but an NHS service patients look for alongside them
+const ehcCard: CardItem = {
+  id: "nhs-sti",
+  imageUrl: ehcImg,
+  chip: "Free on the NHS",
+  ctaLabel: "Book or join the queue",
+  accent: "nhs",
+};
 
 const privateCards: CardItem[] = [
   {
@@ -387,6 +397,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
           {pharmacyFirstCards.map((c) => (
             <ServiceCard key={c.id} item={extras && templateSites[brand.id]?.pfImages?.[c.id] ? { ...c, imageUrl: templateSites[brand.id].pfImages![c.id] } : c} brand={brand} />
           ))}
+          <ServiceCard item={ehcCard} brand={brand} />
         </div>
       </div>
     </section>
@@ -422,7 +433,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
           isKL ? { addressRegion: "Lancashire", hoursSpec: KEPPLE_HOURS_SPEC } : isCentral ? { addressRegion: "Ceredigion", hoursSpec: CENTRAL_HOURS_SPEC } : isTemplate ? { addressRegion: TEMPLATE_AREA[brand.id].region } : undefined,
         )}
       />
-      <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ...privateCardsForBrand.map((c) => c.id)]} />
+      <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ehcCard.id, ...privateCardsForBrand.map((c) => c.id)]} />
       {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : brand.id === "dewsbury" ? <HeroDewsbury /> : isTemplate ? <HeroSectionTemplate brand={brand} /> : <HeroSection />}
 
       {/* Repeat-prescription nomination invite, for template sites that take nominations */}
