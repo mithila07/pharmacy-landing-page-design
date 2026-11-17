@@ -11,6 +11,7 @@ const withBase = (p: string) => `${import.meta.env.BASE_URL}${p.replace(/^\//, "
  *  card opens in a new tab and the iframe loads the URL directly. */
 export type Entry = { name: string; tagline: string; location: string; path: string; external?: boolean };
 
+/** In build order, oldest first: add each new site at the end. The page shows them newest first. */
 const SITES: Entry[] = [
   { name: carefirstBrand.name, tagline: carefirstBrand.tagline, location: "London", path: "/carefirst" },
   { name: strachansBrand.name, tagline: strachansBrand.tagline, location: "Bury & Uppermill", path: "/strachans" },
@@ -134,7 +135,7 @@ export default function PharmacyIndex() {
 
         {/* Cards */}
         <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
-          {SITES.map((s) => <ShowcaseCard key={s.path} s={s} />)}
+          {[...SITES].reverse().map((s) => <ShowcaseCard key={s.path} s={s} />)}
         </div>
 
         {/* Link to the fully-customised builds */}
