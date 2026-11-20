@@ -13,6 +13,8 @@
  *                 PDS check, for services the backend books as two separate
  *                 consultation types (e.g. weight management)
  *  - "datetime" — appointment type, date & time
+ *  - "request"  — request-only services (private sick notes): the note type and
+ *                 a short questionnaire, in place of date & time. Nothing is booked.
  *  - "contact"  — verify contact details (NHS PDS)
  *  - "payment"  — advance booking fee / private service payment (admin-configured)
  *
@@ -20,7 +22,7 @@
  * builds on the entered details), `triage` before `datetime`/`contact`, and
  * `payment` is always last (the patient pays once everything else is settled).
  */
-export type StageKind = "triage" | "details" | "consult" | "datetime" | "contact" | "payment";
+export type StageKind = "triage" | "details" | "consult" | "datetime" | "request" | "contact" | "payment";
 
 /** Initial vs follow-up: the backend has a separate consultation for each. */
 export type ConsultKind = "initial" | "follow-up";
@@ -35,6 +37,7 @@ export const STAGE_LABELS: Record<StageKind, string> = {
   details: "Patient Info",
   consult: "Consultation",
   datetime: "Date & Time",
+  request: "Your Request",
   contact: "Verify Contact",
   payment: "Payment",
 };
@@ -74,11 +77,13 @@ export type BookingConfig = { steps: StageKind[]; payment: PaymentConfig };
 const NHS_WITH_TRIAGE_STEPS: StageKind[] = ["details", "triage", "datetime", "contact"];
 // Used for vaccines and private services (no eligibility questionnaire).
 const STANDARD_STEPS: StageKind[] = ["datetime", "details", "contact"];
+// Request-only services (private sick notes): the questionnaire replaces date & time.
+const REQUEST_STEPS: StageKind[] = ["request", "details", "contact"];
 
 export function getBookingConfig(
-  { hasTriage, askConsultKind = false, payment = NO_PAYMENT }: { isNHS: boolean; hasTriage: boolean; askConsultKind?: boolean; payment?: PaymentConfig },
+  { hasTriage, askConsultKind = false, requestOnly = false, payment = NO_PAYMENT }: { isNHS: boolean; hasTriage: boolean; askConsultKind?: boolean; requestOnly?: boolean; payment?: PaymentConfig },
 ): BookingConfig {
-  let base = hasTriage ? NHS_WITH_TRIAGE_STEPS : STANDARD_STEPS;
+  let base = requestOnly ? REQUEST_STEPS : hasTriage ? NHS_WITH_TRIAGE_STEPS : STANDARD_STEPS;
   // The consultation-type question sits directly after patient details, so it
   // follows the PDS check (which runs on leaving the details stage).
   if (askConsultKind) {

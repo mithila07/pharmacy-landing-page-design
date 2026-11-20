@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useSearchParams } from "react-router";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Calendar, CalendarPlus, Clock, Phone, Mail, CheckCircle, MapPin, Video, PhoneCall, Pencil, ChevronLeft, ChevronRight, ShieldCheck, AlertTriangle, ThumbsUp, Info, ClipboardList, RotateCcw, Home, Zap, CreditCard, Store, Lock, UserPlus, Repeat } from "lucide-react";
 import { nhsServices, privateServices } from "../data/services";
@@ -17,6 +17,8 @@ import { WEIGHT_SERVICE_ID } from "../data/weightAssessment";
 import { useOpenStatus } from "../openStatus";
 import { getQueueSnapshot, isQueueService, joinQueue, loadTicket, type QueueDemo, type QueueTicket } from "../data/liveQueue";
 import { LiveQueueScreen, QueueChoice, QueueJoinPanel, QueueSummary, type BookMode } from "../components/LiveQueue";
+import { EMPTY_SICK_NOTE, NOTE_TYPES, SICK_NOTE_RULES, coverLine, isSickNoteService, noteTypeName, type NoteTypeId, type SickNoteRequest } from "../data/sickNote";
+import { SickNoteRequestStage, SickNoteSummary } from "../components/SickNoteRequest";
 
 const allServices = [...nhsServices, ...privateServices];
 
@@ -175,6 +177,7 @@ function getWeekFromOffset(offset: number) {
 export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand } = {}) {
   const { serviceId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { selected: branch, reason: branchReason, locations: branches, userCoords, selectLocation } = useResolvedLocation(brand);
   const multiBranch = branches.length > 1;
   const service = allServices.find((s) => s.id === serviceId);
@@ -232,6 +235,10 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
   const [bookMode, setBookMode] = useState<BookMode | null>(null);
   const [queueDemo, setQueueDemo] = useState<QueueDemo>("busy"); // demo-only — drop when the queue API is wired
   const [queueTicket, setQueueTicket] = useState<QueueTicket | null>(null);
+
+  // Private sick note: a request reviewed by a partner doctor, not an appointment.
+  const isSickNote = isSickNoteService(service?.id);
+  const [sickNote, setSickNote] = useState<SickNoteRequest>(EMPTY_SICK_NOTE);
   const branchStatus = useOpenStatus(branch);
   const queueSnapshot = getQueueSnapshot(branch.id, service?.id ?? "", branchStatus.open, queueDemo);
   const inQueueMode = queueEnabled && bookMode === "queue";
@@ -254,6 +261,9 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     setConsultKind(null);
     setBookMode(null);
     setQueueTicket(null);
+    // A note type chosen on the home page (?note=work) arrives pre-selected
+    const note = searchParams.get("note");
+    setSickNote({ ...EMPTY_SICK_NOTE, type: NOTE_TYPES.some((t) => t.id === note) ? (note as NoteTypeId) : "" });
     setSubmitted(false);
     setPaymentSetting(service && service.id.startsWith("nhs-") ? "off" : "online");
     setCard({ name: "", number: "", expiry: "", cvc: "" });
@@ -290,7 +300,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
     : paymentSetting === "online" ? { enabled: true, kind: "service", method: "online", amount: servicePriceNum }
     : { enabled: true, kind: "service", method: "counter", amount: servicePriceNum };
 
-  const config = getBookingConfig({ isNHS, hasTriage, askConsultKind: isWeightMgmt, payment });
+  const config = getBookingConfig({ isNHS, hasTriage, askConsultKind: isWeightMgmt, requestOnly: isSickNote, payment });
   const stages = config.steps;
   const stage = stages[stageIdx];
   const hasPayment = stages.includes("payment");
@@ -372,6 +382,63 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           onLeave={() => { setQueueTicket(null); setSubmitted(false); setBookMode(null); setStageIdx(0); }}
           onHome={() => navigate(homePath(brand))}
         />
+      </div>
+    );
+  }
+
+  if (submitted && isSickNote) {
+    const steps = [
+      { t: "Request received", d: "We've got your answers.", done: true },
+      { t: "Doctor review", d: `A UK-registered doctor reviews it, ${SICK_NOTE_RULES.turnaround}. They may call you on ${contactPhone || "your phone"}.`, done: false },
+      { t: "Note emailed", d: `If approved, your note arrives as a PDF at ${contactEmail || "your email"}.`, done: false },
+    ];
+    return (
+      <div className={`min-h-screen bg-gray-50 flex items-center justify-center p-4 ${brand.themeClass}`}>
+        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-lg w-full">
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-brand-primary/10 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle size={32} className="text-brand-primary" />
+            </div>
+            <h2 className="text-[1.4rem] text-gray-900 mb-2" style={{ fontWeight: 700 }}>Request sent</h2>
+            <p className="text-gray-500 mb-6 text-[0.9rem]">
+              Thanks{patient.firstName ? ` ${patient.firstName}` : ""}. Your request for a <strong>{noteTypeName(sickNote.type).toLowerCase()}</strong> is with our doctor. There's nothing else you need to do.
+            </p>
+          </div>
+
+          <ol className="mb-5">
+            {steps.map((st, i) => (
+              <li key={st.t} className="flex gap-3">
+                <div className="flex flex-col items-center">
+                  <span className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] shrink-0 ${st.done ? "bg-brand-primary text-white" : "bg-brand-light text-brand-primary border border-brand-primary/30"}`} style={{ fontWeight: 700 }}>{st.done ? <CheckCircle size={15} /> : i + 1}</span>
+                  {i < steps.length - 1 && <span className="w-px flex-1 bg-gray-200 my-1" />}
+                </div>
+                <div className="pb-4">
+                  <p className="text-[0.92rem] text-gray-900" style={{ fontWeight: 600 }}>{st.t}</p>
+                  <p className="text-[0.84rem] text-gray-500">{st.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <div className="bg-gradient-to-br from-brand-light to-brand-light-alt rounded-lg p-4 mb-5 text-[0.9rem] space-y-2">
+            <p><span className="text-gray-500">Note:</span> <span style={{ fontWeight: 500 }}>{noteTypeName(sickNote.type)}</span></p>
+            {coverLine(sickNote) && <p><span className="text-gray-500">Covers:</span> <span style={{ fontWeight: 500 }}>{coverLine(sickNote)}</span></p>}
+            <p><span className="text-gray-500">Pharmacy:</span> <span style={{ fontWeight: 500 }}>{branch.name}</span></p>
+            {payment.enabled && (
+              <p><span className="text-gray-500">Payment:</span> <span style={{ fontWeight: 500 }}>{payment.method === "counter" ? `£${payment.amount.toFixed(2)} due at the pharmacy` : `£${payment.amount.toFixed(2)} paid online, refunded if no note is issued`}</span></p>
+            )}
+          </div>
+
+          <p className="text-[0.8rem] text-gray-500 mb-5">Feeling worse while you wait? Call NHS 111, or 999 in an emergency.</p>
+
+          <button
+            onClick={() => navigate(homePath(brand))}
+            className="cta cta-primary w-full bg-brand-primary text-white px-6 py-2.5 rounded-lg hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+            style={{ fontWeight: 600 }}
+          >
+            <Home size={16} /> Back to home
+          </button>
+        </div>
       </div>
     );
   }
@@ -464,7 +531,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
           <button onClick={() => navigate(homePath(brand))} className="text-gray-500 hover:text-gray-700 cursor-pointer"><ArrowLeft size={20} /></button>
           <div>
-            <h1 className="text-[1.1rem] text-gray-900" style={{ fontWeight: 700 }}>Book: {service.name}</h1>
+            <h1 className="text-[1.1rem] text-gray-900" style={{ fontWeight: 700 }}>{isSickNote ? "Request" : "Book"}: {service.name}</h1>
             <p className="text-[0.8rem] text-gray-500">{service.description}</p>
           </div>
           {(service.price || isNHS) && (
@@ -511,6 +578,8 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           <div className="flex flex-wrap gap-2">
             {(isNHS
               ? ([{ v: "off", l: "No payment" }, { v: "token", l: `Advance fee £${TOKEN_AMOUNT}` }] as const)
+              : isSickNote
+              ? ([{ v: "off", l: "No payment" }, { v: "online", l: `Pay online £${servicePriceNum}` }, { v: "counter", l: `Pay at counter £${servicePriceNum}` }] as const)
               : ([{ v: "off", l: "No payment" }, { v: "token", l: `Advance fee £${TOKEN_AMOUNT}` }, { v: "online", l: `Pay online £${servicePriceNum}` }, { v: "counter", l: `Pay at counter £${servicePriceNum}` }] as const)
             ).map((opt) => (
               <button
@@ -543,6 +612,18 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
           ) : (
             <WeightAssessmentGate brand={brand} blocked={weightBlocked} onStart={() => setChatOpen(true)} />
           )
+        )}
+
+        {stage === "request" && isSickNote && (
+          <SickNoteRequestStage
+            value={sickNote}
+            onChange={setSickNote}
+            onDone={goNext}
+            priceLabel={payment.enabled ? `The fee is £${payment.amount.toFixed(2)}${payment.method === "counter" ? ", paid at the pharmacy" : ""}` : undefined}
+          />
+        )}
+        {(stage === "details" || stage === "contact" || stage === "payment") && isSickNote && (
+          <SickNoteSummary value={sickNote} onChange={() => goStage("request")} />
         )}
 
         {stage === "datetime" && queueEnabled && (
@@ -1079,10 +1160,10 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
               </>
             )}
 
-            <div className="mt-6">
+            {!isSickNote && <div className="mt-6">
               <label className="text-[0.85rem] text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>Notes (optional)</label>
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full px-4 py-2.5 border border-brand-primary/30 rounded-lg text-[0.9rem] focus:outline-none focus:ring-2 focus:ring-brand-primary/30 resize-none" placeholder="Anything the pharmacist should know in advance?" />
-            </div>
+            </div>}
 
             <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <button onClick={goBack} className="text-gray-500 hover:text-gray-700 text-[0.9rem] cursor-pointer text-left">Back</button>
@@ -1097,7 +1178,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                   className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                   style={{ fontWeight: 600 }}
                 >
-                  {hasPayment ? "Continue to payment" : inQueueMode ? "Join the queue" : "Confirm Booking"} <ChevronRight size={16} />
+                  {hasPayment ? "Continue to payment" : inQueueMode ? "Join the queue" : isSickNote ? "Send request" : "Confirm Booking"} <ChevronRight size={16} />
                 </button>
                 <p className="text-[0.75rem] text-gray-500 sm:text-right max-w-xs">
                   By continuing you agree to our <a href="#" className="text-brand-primary underline">terms and conditions</a> and <a href="#" className="text-brand-primary underline">privacy policy</a>.
@@ -1121,6 +1202,10 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                 <p className="text-[0.85rem] text-gray-600 mt-0.5">
                   {payment.kind === "deposit"
                     ? `A £${payment.amount} advance booking fee helps us reduce missed appointments and secures your slot.`
+                    : isSickNote && payment.method === "counter"
+                    ? "Pay at the pharmacy. We'll email your note once it's approved and paid for."
+                    : isSickNote
+                    ? "Pay securely online to send your request. If the doctor can't issue a note, you'll get a full refund."
                     : payment.method === "counter"
                     ? "Payment for this service is taken over the counter at the pharmacy when you attend."
                     : "Pay securely online to confirm your booking."}
@@ -1131,7 +1216,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
             {/* Amount */}
             <div className="rounded-xl border border-brand-primary/20 bg-gradient-to-br from-brand-light to-brand-light-alt p-4 mb-6">
               <p className="text-[0.75rem] text-gray-500" style={{ fontWeight: 500 }}>
-                {payment.kind === "deposit" ? "Advance booking fee" : "Amount"}{payment.method === "counter" ? " · payable on arrival" : ""}
+                {payment.kind === "deposit" ? "Advance booking fee" : "Amount"}{payment.method === "counter" ? (isSickNote ? " · payable at the pharmacy" : " · payable on arrival") : ""}
               </p>
               <p className="text-[1.7rem] text-gray-900 leading-tight" style={{ fontWeight: 700 }}>£{payment.amount.toFixed(2)}</p>
               {payment.kind === "deposit" && isNHS && (
@@ -1202,7 +1287,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                         className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                         style={{ fontWeight: 600 }}
                       >
-                        <Lock size={15} /> Pay £{payment.amount.toFixed(2)} &amp; confirm
+                        <Lock size={15} /> Pay £{payment.amount.toFixed(2)} &amp; {isSickNote ? "send request" : "confirm"}
                       </button>
                     </div>
                   </>
@@ -1212,7 +1297,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
               <>
                 <label className="flex items-start gap-3 rounded-lg border border-brand-primary/20 bg-brand-light/40 p-4 cursor-pointer">
                   <input type="checkbox" checked={payAcknowledged} onChange={(e) => setPayAcknowledged(e.target.checked)} className="mt-0.5 w-4 h-4 accent-[var(--brand-primary)] cursor-pointer" />
-                  <span className="text-[0.88rem] text-gray-700">I understand £{payment.amount.toFixed(2)} is payable at the pharmacy when I attend my appointment.</span>
+                  <span className="text-[0.88rem] text-gray-700">{isSickNote ? `I understand £${payment.amount.toFixed(2)} is payable at the pharmacy before my note is sent.` : `I understand £${payment.amount.toFixed(2)} is payable at the pharmacy when I attend my appointment.`}</span>
                 </label>
 
                 <div className="mt-8 flex items-center justify-between gap-3">
@@ -1223,7 +1308,7 @@ export default function BookingPage({ brand = carefirstBrand }: { brand?: Brand 
                     className="cta cta-primary bg-brand-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-emerald-900/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                     style={{ fontWeight: 600 }}
                   >
-                    Confirm Booking <ChevronRight size={16} />
+                    {isSickNote ? "Send request" : "Confirm Booking"} <ChevronRight size={16} />
                   </button>
                 </div>
               </>

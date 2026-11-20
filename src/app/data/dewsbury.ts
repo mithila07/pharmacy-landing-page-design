@@ -14,6 +14,7 @@ import cnhs_flu from "../../assets/condition images/image (8).jpeg";
 import cnhs_nms from "../../assets/condition images/new-medicine-service-1 (1)-web.jpg";
 import cweight_consult from "../../assets/condition images/image (28).jpeg";
 import cflu_private from "../../assets/condition images/image (17).jpeg";
+import csick_note from "../../assets/condition images/image (16).jpeg";
 import cchicken_pox from "../../assets/condition images/image (12).jpeg";
 import chpv from "../../assets/condition images/image (5).jpeg";
 import cperiod_delay from "../../assets/condition images/period-delay-1600x900.jpg";
@@ -169,6 +170,7 @@ export const DMP_OTHER_PRIVATE: { title: string; intro: string; items: DmpOther[
     intro: "Quick help without waiting for a GP.",
     items: [
       { id: "prv-period-delay", name: "Period delay", line: "For holidays and special occasions", access: "book" },
+      { id: "prv-sick-note", name: "Private sick note", line: "Reviewed by a doctor, no appointment needed", access: "book" },
       { id: "prv-hayfever", name: "Hay fever", line: "When over-the-counter remedies aren't enough", access: "book" },
       { id: "prv-cold-sore", name: "Cold sores", line: "Treatment to shorten an outbreak", access: "book" },
       { id: "prv-migraine", name: "Migraine", line: "A review of your symptoms and options", access: "book" },
@@ -193,6 +195,7 @@ export const DMP_PRIVATE_NOTE = "Private services are subject to a consultation.
 // Never a photo of a prescription-only medicine or its packaging (MHRA): the
 // weight loss card shows a tape measure, the B12 service shows supplements.
 export const DMP_IMG: Record<string, string> = {
+  "prv-sick-note": csick_note,
   "nhs-pf-sore-throat": cnhs_pf_sore_throat,
   "nhs-pf-sinusitis": cnhs_pf_sinusitis,
   "nhs-pf-earache": cnhs_pf_earache,

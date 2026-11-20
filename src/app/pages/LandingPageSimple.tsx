@@ -30,6 +30,8 @@ import { ReviewsDewsbury } from "../components/dewsbury/ReviewsDewsbury";
 import { ReviewsSectionHealthCheck } from "../components/ReviewsSectionHealthCheck";
 import { BlogTeaserSection } from "../components/BlogTeaserSection";
 import { FaqSection } from "../components/FaqSection";
+import { SickNoteSection } from "../components/SickNoteSection";
+import { SICK_NOTE_SERVICE_ID } from "../data/sickNote";
 import { ContactSection } from "../components/ContactSection";
 import { Footer } from "../components/Footer";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
@@ -433,7 +435,7 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
           isKL ? { addressRegion: "Lancashire", hoursSpec: KEPPLE_HOURS_SPEC } : isCentral ? { addressRegion: "Ceredigion", hoursSpec: CENTRAL_HOURS_SPEC } : isTemplate ? { addressRegion: TEMPLATE_AREA[brand.id].region } : undefined,
         )}
       />
-      <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ehcCard.id, ...privateCardsForBrand.map((c) => c.id)]} />
+      <Header brand={brand} bookNowServices={[...pharmacyFirstCards.map((c) => c.id), ehcCard.id, ...privateCardsForBrand.map((c) => c.id), SICK_NOTE_SERVICE_ID]} />
       {brand.id === "strachans" ? <HeroSectionStrachans /> : isHC ? <HeroSectionHealthCheck /> : isKL ? <HeroSectionKepple /> : isCentral ? (useCentralAltHero ? <HeroSectionCentralAlt /> : <HeroSectionCentral />) : brand.id === "dewsbury" ? <HeroDewsbury /> : isTemplate ? <HeroSectionTemplate brand={brand} /> : <HeroSection />}
 
       {/* Repeat-prescription nomination invite, for template sites that take nominations */}
@@ -442,6 +444,9 @@ export function SimpleLanding({ brand = carefirstBrand }: { brand?: Brand } = {}
       {/* NHS + Private service sections. Central leads with private clinics
           (its main draw); every other brand leads with NHS. */}
       {isCentral ? <>{privateSection}{nhsSection}</> : <>{brand.id === "dewsbury" ? <PharmacyFirstDewsbury /> : nhsSection}{extras?.bento ? <BentoServicesTemplate brand={brand} /> : privateSection}{brand.id === "dewsbury" && <PrivateServicesDewsbury />}</>}
+
+      {/* Private sick notes: a request reviewed by a partner doctor, no appointment */}
+      <SickNoteSection brand={brand} skin={brand.id === "dewsbury" ? "dewsbury" : "default"} />
 
       {brand.id === "healthcheck" ? <ReviewsSectionHealthCheck /> : brand.id === "dewsbury" ? <ReviewsDewsbury /> : <ReviewsSection />}
       {brand.blogPath && <BlogTeaserSection brand={brand} />}

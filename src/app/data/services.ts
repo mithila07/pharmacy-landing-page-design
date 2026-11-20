@@ -83,6 +83,8 @@ export const privateServices: Service[] = [
   { id: "prv-fungal", name: "Fungal Nail Treatment", description: "Antifungal treatments for nail infections", price: "From 20", icon: "Pill", category: "Skin & Dermatology" },
   { id: "prv-cold-sore", name: "Cold Sore Treatment", description: "Fast-acting antiviral cold sore treatment", price: "From 15", icon: "Pill", category: "Skin & Dermatology" },
   { id: "prv-wart", name: "Wart & Verruca Treatment", description: "Cryotherapy and topical treatments", price: "From 30", icon: "Zap", category: "Skin & Dermatology" },
+  // Medical letters: a request reviewed by a partner doctor, not an appointment (data/sickNote.ts)
+  { id: "prv-sick-note", name: "Private Sick Note", description: "A doctor-reviewed sick note for work, travel or the gym, without an appointment", price: "From 25", icon: "FileText", category: "Medical Letters" },
   // Ear Health
   { id: "prv-ear-wax", name: "Ear Wax Removal", description: "Microsuction ear wax removal by trained clinicians", price: "From 40", icon: "Ear", category: "Ear Health" },
   { id: "prv-ear-infection", name: "Ear Infection Treatment", description: "Assessment and treatment for ear infections", price: "From 25", icon: "Stethoscope", category: "Ear Health" },

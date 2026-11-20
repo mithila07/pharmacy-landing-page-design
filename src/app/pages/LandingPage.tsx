@@ -6,6 +6,8 @@ import { ShopSection } from "../components/ShopSection";
 import { ReviewsSection } from "../components/ReviewsSection";
 import { ContactSection } from "../components/ContactSection";
 import { Footer } from "../components/Footer";
+import { SickNoteSection } from "../components/SickNoteSection";
+import { carefirstBrand } from "../branding";
 import { nhsServices, onlineDoctorServices, inPersonPrivateServices } from "../data/services";
 
 export default function LandingPage() {
@@ -53,6 +55,7 @@ export default function LandingPage() {
           />
         </div>
       </div>
+      <SickNoteSection brand={carefirstBrand} />
       <ShopSection />
       <ReviewsSection />
       <ContactSection />

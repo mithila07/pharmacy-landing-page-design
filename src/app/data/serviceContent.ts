@@ -1,3 +1,5 @@
+import sickNoteImg from "../../assets/condition images/image (16).jpeg";
+
 export interface ServiceFAQ {
   q: string;
   a: string;
@@ -716,6 +718,55 @@ export const categoryContent: Record<string, ServiceContent> = {
     image:
       "https://images.unsplash.com/photo-1761718209708-9ab9ba1c7252?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
     imageAlt: "Aesthetic and cosmetic clinic treatment at pharmacy",
+  },
+
+  // Private sick notes: a request reviewed remotely by a partner UK-registered doctor.
+  // Never promise a note will be issued or that an employer must accept it.
+  "Medical Letters": {
+    headline: "Private Sick Notes, Reviewed by a UK Doctor",
+    intro:
+      "Need a note for a few days off work, a cancelled trip or your gym membership? Request it online in a few minutes. There's no appointment to book: a UK-registered doctor reviews your answers, usually the same day, and if the note is right for you it's emailed to you as a PDF.",
+    benefits: [
+      "No appointment and no waiting room: request from your sofa",
+      "Reviewed by a UK-registered doctor, usually the same day",
+      "Sick notes for work covering up to 7 days, including days you've already had off",
+      "Letters for travel insurance claims and gym cancellations",
+      "Sent straight to your inbox as a PDF",
+    ],
+    whatToExpect: [
+      "Choose the note you need and answer a short questionnaire about your illness",
+      "We check your details against your NHS record",
+      "A doctor reviews your request and may call you if they need to know more",
+      "If approved, your note is emailed to you. If it isn't right for you, the doctor will tell you why and what to do next",
+    ],
+    suitableFor: [
+      "Employees off work for up to 7 days whose employer asks for a note",
+      "Anyone who was too unwell to travel and is claiming on travel insurance",
+      "People who need to freeze or cancel a gym membership for health reasons",
+      "Anyone who needs a letter confirming they're fit to return to work or study",
+    ],
+    faqs: [
+      {
+        q: "Is a private sick note the same as an NHS fit note?",
+        a: "No. An NHS fit note is for absences of more than 7 days and comes from your GP or hospital. A private sick note is a letter from a doctor for shorter absences and other purposes. It's up to your employer, gym or insurer whether they accept it.",
+      },
+      {
+        q: "Can the note cover days I've already had off?",
+        a: "Yes, the first day can be up to 7 days ago, as long as your symptoms started on or before that day.",
+      },
+      {
+        q: "Will I definitely get a note?",
+        a: "Not always. The doctor decides based on your answers and may call you. If a note isn't right for you, they'll explain why and point you to the right help.",
+      },
+      {
+        q: "Do I need to come into the pharmacy?",
+        a: "No. The whole request is online and your note is emailed to you.",
+      },
+    ],
+    safetyNetting:
+      "A sick note isn't the right step if you have chest pain, are struggling to breathe, have signs of a stroke, or have thoughts of harming yourself. Call 999 in an emergency, NHS 111 for urgent advice, or Samaritans free on 116 123.",
+    image: sickNoteImg,
+    imageAlt: "Person resting at home with a hot water bottle while unwell",
   },
 };
 

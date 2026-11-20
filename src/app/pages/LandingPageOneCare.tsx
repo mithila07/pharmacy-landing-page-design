@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { onecareBrand } from "../branding";
+import { SickNoteSection } from "../components/SickNoteSection";
 import { OC_BRANCHES, OC_FAQS, OC_IMAGES, OC_LEGAL, formatAddress, isTbc } from "../data/onecare";
 import { useSeo, JsonLd } from "../seo";
 import { useOcReveal } from "../onecareMotion";
@@ -116,6 +117,7 @@ export default function LandingPageOneCare() {
           <HeroSectionOneCare />
           <NhsServicesOneCare />
           <PrivateServicesOneCare />
+          <SickNoteSection brand={onecareBrand} skin="oc" />
           <TravelClinicOneCare />
           <MoreServicesOneCare />
           <ReviewsOneCare />

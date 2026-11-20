@@ -8,6 +8,7 @@ import { HeaderICare } from "../components/HeaderICare";
 import { FooterICare } from "../components/FooterICare";
 import { Watermark, GRAD_HERO, GRAD_MIST, GRAD_DEEP, GRAD_WHITE, GRAD_INK } from "../components/icareUi";
 import { canadaBrand } from "../branding";
+import { SickNoteSection } from "../components/SickNoteSection";
 import ehcImg from "../../assets/condition images/image (22).jpeg";
 import { pharmacyInfo } from "../data/services";
 import { useOpenStatus } from "../openStatus";
@@ -353,6 +354,9 @@ export default function LandingPageCanada() {
           </div>
         </div>
       </section>
+
+      {/* ───────── Private sick notes (request, no appointment) ───────── */}
+      <SickNoteSection brand={canadaBrand} />
 
       {/* ───────── How it works ───────── */}
       <section className="relative overflow-hidden py-14 lg:py-20" style={{ background: GRAD_DEEP }}>

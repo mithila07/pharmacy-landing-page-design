@@ -179,7 +179,8 @@ export function serviceSeo(service: Service, isNHS: boolean, brand?: Brand): { t
       ? service.price.replace(/From\s*(\d)/, "from £$1").toLowerCase()
       : "a private service";
   const title = `${service.name} in ${area} | ${siteName}`;
-  const description = `${service.name} at ${siteName} — ${price}. ${service.description}. Book a same-day appointment in ${area}.`;
+  const cta = service.category === "Medical Letters" ? "Request online, no appointment needed." : `Book a same-day appointment in ${area}.`;
+  const description = `${service.name} at ${siteName} — ${price}. ${service.description}. ${cta}`;
   return { title, description: description.length > 160 ? description.slice(0, 157) + "…" : description };
 }
 

@@ -282,6 +282,7 @@ export const templateSites: Record<string, TemplateConfig> = {
             { id: "prv-chicken-pox", name: "Chickenpox vaccine", note: "For children and adults", access: "book" },
             { id: "prv-hpv", name: "HPV vaccine", note: "Protection against HPV", access: "book" },
             { id: "prv-period-delay", name: "Period delay", note: "For holidays and special occasions", access: "book" },
+            { id: "prv-sick-note", name: "Private sick note", note: "Reviewed by a doctor, no appointment", access: "book" },
             { id: "prv-hayfever", name: "Hay fever", note: "When remedies aren't enough", access: "book" },
             { id: "prv-cold-sore", name: "Cold sores", note: "Treatment to shorten an outbreak", access: "book" },
             { id: "prv-migraine", name: "Migraine", note: "A review of your options", access: "book" },

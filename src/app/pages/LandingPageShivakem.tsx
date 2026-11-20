@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { shivakemBrand } from "../branding";
+import { SickNoteSection } from "../components/SickNoteSection";
 import { SK_BRANCH, SK_LEGAL } from "../data/shivakem";
 import { isTbc } from "../data/onecare";
 import { useSeo, JsonLd } from "../seo";
@@ -46,6 +47,7 @@ export default function LandingPageShivakem() {
         <HeroSectionShivakem />
         <NhsServicesShivakem />
         <PrivateServicesShivakem />
+        <SickNoteSection brand={shivakemBrand} skin="oc" />
         <TravelClinicShivakem />
         <MoreServicesShivakem />
         <ReviewsShivakem />
