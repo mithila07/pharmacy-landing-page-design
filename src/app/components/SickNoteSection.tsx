@@ -1,5 +1,11 @@
 import { Link } from "react-router";
-import { ArrowRight, Mail, MessageSquareText, Stethoscope } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowRight, FileText, Mail, MessageSquareText, Stethoscope } from "lucide-react";
+import { FileText as PhFileText } from "@phosphor-icons/react";
+import { DocumentText24Regular } from "@fluentui/react-icons";
+import { NavArrowRight } from "iconoir-react";
+import { Arrow, BTN_PRIMARY, Ph } from "./onecareUi";
+import { Fl, SkArrow } from "./shivakemUi";
 import type { Brand } from "../branding";
 import { privateServices } from "../data/services";
 import { NOTE_TYPES, SICK_NOTE_RULES, SICK_NOTE_SERVICE_ID } from "../data/sickNote";
@@ -17,7 +23,7 @@ type Skin = "default" | "oc" | "dewsbury";
 
 const SKINS: Record<Skin, {
   section: string; h2: string; accent: string; lead: string; step: string; stepNum: string;
-  cta: string; panel: string; row: string; rowTitle: string; chip: string; fine: string; wrap: string;
+  panel: string; row: string; rowTitle: string; chip: string; fine: string; wrap: string;
 }> = {
   default: {
     section: "relative py-20 overflow-hidden bg-gradient-to-b from-white via-brand-light/50 to-white",
@@ -27,7 +33,6 @@ const SKINS: Record<Skin, {
     lead: "text-gray-600 text-[1rem] leading-relaxed",
     step: "text-gray-700",
     stepNum: "bg-brand-primary/10 text-brand-primary",
-    cta: "cta cta-primary inline-flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all no-underline",
     panel: "rounded-2xl bg-white border border-gray-100 shadow-[0_24px_50px_-30px_rgba(15,40,30,0.35)] overflow-hidden",
     row: "hover:bg-brand-light/60",
     rowTitle: "text-gray-900 group-hover:text-brand-primary",
@@ -42,7 +47,6 @@ const SKINS: Record<Skin, {
     lead: "oc-lead text-oc-quiet",
     step: "text-oc-ink",
     stepNum: "bg-oc-mist text-oc-dark",
-    cta: "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold bg-oc-dark text-white hover:bg-oc-deep transition-colors no-underline",
     panel: "rounded-oc-xl bg-white border border-oc-line overflow-hidden",
     row: "hover:bg-oc-tint",
     rowTitle: "text-oc-ink group-hover:text-oc-deep",
@@ -57,7 +61,6 @@ const SKINS: Record<Skin, {
     lead: "text-slate-600 text-[1.02rem] leading-relaxed",
     step: "text-slate-700",
     stepNum: "bg-brand-light text-brand-primary",
-    cta: "dmp-btn dmp-btn--lg no-underline",
     panel: "dmp-glass-light overflow-hidden",
     row: "hover:bg-white",
     rowTitle: "text-slate-900 group-hover:text-brand-primary",
@@ -65,6 +68,44 @@ const SKINS: Record<Skin, {
     fine: "text-slate-500",
   },
 };
+
+/**
+ * The section's button copies each site's own main button: same shape, colour,
+ * weight and icon habit (leading icon, trailing arrow, or no icon at all).
+ */
+type Cta = { className: string; weight: number; lead?: ReactNode; trail?: ReactNode };
+const leadLucide = <FileText size={18} />;
+const arrow16 = <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />;
+const arrow18 = <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />;
+const CTAS: Record<string, Cta> = {
+  // CareFirst hero "Explore Services"
+  carefirst: { className: "group inline-flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-emerald-900/20 transition-all", weight: 600, trail: <ArrowRight size={16} /> },
+  // Strachans hero "Explore Services"
+  strachans: { className: "group inline-flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-xl shadow-lg shadow-brand-primary/20 hover:shadow-xl hover:shadow-brand-primary/30 hover:-translate-y-0.5 transition-all", weight: 600, trail: arrow16 },
+  // Health-Check and Central hero "Explore our services": gradient, leading icon
+  healthcheck: { className: "hc-btn-gradient inline-flex items-center justify-center gap-2 px-7 rounded-xl text-[1rem] min-h-[48px]", weight: 600, lead: leadLucide },
+  central: { className: "cp-btn-gradient inline-flex items-center justify-center gap-2 px-7 rounded-xl text-[1rem] min-h-[48px]", weight: 600, lead: leadLucide },
+  // Kepple Lane hero "Book an appointment"
+  kepplelane: { className: "kl-btn-gradient group inline-flex items-center justify-center gap-2 px-8 min-h-[52px] rounded-full text-[1rem]", weight: 700, trail: arrow18 },
+  // iCare hero "Book an appointment"
+  icare: { className: "cta cta-primary group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-[1rem]", weight: 700, trail: arrow18 },
+  // One Care and Shivakem: their shared primary button, with a leading icon in each site's own icon set
+  onecare: { className: BTN_PRIMARY, weight: 600, lead: <Ph icon={PhFileText} size={20} /> },
+  shivakem: { className: `${BTN_PRIMARY} min-h-[52px] px-7`, weight: 600, lead: <Fl icon={DocumentText24Regular} size={20} /> },
+  // Dewsbury: glossy button, never an icon
+  dewsbury: { className: "dmp-btn dmp-btn--lg", weight: 600 },
+};
+// J Morris, Acre and Meadows: the large accent button (as on the J Morris nomination banner), no icon
+const TEMPLATE_CTA: Cta = { className: "inline-flex items-center justify-center gap-2 min-h-[48px] px-7 rounded-xl bg-brand-secondary text-white hover:brightness-110 transition-[filter]", weight: 700 };
+
+/** The arrow at the end of each note row, in the site's own icon set. */
+function RowArrow({ brandId }: { brandId: string }) {
+  if (brandId === "onecare") return <Arrow />;
+  if (brandId === "shivakem") return <SkArrow />;
+  const cls = "shrink-0 opacity-50 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100";
+  if (brandId === "dewsbury") return <NavArrowRight width={18} height={18} className={cls} />;
+  return <ArrowRight size={18} className={cls} />;
+}
 
 const STEPS = [
   { icon: MessageSquareText, text: "Answer a few questions online" },
@@ -74,6 +115,7 @@ const STEPS = [
 
 export function SickNoteSection({ brand, skin = "default" }: { brand: Brand; skin?: Skin }) {
   const s = SKINS[skin];
+  const cta = CTAS[brand.id] ?? TEMPLATE_CTA;
   const price = (privateServices.find((x) => x.id === SICK_NOTE_SERVICE_ID)?.price ?? "").replace(/^From\s*/i, "");
   const href = (note?: string) => `${brand.basePath}/book/${SICK_NOTE_SERVICE_ID}${note ? `?note=${note}` : ""}`;
 
@@ -96,8 +138,8 @@ export function SickNoteSection({ brand, skin = "default" }: { brand: Brand; ski
             ))}
           </ol>
           <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <Link to={href()} className={s.cta} style={{ fontWeight: 600 }}>
-              Request a sick note <ArrowRight size={17} />
+            <Link to={href()} className={`${cta.className} no-underline cursor-pointer`} style={{ fontWeight: cta.weight }}>
+              {cta.lead}Request a sick note{cta.trail}
             </Link>
             {price && <span className={`${s.lead} !text-[0.95rem]`}>From <strong style={{ fontWeight: 700 }}>£{price}</strong></span>}
           </div>
@@ -121,7 +163,7 @@ export function SickNoteSection({ brand, skin = "default" }: { brand: Brand; ski
                     </span>
                     <span className={`block text-[0.86rem] mt-0.5 ${s.fine}`}>{t.desc}</span>
                   </span>
-                  <ArrowRight size={18} className="shrink-0 opacity-50 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100" />
+                  <RowArrow brandId={brand.id} />
                 </Link>
               </li>
             ))}
